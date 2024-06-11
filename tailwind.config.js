@@ -7,8 +7,11 @@ module.exports = {
     extend: {
       colors: {
         customGray: '#141414',
+        default: '#aebfc1',
     },},
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }
 
