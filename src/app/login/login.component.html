@@ -12,9 +12,15 @@
             <div>
                 <label for="email" class="block text-lg font-medium leading-6 text-defaultTextColor">
                     Email or Username</label>
-                <div class="mt-2">
+                <div class="mt-2 relative">
                     <input id="identifier" formControlName="identifier" name="identifier" autocomplete="email" required
-                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColor lg:text-lg lg:leading-6">
+                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 
+                        placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColor lg:text-lg lg:leading-6">
+                    <span *ngIf="(identifierFormField?.dirty || identifierFormField?.touched)"
+                        class="input-error absolute form-control-sm text-danger">
+                        <span *ngIf="identifierFormField?.hasError('required')">* Email or Username is
+                            required</span>
+                    </span>
                 </div>
             </div>
 
@@ -24,28 +30,38 @@
                         class="block text-lg font-medium leading-6 text-defaultTextColor">Password</label>
                     <div class="text-md">
                         <a (click)="navigateToSendMail()"
-                            class="font-semibold text-accentColor hover:text-accentColorHover">Forgot
+                            class="font-semibold text-accentColor hover:text-accentColorHover cursor-pointer">Forgot
                             password?</a>
                     </div>
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 relative">
                     <input id="password" formControlName="password" name="password" type="password"
                         autocomplete="current-password" required
-                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColor lg:text-lg lg:leading-6">
+                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset 
+                        ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColor 
+                        lg:text-lg lg:leading-6">
+                    <span *ngIf="(passwordFormField?.dirty || passwordFormField?.touched)"
+                        class="input-error absolute form-control-sm text-danger">
+                        <span *ngIf="passwordFormField?.hasError('required')">* Password is
+                            required</span>
+                    </span>
                 </div>
             </div>
 
             <div class="!mt-10">
-                <button type="submit"
-                    class="flex w-full justify-center rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold leading-6 text-white shadow-lg hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accentColor">Sign
+                <button type="submit" [disabled]="loginForm.invalid"
+                    class="flex w-full justify-center rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold leading-6 
+                    text-white shadow-lg hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 
+                    focus-visible:outline-offset-2 focus-visible:outline-accentColor disabled:opacity-60 disabled:hover:bg-accentColor">Sign
                     in</button>
             </div>
         </form>
 
         <p class="mt-10 text-center text-lg text-defaultTextColor">
             Not a member?
-            <a (click)="navigateToRegistry()"
-                class="font-semibold leading-6 text-accentColor hover:text-accentColorHover">Create an account
+            <a (click)="navigateToRegister()"
+                class="font-semibold leading-6 text-accentColor hover:text-accentColorHover cursor-pointer">Create an
+                account
                 right now!</a>
         </p>
     </div>

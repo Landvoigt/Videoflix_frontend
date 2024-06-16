@@ -7,10 +7,35 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    .overlay {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgb(29, 29, 29);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 225ms ease,
+        visibility 225ms ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+      color: #aa42f0;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- <div class="overlay" id="loadingOverlay">
+  <div class="overlay" id="loadingOverlay">
     <svg width="100" height="100" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg" stroke="#7400c2">
       <g fill="none" fill-rule="evenodd" transform="translate(1 1)" stroke-width="2">
         <circle cx="22" cy="22" r="6" stroke-opacity="0">
@@ -35,27 +60,27 @@
         </circle>
       </g>
     </svg>
-  </div> -->
+  </div>
   <app-root></app-root>
 </body>
 
 <script>
-  // function showLoadingAnimation() {
-  //   document.getElementById('loadingOverlay').classList.add('active');
-  // }
+  function showLoadingAnimation() {
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
 
-  // function hideLoadingAnimation() {
-  //   document.getElementById('loadingOverlay').classList.remove('active');
-  // }
+  function hideLoadingAnimation() {
+    document.getElementById('loadingOverlay').classList.remove('active');
+  }
 
-  // function simulateAppLoading() {
-  //   showLoadingAnimation();
-  //   setTimeout(function () {
-  //     hideLoadingAnimation();
-  //   }, 3000);
-  // }
+  function simulateAppLoading() {
+    showLoadingAnimation();
+    setTimeout(function () {
+      hideLoadingAnimation();
+    }, 2500);
+  }
 
-  // simulateAppLoading();
+  simulateAppLoading();
 </script>
 
 </html>

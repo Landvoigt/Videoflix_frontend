@@ -32,6 +32,14 @@ body {
     color: #aa42f0;
 }
 
+input {
+    border-width: 1px !important;
+
+    &:focus {
+        border-color: #2528eb !important;
+    }
+}
+
 .btn-container {
     position: absolute;
     top: 2rem;
@@ -59,8 +67,13 @@ body {
 }
 
 .text-danger {
-    width: 100%;
+    // width: 100%;
     font-size: 14px;
     font-style: italic;
     color: #f55c5c;
+}
+
+.input-error {
+    bottom: -21px;
+    right: 4px;
 }

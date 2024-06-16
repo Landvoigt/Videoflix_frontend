@@ -1,24 +1,43 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  apiBaseUrl: string = 'http://127.0.0.1:8000/';
 
-  constructor(private http: HttpClient) { }
+  private readonly TOKEN_KEY = 'authToken';
 
-  register(email: string, password: string): Observable<any> {
-    const payload = { email, password };
-    console.log(payload);  ////// remove
-    return this.http.post(`${this.apiBaseUrl}register/`, payload);
+  constructor(private router: Router) { }
+
+  private isLocalStorageAvailable(): boolean {
+    try {
+      const testKey = '__test__';
+      localStorage.setItem(testKey, testKey);
+      localStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
-  login(identifier: string, password: string): Observable<any> {
-    const payload = { identifier, password };
-    console.log(payload);  ////// remove
-    return this.http.post(`${this.apiBaseUrl}login/`, payload);
+  isLoggedIn(): boolean {
+    if (!this.isLocalStorageAvailable()) {
+      return false;
+    }
+    return !!localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  login(token: string): void {
+    if (this.isLocalStorageAvailable()) {
+      localStorage.setItem(this.TOKEN_KEY, token);
+    }
+  }
+
+  logout(): void {
+    if (this.isLocalStorageAvailable()) {
+      localStorage.removeItem(this.TOKEN_KEY);
+    }
+    this.router.navigate(['/login']);
   }
 }

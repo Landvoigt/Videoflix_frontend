@@ -1,0 +1,89 @@
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-default">
+    <div class="btn-container" (click)="navigateBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+    </div>
+
+    <div class="lg:mx-auto lg:w-full lg:max-w-lg">
+        <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            alt="Your Company">
+        <h2 class="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-defaultTextColor">Register for
+            greater entertainment
+        </h2>
+    </div>
+
+    <div class="mt-10 lg:mx-auto lg:w-full lg:max-w-lg mb-20">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <div>
+                <label for="emailRegister" class="block text-lg font-medium leading-6 text-defaultTextColor">Your Email</label>
+                <div class="mt-2 relative">
+                    <input id="emailRegister" formControlName="email" type="email" autocomplete="email" required
+                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 
+                        placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColorHover lg:text-lg lg:leading-6">
+                    <span *ngIf="(emailFormField?.dirty || emailFormField?.touched)"
+                        class="input-error absolute form-control-sm text-danger">
+                        <span *ngIf="emailFormField?.hasError('required')">* Email is
+                            required</span>
+                        <span *ngIf="emailFormField?.hasError('pattern')">* Enter valid
+                            email</span>
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between">
+                    <label for="passwordRegister" class="block text-lg font-medium leading-6 text-defaultTextColor">Your
+                        Password</label>
+                    <div class="text-md"></div>
+                </div>
+                <div class="mt-2 relative">
+                    <input id="passwordRegister" formControlName="password" type="password" autocomplete="password" required
+                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 
+                        placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColorHover lg:text-lg lg:leading-6">
+                    <span *ngIf="(passwordFormField?.dirty || passwordFormField?.touched)"
+                        class="input-error absolute form-control-sm text-danger">
+                        <span *ngIf="passwordFormField?.hasError('required')">* Password is
+                            required</span>
+                        <span *ngIf="passwordFormField?.hasError('pattern')">* Enter valid
+                            password</span>
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between">
+                    <label for="confirmPasswordRegister"
+                        class="block text-lg font-medium leading-6 text-defaultTextColor">Confirm
+                        Password</label>
+                    <div class="text-md"></div>
+                </div>
+                <div class="mt-2 relative">
+                    <input id="confirmPasswordRegister" formControlName="confirmPassword" type="password"
+                        autocomplete="password" required
+                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset 
+                        ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColorHover 
+                        lg:text-lg lg:leading-6">
+                    <span *ngIf="confirmPasswordFormField?.invalid &&
+                                 (confirmPasswordFormField?.dirty || confirmPasswordFormField?.touched)"
+                        class="input-error absolute form-control-sm text-danger">
+                        <span *ngIf="confirmPasswordFormField?.hasError('required')">
+                            * Confirm Password is required
+                        </span>
+                        <span *ngIf="confirmPasswordFormField?.hasError('passwordsDoNotMatch')">
+                            * Passwords do not match
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="!mt-10">
+                <button type="submit" [disabled]="registerForm.invalid"
+                    class="flex w-full justify-center rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold 
+                    leading-6 text-white shadow-lg hover:bg-accentColorHover focus:outline-none focus-visible:ring-2 
+                    focus-visible:ring-offset-2 focus-visible:ring-accentColor disabled:opacity-60 disabled:hover:bg-accentColor">Register</button>
+            </div>
+        </form>
+    </div>
+</div>

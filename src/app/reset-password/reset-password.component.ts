@@ -1,16 +1,106 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ResetPasswordFormModel } from '../../models/auth.model';
+import { PasswordRegex } from '../utils/regex';
+import { AlertService } from '../services/alert.service';
+import { ErrorService } from '../services/error.service';
+import { RestService } from '../services/rest.service';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss'
 })
-export class ResetPasswordComponent {
-  password1: string = '';
-  password2: string = '';
+export class ResetPasswordComponent implements OnInit {
 
+  public resetPasswordForm: FormGroup<ResetPasswordFormModel> = new FormGroup<ResetPasswordFormModel>(
+    {
+      password: new FormControl(null, [Validators.required, Validators.pattern(PasswordRegex)]),
+      confirmPassword: new FormControl(null, [Validators.required]),
+    },
+    {
+      validators: this.passwordMatchValidator('password', 'confirmPassword')
+    }
+  );
+
+  token: string | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private restService: RestService,
+    private errorService: ErrorService,
+    private alertService: AlertService) { }
+
+  get passwordFormField() {
+    return this.resetPasswordForm.get('password');
+  }
+
+  get confirmPasswordFormField() {
+    return this.resetPasswordForm.get('confirmPassword');
+  }
+
+  ngOnInit(): void {
+    this.token = this.route.snapshot.queryParamMap.get('token');
+    if (this.token) {
+      this.restService.validateResetToken(this.token).subscribe({
+        next: (response) => {
+          //////
+          console.log(response.valid);
+
+          if (!response.valid) {
+            this.router.navigate(['/error'], { queryParams: { message: 'Invalid or expired token' } });
+          }
+        },
+        error: (err) => {
+          console.error('Token validation error', err);
+          this.router.navigate(['/error'], { queryParams: { message: 'Error validating token' } });
+        }
+      });
+    } else {
+      this.router.navigate(['/error'], { queryParams: { message: 'Token not provided' } });
+    }
+  }
+
+  passwordMatchValidator(controlName: string, matchingControlName: string): ValidatorFn {
+    return (abstractControl: AbstractControl) => {
+      const control = abstractControl.get(controlName);
+      const matchingControl = abstractControl.get(matchingControlName);
+
+      if (control && matchingControl && control.value !== matchingControl.value) {
+        matchingControl.setErrors({ passwordsDoNotMatch: true });
+        return { passwordsDoNotMatch: true };
+      } else {
+        matchingControl?.setErrors(null);
+        return null;
+      }
+    }
+  }
+
+  onSubmit(): void {
+    if (this.resetPasswordForm.valid) {
+      const { password } = this.resetPasswordForm.value;
+      this.restService.resetPassword(this.token!, password!).subscribe({
+        next: (response) => {
+          this.alertService.showAlert('Password reset successfully!', 'success');
+          this.router.navigate(['/login']);
+
+          /////
+          console.log(response);
+        },
+        error: (err) => {
+          this.errorService.handleResetPasswordError(err);
+
+          /////
+          console.error('Registration error', err);
+        },
+        complete: () => {
+        }
+      });
+    }
+  }
 }
