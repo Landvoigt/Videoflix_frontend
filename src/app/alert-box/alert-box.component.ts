@@ -1,8 +1,8 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { AlertService } from '../services/alert.service';
 import { CommonModule } from '@angular/common';
 import { Alert } from '../../models/alert.interface';
+import { fadeInAlert } from '../utils/animations';
 
 @Component({
   selector: 'app-alert-box',
@@ -10,16 +10,7 @@ import { Alert } from '../../models/alert.interface';
   imports: [CommonModule],
   templateUrl: './alert-box.component.html',
   styleUrl: './alert-box.component.scss',
-  animations: [
-    trigger('fade', [
-      state('void', style({
-        opacity: 0
-      })),
-      transition(':enter, :leave', [
-        animate(250)
-      ])
-    ])
-  ]
+  animations: [fadeInAlert]
 })
 
 export class AlertBoxComponent {

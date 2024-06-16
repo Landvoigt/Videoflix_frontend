@@ -6,20 +6,22 @@ import { ErrorService } from '../services/error.service';
 import { LoginFormModel } from '../../models/auth.model';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
+import { fadeInPage } from '../utils/animations';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  animations: [fadeInPage]
 })
 export class LoginComponent {
 
   public loginForm: FormGroup<LoginFormModel> = new FormGroup<LoginFormModel>(
     {
-      identifier:       new FormControl(null, [Validators.required]),
-      password:         new FormControl(null, [Validators.required]),
+      identifier: new FormControl(null, [Validators.required]),
+      password: new FormControl(null, [Validators.required]),
     }
   );
 
@@ -44,7 +46,7 @@ export class LoginComponent {
           this.errorService.handleLoginError(err);
 
           /////
-          console.error('Login error:', err);
+          // console.error('Login error:', err);
         },
         complete: () => {
         }

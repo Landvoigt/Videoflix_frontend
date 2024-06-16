@@ -7,13 +7,15 @@ import { EmailRegex, PasswordRegex } from '../utils/regex';
 import { RegisterFormModel } from '../../models/auth.model';
 import { ErrorService } from '../services/error.service';
 import { AlertService } from '../services/alert.service';
+import { fadeInPage } from '../utils/animations';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrl: './register.component.scss',
+  animations: [fadeInPage]
 })
 export class RegisterComponent {
 
