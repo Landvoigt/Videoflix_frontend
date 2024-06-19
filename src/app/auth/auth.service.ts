@@ -28,10 +28,20 @@ export class AuthService {
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
 
+  canActivate(): boolean {
+    if (this.isLoggedIn()) {
+      return true;
+    } else {
+      this.router.navigate(['/login']);
+      return false;
+    }
+  }
+
   login(token: string): void {
     if (this.isLocalStorageAvailable()) {
       localStorage.setItem(this.TOKEN_KEY, token);
     }
+    this.router.navigate(['/selection']);
   }
 
   logout(): void {

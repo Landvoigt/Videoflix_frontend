@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
 import { RestService } from '../services/rest.service';
 import { ErrorService } from '../services/error.service';
-import { LoginFormModel } from '../../models/auth.model';
+import { LoginFormModel } from '../interfaces/auth.interface';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
 
 @Component({
@@ -44,9 +44,6 @@ export class LoginComponent {
         },
         error: (err) => {
           this.errorService.handleLoginError(err);
-
-          /////
-          // console.error('Login error:', err);
         },
         complete: () => {
         }

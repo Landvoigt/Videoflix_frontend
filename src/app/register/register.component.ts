@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule, FormGroup, Validators, AbstractContro
 import { RestService } from '../services/rest.service';
 import { CommonModule } from '@angular/common';
 import { EmailRegex, PasswordRegex } from '../utils/regex';
-import { RegisterFormModel } from '../../models/auth.model';
+import { RegisterFormModel } from '../interfaces/auth.interface';
 import { ErrorService } from '../services/error.service';
 import { AlertService } from '../services/alert.service';
 import { fadeInPage } from '../utils/animations';

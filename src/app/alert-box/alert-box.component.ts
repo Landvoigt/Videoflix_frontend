@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AlertService } from '../services/alert.service';
 import { CommonModule } from '@angular/common';
-import { Alert } from '../../models/alert.interface';
+import { Alert } from '../interfaces/alert.interface';
 import { fadeInAlert } from '../utils/animations';
 
 @Component({

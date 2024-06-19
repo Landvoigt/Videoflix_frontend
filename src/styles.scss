@@ -60,11 +60,17 @@ input {
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
     --tw-bg-opacity: 1;
 
+    transition: all 105ms ease-in-out;
+
     &:hover {
         --tw-bg-opacity: 1;
         // background-color: var(--accentColorHover);
         background-color: #aa42f0;
     }
+}
+
+button, a {
+    transition: all 105ms ease-in-out;
 }
 
 .text-danger {

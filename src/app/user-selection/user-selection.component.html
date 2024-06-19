@@ -1,1 +1,39 @@
-<p>user-selection works!</p>
+<div @fadeInPage
+    class="flex flex-col min-h-full justify-center content-center flex-wrap px-6 py-12 lg:px-8 bg-default gap-8">
+    <div class="btn-container" (click)="navigateBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+    </div>
+
+    <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-10">
+        <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            alt="Your Company">
+        <h2 class="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-defaultTextColor">{{
+            profiles.length === 0 ? 'Create up to 3 profiles' : 'Select a profile or create a new one' }}</h2>
+    </div>
+    <div class="tile-wrapper flex justify-center content-center">
+        <div *ngFor="let profile of profiles; let i = index" (click)="startApp(i)" class="selection-tile"
+            id="profile{{ i }}">
+            <img [src]="profile.image" class="profile-img">
+            <div class="selection-tile-btn-wrapper">
+                <button class="selection-tile-btn flex flex-wrap w-full justify-center content-end rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold 
+            leading-6 text-white shadow-lg hover:bg-accentColorHover focus-visible:outline 
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accentColor 
+            disabled:opacity-60 disabled:hover:bg-accentColor">{{ profile.name }}</button>
+            </div>
+        </div>
+
+        <div *ngIf="profiles.length < 3" class="selection-tile selection-add">
+            <svg (click)="openCreateProfile()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" class="size-28">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+        </div>
+    </div>
+
+</div>
+<app-dialog-create-profile *ngIf="isDialogOpen" (createProfile)="createProfile($event)" [isEdit]="isEdit"
+    [currentProfileId]="currentProfileId"></app-dialog-create-profile>
+<app-loading-screen *ngIf="loadingApp"></app-loading-screen>

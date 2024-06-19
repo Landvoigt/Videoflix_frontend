@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Alert } from '../../models/alert.interface';
+import { Alert } from '../interfaces/alert.interface';
 
 
 @Injectable({

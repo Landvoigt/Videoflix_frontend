@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { SendMailFormModel } from '../../models/auth.model';
+import { SendMailFormModel } from '../interfaces/auth.interface';
 import { EmailRegex } from '../utils/regex';
 import { RestService } from '../services/rest.service';
 import { AlertService } from '../services/alert.service';

@@ -7,7 +7,8 @@ import { VideoComponent } from './video/video.component';
 import { SendMailComponent } from './send-mail/send-mail.component';
 import { NgModule } from '@angular/core';
 import { ErrorPageComponent } from './error-page/error-page.component';
-import { AuthGuard } from './services/auth.guard';
+import { AuthGuard } from './auth/auth.guard';
+import { UserSelectionComponent } from './user-selection/user-selection.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,6 +18,7 @@ export const routes: Routes = [
     { path: 'send_mail', component: SendMailComponent },
     { path: 'reset_password', component: ResetPasswordComponent },
     
+    { path: 'selection', component: UserSelectionComponent, canActivate: [AuthGuard] },
     { path: 'mainpage', component: MainpageComponent, canActivate: [AuthGuard] },
     { path: 'video', component: VideoComponent, canActivate: [AuthGuard] },
 

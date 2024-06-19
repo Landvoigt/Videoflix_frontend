@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ResetPasswordFormModel } from '../../models/auth.model';
+import { ResetPasswordFormModel } from '../interfaces/auth.interface';
 import { PasswordRegex } from '../utils/regex';
 import { AlertService } from '../services/alert.service';
 import { ErrorService } from '../services/error.service';
