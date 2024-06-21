@@ -57,16 +57,7 @@
               </button>
             </div>
   
-            <!--
-              Dropdown menu, show/hide based on menu state.
-  
-              Entering: "transition ease-out duration-100"
-                From: "transform opacity-0 scale-95"
-                To: "transform opacity-100 scale-100"
-              Leaving: "transition ease-in duration-75"
-                From: "transform opacity-100 scale-100"
-                To: "transform opacity-0 scale-95"
-            -->
+          
             <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
               <!-- Active: "bg-gray-100", Not Active: "" -->
               <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
@@ -92,121 +83,99 @@
   
   
   
-  <div class="w-full h-96 flex bg-gray-500"></div>
-  
-  
-  
-  
-  
-  
-  <!--
-    This example requires some changes to your config:
-    
-    ```
-    // tailwind.config.js
-    module.exports = {
-      // ...
-      plugins: [
-        // ...
-        require('@tailwindcss/aspect-ratio'),
-      ],
-    }
-    ```
-  -->
-  <div class="bg-customGray">
-    <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-      <h2 class="sr-only">Products</h2>
-  
-      <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg" alt="Tall slender porcelain bottle with natural clay textured body and cork stopper." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Earthen Bottle</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$48</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg" alt="Olive drab green insulated bottle with flared screw lid and flat top." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Nomad Tumbler</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$35</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg" alt="Person using a pen to cross a task off a productivity paper card." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Focus Paper Refill</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$89</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg" alt="Hand holding black machined steel mechanical pencil with brass tip and top." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Machined Mechanical Pencil</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$35</p>
-        </a>
-  
-        <!-- More products... -->
-      </div>
-    </div>
+  <div class="w-full h-2/3 flex  start"></div>
+   
+ <div class="main"> 
+   <div class="sor">  
+    <img id="left1" (click)="scrollingLeft1()" src="/assets/img/barni/arrow-left.png" alt="">
+      <div id="line1" class="line ">
+
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+<img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
+ 
+    </div> 
+    <img id="right1" (click)="scrollingRight1()" src="/assets/img/barni/arrow-right.png" alt="">
   </div>
-  
-  
-  
-  
-  
-  <!--
-    This example requires some changes to your config:
+
+</div>
+
+
+<div class="main"> 
+  <div class="sor"> 
+    <img id="left2" (click)="scrollingLeft2()" src="/assets/img/barni/arrow-left.png" alt=""> 
+     <div id="line2" class="line">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+     
+   
+   </div> 
+   <img id="right2" (click)="scrollingRight2()" src="/assets/img/barni/arrow-right.png" alt="">
+ </div>
+
+</div>
+
+<div class="main"> 
+  <div class="sor">  
+    <img id="left3" (click)="scrollingLeft3()" src="/assets/img/barni/arrow-left.png" alt=""> 
+     <div id="line3" class="line">
+
+
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
+      <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
     
-    ```
-    // tailwind.config.js
-    module.exports = {
-      // ...
-      plugins: [
-        // ...
-        require('@tailwindcss/aspect-ratio'),
-      ],
-    }
-    ```
-  -->
-  <div class="bg-customGray">
-    <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-      <h2 class="sr-only">Products</h2>
+   
+
+
+   </div> 
+   <img id="right3" (click)="scrollingRight3()" src="/assets/img/barni/arrow-right.png" alt="">
+ </div>
+
+</div>
   
-      <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg" alt="Tall slender porcelain bottle with natural clay textured body and cork stopper." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Earthen Bottle</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$48</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg" alt="Olive drab green insulated bottle with flared screw lid and flat top." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Nomad Tumbler</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$35</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg" alt="Person using a pen to cross a task off a productivity paper card." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Focus Paper Refill</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$89</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-            <img src="https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg" alt="Hand holding black machined steel mechanical pencil with brass tip and top." class="h-full w-full object-cover object-center group-hover:opacity-75">
-          </div>
-          <h3 class="mt-4 text-sm text-gray-700">Machined Mechanical Pencil</h3>
-          <p class="mt-1 text-lg font-medium text-gray-900">$35</p>
-        </a>
   
-        <!-- More products... -->
-      </div>
-    </div>
-  </div>
+  
+  
   
   
