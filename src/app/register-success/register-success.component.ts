@@ -3,19 +3,18 @@ import { Router } from '@angular/router';
 import { fadeInPage } from '../utils/animations';
 
 @Component({
-  selector: 'app-error-page',
+  selector: 'app-register-success',
   standalone: true,
   imports: [],
-  templateUrl: './error-page.component.html',
-  styleUrl: './error-page.component.scss',
+  templateUrl: './register-success.component.html',
+  styleUrl: './register-success.component.scss',
   animations: [fadeInPage]
-
 })
-export class ErrorPageComponent {
+export class RegisterSuccessComponent {
 
   constructor(
     private router: Router) { }
-    
+
   navigateBack() {
     this.router.navigate(['/login']);
   }

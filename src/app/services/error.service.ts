@@ -64,11 +64,15 @@ export class ErrorService {
           this.showAlert('Invalid email!');
         } else if (error.error.error === 'Invalid username') {
           this.showAlert('Invalid username!');
-        } else if (error.error.error === 'Invalid password') {
-          this.showAlert('Invalid password!');
         } else {
           this.showAlert('An unexpected error occurred. Please try again later.');
         }
+      },
+      401: () => {
+        this.showAlert('Invalid password!');
+      },
+      403: () => {
+        this.showAlert('Not verified. Please verify your email first.');
       }
     };
     this.handleHttpError(error, errorHandlers);

@@ -10,7 +10,7 @@
     <div class="mt-10 lg:mx-auto lg:w-full lg:max-w-lg mb-20">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
             <div>
-                <label for="email" class="block text-lg font-medium leading-6 text-defaultTextColor">
+                <label for="identifier" class="block text-lg font-medium leading-6 text-defaultTextColor">
                     Email or Username</label>
                 <div class="mt-2 relative">
                     <input id="identifier" formControlName="identifier" name="identifier" autocomplete="email" required
@@ -49,11 +49,13 @@
             </div>
 
             <div class="!mt-10">
-                <button type="submit" [disabled]="loginForm.invalid"
-                    class="flex w-full justify-center rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold leading-6 
+                <button type="submit" [disabled]="loginForm.invalid || loading"
+                    class="submit-btn flex w-full justify-center rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold leading-6 
                     text-white shadow-lg hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 
-                    focus-visible:outline-offset-2 focus-visible:outline-accentColor disabled:opacity-60 disabled:hover:bg-accentColor">Sign
-                    in</button>
+                    focus-visible:outline-offset-2 focus-visible:outline-accentColor disabled:opacity-60 disabled:hover:bg-accentColor">
+                    <span *ngIf="!loading">Sign in</span>
+                    <div *ngIf="loading" class="spinner"></div>
+                </button>
             </div>
         </form>
 

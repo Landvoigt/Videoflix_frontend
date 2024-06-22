@@ -52,7 +52,7 @@ export class DialogCreateProfileComponent implements OnInit {
     this.createProfile.emit(
       {
         name: this.profileName,
-        image: this.selectedImage
+        avatar_id: this.selectedImageIndex
       }
     );
   }

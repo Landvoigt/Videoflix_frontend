@@ -25,6 +25,8 @@ export class SendMailComponent {
     }
   );
 
+  loading: boolean = false;
+
   constructor(
     private router: Router,
     private restService: RestService,
@@ -38,6 +40,7 @@ export class SendMailComponent {
   onSubmit() {
     if (this.sendMailForm.valid) {
       const { email } = this.sendMailForm.value;
+      this.loading = true;
       this.restService.sendMail(email!).subscribe({
         next: (response) => {
           this.alertService.showAlert('Email sent successfully!', 'success');
@@ -53,6 +56,7 @@ export class SendMailComponent {
           console.error('Registration error', err);
         },
         complete: () => {
+          this.loading = false;
         }
       });
     }

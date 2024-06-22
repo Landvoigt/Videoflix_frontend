@@ -9,12 +9,14 @@ import { NgModule } from '@angular/core';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { AuthGuard } from './auth/auth.guard';
 import { UserSelectionComponent } from './user-selection/user-selection.component';
+import { RegisterSuccessComponent } from './register-success/register-success.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
+    { path: 'register_success', component: RegisterSuccessComponent },
     { path: 'send_mail', component: SendMailComponent },
     { path: 'reset_password', component: ResetPasswordComponent },
     

@@ -21,19 +21,21 @@ export class RegisterComponent {
 
   public registerForm: FormGroup<RegisterFormModel> = new FormGroup<RegisterFormModel>(
     {
-      email:            new FormControl(null, [Validators.required, Validators.pattern(EmailRegex)]),
-      password:         new FormControl(null, [Validators.required, Validators.pattern(PasswordRegex)]),
-      confirmPassword:  new FormControl(null, [Validators.required]),
+      email: new FormControl(null, [Validators.required, Validators.pattern(EmailRegex)]),
+      password: new FormControl(null, [Validators.required, Validators.pattern(PasswordRegex)]),
+      confirmPassword: new FormControl(null, [Validators.required]),
     },
     {
       validators: this.passwordMatchValidator('password', 'confirmPassword')
     }
   );
 
+  loading: boolean = false;
+
   constructor(
     private router: Router,
-    private restService: RestService, 
-    private errorService: ErrorService, 
+    private restService: RestService,
+    private errorService: ErrorService,
     private alertService: AlertService) { }
 
   get emailFormField() {
@@ -66,10 +68,11 @@ export class RegisterComponent {
   onSubmit() {
     if (this.registerForm.valid) {
       const { email, password } = this.registerForm.value;
+      this.loading = true;
       this.restService.register(email!, password!).subscribe({
         next: (response) => {
-          this.alertService.showAlert('User created successfully!', 'success');
-          this.router.navigate(['/login']);
+          // this.alertService.showAlert('User created successfully!', 'success');
+          this.router.navigate(['/register_success']);
 
           /////
           console.log(response);
@@ -81,6 +84,7 @@ export class RegisterComponent {
           console.error('Registration error', err);
         },
         complete: () => {
+          this.loading = false;
         }
       });
     }

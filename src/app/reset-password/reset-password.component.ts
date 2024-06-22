@@ -30,6 +30,7 @@ export class ResetPasswordComponent implements OnInit {
   );
 
   token: string | null = null;
+  loading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -86,6 +87,7 @@ export class ResetPasswordComponent implements OnInit {
   onSubmit(): void {
     if (this.resetPasswordForm.valid) {
       const { password } = this.resetPasswordForm.value;
+      this.loading = true;
       this.restService.resetPassword(this.token!, password!).subscribe({
         next: (response) => {
           this.alertService.showAlert('Password reset successfully!', 'success');
@@ -99,9 +101,11 @@ export class ResetPasswordComponent implements OnInit {
 
           /////
           console.error('Registration error', err);
+          this.loading = false;
         },
         complete: () => {
-        }
+          this.loading = false;
+        },
       });
     }
   }
