@@ -104,15 +104,16 @@
     text-align: right;
 }
 
-// .dialog-footer button {
-//     background: #007bff;
-//     color: white;
-//     border: none;
-//     padding: 10px 20px;
-//     border-radius: 5px;
-//     cursor: pointer;
-// }
+.dialog-edit-footer {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
 
-// .dialog-footer button:hover {
-//     background: #0056b3;
-// }
+.btn-delete {
+    background-color: #e03140;
+    
+    &:hover {
+        background-color: #ff919b;
+    }
+}

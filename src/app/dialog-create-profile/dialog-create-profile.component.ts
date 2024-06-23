@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { fadeInPage } from '../utils/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Profile, ProfileImages } from '../../models/profile.model';
+import { RestService } from '../services/rest.service';
 
 @Component({
   selector: 'app-dialog-create-profile',
@@ -15,26 +17,31 @@ export class DialogCreateProfileComponent implements OnInit {
   @Input() isEdit: boolean = false;
   @Input() currentProfileId: number | null = null;
 
-  @Output() createProfile = new EventEmitter<any>();
   @Output() closeDialog = new EventEmitter<any>();
 
-  profileImages: any[] = [
-    "/assets/img/profile-images/profile_1.png",
-    "/assets/img/profile-images/profile_2.png",
-    "/assets/img/profile-images/profile_3.png",
-    "/assets/img/profile-images/profile_4.png",
-    "/assets/img/profile-images/profile_5.png",
-    "/assets/img/profile-images/profile_6.png",
-    "/assets/img/profile-images/profile_7.png",
-  ];
+  profile: Profile = new Profile('', 0);
+  profileImages: any[] = ProfileImages;
 
   selectedImage: string | null = null;
   selectedImageIndex: number | null = null;
   profileName: string = '';
+  loading: boolean = false;
+  loadingBtn: string = 'add' || 'edit' || 'delete';
+
+  constructor(private restService: RestService) { }
 
   ngOnInit(): void {
-    if (this.isEdit) {
-      ///// get profiles from user take profileId and find pic url, set selectedImage and selectedImageIndex
+    if (this.isEdit && this.currentProfileId) {
+      this.restService.getProfile(this.currentProfileId).subscribe({
+        next: (data) => {
+          this.profile = data;
+          this.selectedImageIndex = this.profile.avatar_id;
+          this.selectedImage = this.profileImages[this.selectedImageIndex];
+        },
+        error: (err) => {
+          console.error('Error fetching profile:', err);
+        }
+      });
     }
   }
 
@@ -48,13 +55,71 @@ export class DialogCreateProfileComponent implements OnInit {
     }
   }
 
+  createOrEdit() {
+    if (this.isEdit) {
+      this.update();
+    } else {
+      this.create();
+    }
+  }
+
   create() {
-    this.createProfile.emit(
-      {
-        name: this.profileName,
-        avatar_id: this.selectedImageIndex
+    this.profile.avatar_id = this.selectedImageIndex ? this.selectedImageIndex : 0;
+    const profileToSend = { ...this.profile };
+    delete profileToSend.id;
+
+    this.addProfile(profileToSend);
+  }
+
+  update() {
+    this.profile.avatar_id = this.selectedImageIndex ? this.selectedImageIndex : 0;
+    this.updateProfile(this.profile, this.profile.id!);
+  }
+
+  delete() {
+    this.deleteProfile(this.profile.id!)
+  }
+
+  addProfile(payload: any): void {
+    this.loading = true;
+    this.loadingBtn = 'add';
+    this.restService.addProfile(payload).subscribe({
+      error: (error) => {
+        console.error('Error adding profile:', error);
+      },
+      complete: () => {
+        this.loading = false;
+        this.closeDialog.emit();
       }
-    );
+    });
+  }
+
+  updateProfile(payload: any, id: number): void {
+    this.loading = true;
+    this.loadingBtn = 'edit';
+    this.restService.updateProfile(payload, id).subscribe({
+      error: (error) => {
+        console.error(`Error updating profile ${id}:`, error);
+      },
+      complete: () => {
+        this.loading = false;
+        this.closeDialog.emit();
+      }
+    });
+  }
+
+  deleteProfile(id: number): void {
+    this.loading = true;
+    this.loadingBtn = 'delete';
+    this.restService.deleteProfile(id).subscribe({
+      error: (error) => {
+        console.error(`Error deleting profile ${id}:`, error);
+      },
+      complete: () => {
+        this.loading = false;
+        this.closeDialog.emit();
+      }
+    });
   }
 
   close() {

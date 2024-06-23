@@ -5,14 +5,9 @@ import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { RestService } from '../services/rest.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { Profile, ProfileImages } from '../../models/profile.model';
 
-export interface Profile {
-  id: number;
-  name: string;
-  avatar_id: number;
-  // Weitere Eigenschaften entsprechend deiner Datenstruktur
-}
 @Component({
   selector: 'app-user-selection',
   standalone: true,
@@ -24,16 +19,7 @@ export interface Profile {
 export class UserSelectionComponent implements OnInit {
 
   profiles$: Observable<Profile[]>;
-
-  profileImages: any[] = [
-    "/assets/img/profile-images/profile_1.png",
-    "/assets/img/profile-images/profile_2.png",
-    "/assets/img/profile-images/profile_3.png",
-    "/assets/img/profile-images/profile_4.png",
-    "/assets/img/profile-images/profile_5.png",
-    "/assets/img/profile-images/profile_6.png",
-    "/assets/img/profile-images/profile_7.png",
-  ];
+  profileImages: any[] = ProfileImages;
 
   isDialogOpen: boolean = false;
   isEdit: boolean = false;
@@ -41,6 +27,7 @@ export class UserSelectionComponent implements OnInit {
 
   loadingApp: boolean = false;
   loading: boolean = false;
+  hoveredIndex: number | null = null;
 
   constructor(
     private router: Router,
@@ -65,45 +52,26 @@ export class UserSelectionComponent implements OnInit {
     });
   }
 
-  addProfile(payload: any): void {
-    this.loading = true;
-    this.restService.addProfile(payload).subscribe({
-      error: (error) => {
-        console.error('Error adding profile:', error);
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
-  }
-
-  updateProfile(payload: any, id: number): void {
-    this.loading = true;
-    this.restService.updateProfile(payload, id).subscribe({
-      error: (error) => {
-        console.error(`Error updating profile ${id}:`, error);
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
-  }
-
-  deleteProfile(id: string): void {
-    this.loading = true;
-    this.restService.deleteProfile(id).subscribe({
-      error: (error) => {
-        console.error(`Error deleting profile ${id}:`, error);
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
+  toggleEditBtn(index: number | null) {
+    this.hoveredIndex = index;
   }
 
   openCreateProfile() {
     this.isEdit = false;
     this.isDialogOpen = true;
+  }
+
+  openEditProfile(event: MouseEvent, profileId: number): void {
+    event.stopPropagation();
+    this.currentProfileId = profileId;
+    console.log(this.currentProfileId);
+    this.isEdit = true;
+    this.isDialogOpen = true;
+  }
+
+  closeDialog() {
+    this.isEdit = false;
+    this.isDialogOpen = false;
   }
 
   startApp(index: number) {
@@ -116,23 +84,6 @@ export class UserSelectionComponent implements OnInit {
       this.router.navigate(['/mainpage']);
     }, 2500);
 
-  }
-
-  editProfile(updatedProfile: any, id: number) {
-    this.isEdit = true;
-
-
-    ///// await undso
-    this.updateProfile(updatedProfile, id)
-    // this.currentProfileId = this.profiles[index].id;
-    this.isDialogOpen = true;
-  }
-
-  createProfile(newProfile: any) {
-
-    ///// await undso
-    this.addProfile(newProfile);
-    this.isDialogOpen = false;
   }
 
   navigateBack() {

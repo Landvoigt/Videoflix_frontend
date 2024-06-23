@@ -50,4 +50,12 @@ export class AuthService {
     }
     this.router.navigate(['/login']);
   }
+
+  getAuthenticationToken(): string | null {
+    const storageToken = localStorage.getItem('authToken');
+    if (storageToken) {
+      return `Token ${storageToken}`;
+    }
+    return null;
+  }
 }

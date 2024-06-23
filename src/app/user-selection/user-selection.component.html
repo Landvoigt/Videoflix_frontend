@@ -1,33 +1,45 @@
-<div @fadeInPage
-    class="flex flex-col min-h-full justify-center content-center flex-wrap px-6 py-12 lg:px-8 bg-default gap-8">
-    <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-10">
+<div @fadeInPage class="flex flex-col min-h-full justify-center content-center flex-wrap px-6 py-12 lg:px-8 bg-default">
+    <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-8">
         <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
             alt="Your Company">
         <h2 class="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-defaultTextColor">
             {{ (profiles$ | async)?.length === 0 ? 'Create up to 3 profiles' : 'Select a profile or create a new one' }}
         </h2>
     </div>
-    <div class="tile-wrapper flex justify-center content-center gap-6">
-        <div *ngFor="let profile of (profiles$ | async); let i = index" (click)="startApp(i)" class="selection-tile"
+    <div class="tile-wrapper flex justify-center content-center gap-8">
+        <div *ngFor="let profile of (profiles$ | async); let i = index" (click)="startApp(i)"
+            (mouseover)="toggleEditBtn(i)" (mouseleave)="toggleEditBtn(null)" class="selection-tile"
             id="profile{{ i }}">
-            <img [src]="profileImages[profile.avatar_id]" class="profile-img">
-            <div class="selection-tile-btn-wrapper">
-                <button class="selection-tile-btn flex flex-wrap w-full justify-center content-end rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold 
-            leading-6 text-white shadow-lg hover:bg-accentColorHover focus-visible:outline 
-            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accentColor 
-            disabled:opacity-60 disabled:hover:bg-accentColor">{{ profile.name }}</button>
+            <div class="selection-tile-img-box">
+                <div class="selection-tile-edit-icon">
+                    <button (click)="openEditProfile($event, profile.id!)" [ngClass]="{'d-none': hoveredIndex !== i}"
+                        class="flex w-full justify-center rounded-lg bg-accentColor px-3 py-4 text-lg font-semibold 
+                    leading-6 text-white shadow-lg hover:bg-accentColorHover focus-visible:outline 
+                    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accentColor 
+                    disabled:opacity-60 disabled:hover:bg-accentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="text-defaultTextColor size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                    </button>
+                </div>
+                <img [src]="profileImages[profile.avatar_id]" class="profile-img">
             </div>
+            <span class="selection-tile-text text-defaultTextColor">{{ profile.name }}</span>
         </div>
 
         <div *ngIf="((profiles$ | async) ?? []).length < 3" class="selection-tile selection-add">
+            <div class="selection-tile-edit-icon" style="margin-bottom: 1rem;"></div>
             <svg (click)="openCreateProfile()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke-width="1.5" stroke="currentColor" class="size-28">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
+            <span>&nbsp;</span>
         </div>
     </div>
 </div>
 
-<app-dialog-create-profile *ngIf="isDialogOpen" (createProfile)="createProfile($event)" [isEdit]="isEdit"
+<app-dialog-create-profile *ngIf="isDialogOpen" (closeDialog)="closeDialog()" [isEdit]="isEdit"
     [currentProfileId]="currentProfileId"></app-dialog-create-profile>
 <app-loading-screen *ngIf="loadingApp"></app-loading-screen>
