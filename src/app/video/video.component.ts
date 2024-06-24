@@ -1,6 +1,5 @@
-import { Component, ElementRef,Input, ViewChild, OnDestroy,OnInit  } from '@angular/core';
-import videojs from 'video.js';
-import Player from 'video.js/dist/types/player';
+import { Component} from '@angular/core';
+
 @Component({
   selector: 'app-video',
   standalone: true,
@@ -8,40 +7,7 @@ import Player from 'video.js/dist/types/player';
   templateUrl: './video.component.html',
   styleUrl: './video.component.scss'
 })
-export class VideoComponent implements OnInit, OnDestroy  {
-  @ViewChild('target', {static: true}) target: ElementRef ;
-
-
- @Input() options: {
-  fluid: boolean,
-  aspectRatio: string,
-  autoplay: boolean,
-  sources: {
-      src: string,
-      type: string,
-  }[],
-};
- 
-
-player: Player ;
-constructor(
-  private elementRef: ElementRef,
-) {}
-
-ngOnInit() {
-  this.player = videojs(this.target.nativeElement, this.options, function onPlayerReady() {
-    console.log('Player is ready');
-  });
-}
-
-ngOnDestroy() {
-  if (this.player) {
-    this.player.dispose();
-  }
-}
-
-
-
+export class VideoComponent {
 
 }
 
