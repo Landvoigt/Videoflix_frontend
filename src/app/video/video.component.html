@@ -1,1 +1,16 @@
-<p>video works!</p>
+
+
+
+
+   <div class="video-container">
+    <video #target class="video-js" controls muted playsinline preload="none"></video>
+  </div>
+  
+  <div class="video-container">
+    <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264"
+      data-setup="{}">
+      <source src="https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8" type="application/x-mpegURL">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
