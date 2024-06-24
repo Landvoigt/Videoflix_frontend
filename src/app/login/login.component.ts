@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } 
 import { RestService } from '../services/rest.service';
 import { ErrorService } from '../services/error.service';
 import { LoginFormModel } from '../interfaces/auth.interface';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
 import { AlertService } from '../services/alert.service';
@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private restService: RestService,
     private errorService: ErrorService,
     private authService: AuthService,
@@ -72,6 +73,10 @@ export class LoginComponent implements OnInit {
 
   get passwordFormField() {
     return this.loginForm.get('password');
+  }
+
+  navigateBack() {
+    this.location.back();
   }
 
   navigateToSendMail() {

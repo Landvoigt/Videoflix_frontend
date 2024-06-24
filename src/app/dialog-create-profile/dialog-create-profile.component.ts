@@ -28,7 +28,9 @@ export class DialogCreateProfileComponent implements OnInit {
   loading: boolean = false;
   loadingBtn: string = 'add' || 'edit' || 'delete';
 
-  constructor(private restService: RestService) { }
+  constructor(private restService: RestService) {
+    this.shuffleArray(this.profileImages);
+  }
 
   ngOnInit(): void {
     if (this.isEdit && this.currentProfileId) {
@@ -42,6 +44,13 @@ export class DialogCreateProfileComponent implements OnInit {
           console.error('Error fetching profile:', err);
         }
       });
+    }
+  }
+
+  shuffleArray(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
   }
 

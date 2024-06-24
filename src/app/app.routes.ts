@@ -10,10 +10,12 @@ import { ErrorPageComponent } from './error-page/error-page.component';
 import { AuthGuard } from './auth/auth.guard';
 import { UserSelectionComponent } from './user-selection/user-selection.component';
 import { RegisterSuccessComponent } from './register-success/register-success.component';
+import { FrontpageComponent } from './frontpage/frontpage.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/login', pathMatch: 'full' },
+    { path: '', redirectTo: '/welcome', pathMatch: 'full' },
 
+    { path: 'welcome', component: FrontpageComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'register_success', component: RegisterSuccessComponent },

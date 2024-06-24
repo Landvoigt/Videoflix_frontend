@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, AbstractControl, ValidatorFn, FormControl } from '@angular/forms';
 import { RestService } from '../services/rest.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { EmailRegex, PasswordRegex } from '../utils/regex';
 import { RegisterFormModel } from '../interfaces/auth.interface';
 import { ErrorService } from '../services/error.service';
@@ -34,6 +34,7 @@ export class RegisterComponent {
 
   constructor(
     private router: Router,
+    private location: Location,
     private restService: RestService,
     private errorService: ErrorService,
     private alertService: AlertService) { }
@@ -91,6 +92,6 @@ export class RegisterComponent {
   }
 
   navigateBack() {
-    this.router.navigate(['/login']);
+    this.location.back();
   }
 }

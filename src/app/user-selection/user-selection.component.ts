@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { fadeInPage } from '../utils/animations';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { RestService } from '../services/rest.service';
@@ -31,7 +31,8 @@ export class UserSelectionComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private restService: RestService,) {
+    private location: Location,
+    private restService: RestService) {
 
     this.profiles$ = this.restService.profiles$;
   }
@@ -87,6 +88,6 @@ export class UserSelectionComponent implements OnInit {
   }
 
   navigateBack() {
-    this.router.navigate(['/login']);
+    this.location.back();
   }
 }

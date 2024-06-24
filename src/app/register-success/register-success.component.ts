@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
 import { fadeInPage } from '../utils/animations';
 
 @Component({
   selector: 'app-register-success',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './register-success.component.html',
   styleUrl: './register-success.component.scss',
   animations: [fadeInPage]
@@ -13,9 +13,9 @@ import { fadeInPage } from '../utils/animations';
 export class RegisterSuccessComponent {
 
   constructor(
-    private router: Router) { }
+    private location: Location) { }
 
   navigateBack() {
-    this.router.navigate(['/login']);
+    this.location.back();
   }
 }

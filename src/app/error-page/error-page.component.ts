@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { fadeInPage } from '../utils/animations';
+import { CommonModule, Location } from '@angular/common';
 
 @Component({
   selector: 'app-error-page',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './error-page.component.html',
   styleUrl: './error-page.component.scss',
   animations: [fadeInPage]
@@ -14,9 +15,10 @@ import { fadeInPage } from '../utils/animations';
 export class ErrorPageComponent {
 
   constructor(
-    private router: Router) { }
+    private router: Router,
+    private location: Location) { }
     
   navigateBack() {
-    this.router.navigate(['/login']);
+    this.location.back();
   }
 }

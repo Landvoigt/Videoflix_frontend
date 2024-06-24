@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { SendMailFormModel } from '../interfaces/auth.interface';
 import { EmailRegex } from '../utils/regex';
 import { RestService } from '../services/rest.service';
@@ -29,6 +29,7 @@ export class SendMailComponent {
 
   constructor(
     private router: Router,
+    private location: Location,
     private restService: RestService,
     private errorService: ErrorService,
     private alertService: AlertService) { }
@@ -63,6 +64,6 @@ export class SendMailComponent {
   }
 
   navigateBack() {
-    this.router.navigate(['/login']);
+    this.location.back();
   }
 }
