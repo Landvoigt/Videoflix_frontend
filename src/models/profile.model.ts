@@ -4,11 +4,15 @@ export class Profile {
     name: string;
     description?: string;
     avatar_id: number;
-    creation_date?: any;
+    language: string;
+    created_at?: any;
+    view_list?: any[];
+    liked_list?: any[];
 
-    constructor(name: string, avatar_id: number, id?: number) {
+    constructor(name: string, avatar_id: number, language: string = 'eng', id?: number) {
         this.name = name;
         this.avatar_id = avatar_id;
+        this.language = language;
         if (id) {
             this.id = id;
         }
@@ -30,7 +34,8 @@ export const ProfileImages: any[] = [
     "/assets/img/profile-images/profile_12.png",
     "/assets/img/profile-images/profile_13.png",
     "/assets/img/profile-images/profile_14.png",
-    // "/assets/img/profile-images/profile_15.png",
+    "/assets/img/profile-images/profile_15.png",
     "/assets/img/profile-images/profile_16.png",
     "/assets/img/profile-images/profile_17.png",
+    "/assets/img/profile-images/profile_18.png",
 ];

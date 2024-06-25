@@ -2,7 +2,8 @@
     <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-8">
         <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
             alt="Your Company">
-        <h2 class="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-defaultTextColor">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-defaultTextColor
+            lg:text-3xl">
             {{ (profiles$ | async)?.length === 0 ? 'Create up to 3 profiles' : 'Select a profile or create a new one' }}
         </h2>
     </div>
@@ -26,13 +27,13 @@
                 </div>
                 <img [src]="profileImages[profile.avatar_id]" class="profile-img">
             </div>
-            <span class="selection-tile-text text-defaultTextColor">{{ profile.name }}</span>
+            <span class="selection-tile-text text-defaultTextColor text-sm lg:text-lg">{{ profile.name }}</span>
         </div>
 
         <div *ngIf="((profiles$ | async) ?? []).length < 3" class="selection-tile selection-add">
-            <div class="selection-tile-edit-icon" style="margin-bottom: 1rem;"></div>
+            <div class="selection-tile-edit-icon edit-icon-add-margin">&nbsp;</div>
             <svg (click)="openCreateProfile()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke-width="1.5" stroke="currentColor" class="size-28">
+                stroke-width="1.5" stroke="currentColor" class="h-20 w-20 lg:h-28 lg:w-28">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             <span>&nbsp;</span>

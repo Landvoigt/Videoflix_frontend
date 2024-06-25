@@ -1,3 +1,9 @@
+.tile-wrapper {
+    @media (max-width: 500px) {
+        flex-direction: column;
+    }
+}
+
 .selection-tile {
     display: flex;
     justify-content: start;
@@ -22,10 +28,19 @@
 
         .selection-tile-edit-icon {
             height: 34px;
+            width: 34px;
             transition: all 105ms ease-in-out;
 
             button {
                 padding: 0.25rem;
+            }
+        }
+
+        .edit-icon-add-margin {
+            margin-bottom: 1rem;
+
+            @media (max-width: 1025px) {
+                margin-bottom: 1.5rem;
             }
         }
 
@@ -38,6 +53,22 @@
             border-color: #aa42f0;
             -webkit-box-shadow: 1px 1px 8px 0px rgba(255, 255, 255, 0.6);
             box-shadow: 1px 1px 8px 0px rgba(255, 255, 255, 0.6);
+
+            @media (max-width: 1025px) {
+                height: 145px;
+                width: 145px;
+            }
+
+            @media (max-width: 768px) {
+                height: 120px;
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            flex-direction: row;
+            justify-content: end;
+            margin-right: calc(34px + 0.75rem);
         }
     }
 

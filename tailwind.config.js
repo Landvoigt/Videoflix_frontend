@@ -1,4 +1,3 @@
-// @type {import('tailwindcss').Config} 
 module.exports = {
   content: [
     "./src/**/*.{html,ts}"
@@ -16,6 +15,7 @@ module.exports = {
         secondTextColor: 'rgba(240, 248, 255, 0.77)',
         accentColor: '#7400c2',
         accentColorHover: '#aa42f0',
+        inputFocusColor: '#2528eb',
       },
     },
   },
@@ -23,4 +23,3 @@ module.exports = {
     require('@tailwindcss/forms'),
   ],
 }
-
