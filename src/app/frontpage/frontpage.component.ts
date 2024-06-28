@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { LogoComponent } from '../logo/logo.component';
 
 @Component({
   selector: 'app-frontpage',
   standalone: true,
-  imports: [],
+  imports: [LogoComponent],
   templateUrl: './frontpage.component.html',
   styleUrl: './frontpage.component.scss'
 })

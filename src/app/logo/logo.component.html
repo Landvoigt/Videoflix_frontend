@@ -1,0 +1,3 @@
+<div class="logo-text" (mouseenter)="startAnimation()" (mouseleave)="stopAnimation()">
+    <div *ngFor="let letter of letters; let i = index" [ngClass]="{'animating': isAnimating}">{{ letter }}</div>
+</div>
