@@ -1,0 +1,9 @@
+[
+    {
+      "origin": ["http://localhost:4200"],
+      "responseHeader": ["Content-Type", "Authorization"],
+      "method": ["GET", "HEAD", "OPTIONS"],
+      "maxAgeSeconds": 3600
+    }
+]
+ 
