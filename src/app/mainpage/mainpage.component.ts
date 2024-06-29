@@ -1,4 +1,6 @@
 import { Component, ElementRef, inject} from '@angular/core';
+import { NavigationService } from '../services/navigation.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-mainpage',
@@ -8,6 +10,10 @@ import { Component, ElementRef, inject} from '@angular/core';
   styleUrl: './mainpage.component.scss'
 })
 export class MainpageComponent {
+
+  constructor(public navService: NavigationService, public authService: AuthService) {
+
+  }
 
 
   elementRef = inject(ElementRef)

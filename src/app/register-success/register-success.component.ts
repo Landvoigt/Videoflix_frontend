@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { fadeInPage } from '../utils/animations';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-register-success',
@@ -12,10 +13,6 @@ import { fadeInPage } from '../utils/animations';
 })
 export class RegisterSuccessComponent {
 
-  constructor(
-    private location: Location) { }
+  constructor(public navService: NavigationService) { }
 
-  navigateBack() {
-    this.location.back();
-  }
 }

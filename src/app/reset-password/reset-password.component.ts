@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ResetPasswordFormModel } from '../interfaces/auth.interface';
@@ -8,6 +8,7 @@ import { AlertService } from '../services/alert.service';
 import { ErrorService } from '../services/error.service';
 import { RestService } from '../services/rest.service';
 import { fadeInPage } from '../utils/animations';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -34,7 +35,7 @@ export class ResetPasswordComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    public navService: NavigationService,
     private restService: RestService,
     private errorService: ErrorService,
     private alertService: AlertService) { }
@@ -52,20 +53,16 @@ export class ResetPasswordComponent implements OnInit {
     if (this.token) {
       this.restService.validateResetToken(this.token).subscribe({
         next: (response) => {
-          //////
-          console.log(response.valid);
-
           if (!response.valid) {
-            this.router.navigate(['/error'], { queryParams: { message: 'Invalid or expired token' } });
+            this.navService.error({ queryParams: { message: 'Invalid or expired token' } });
           }
         },
         error: (err) => {
-          console.error('Token validation error', err);
-          this.router.navigate(['/error'], { queryParams: { message: 'Error validating token' } });
+          this.navService.error({ queryParams: { message: 'Error validating token' } });
         }
       });
     } else {
-      this.router.navigate(['/error'], { queryParams: { message: 'Token not provided' } });
+      this.navService.error({ queryParams: { message: 'Token not provided' } });
     }
   }
 
@@ -91,16 +88,10 @@ export class ResetPasswordComponent implements OnInit {
       this.restService.resetPassword(this.token!, password!).subscribe({
         next: (response) => {
           this.alertService.showAlert('Password reset successfully!', 'success');
-          this.router.navigate(['/login']);
-
-          /////
-          console.log(response);
+          this.navService.login();
         },
         error: (err) => {
           this.errorService.handleResetPasswordError(err);
-
-          /////
-          console.error('Registration error', err);
           this.loading = false;
         },
         complete: () => {

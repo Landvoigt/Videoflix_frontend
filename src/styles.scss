@@ -23,7 +23,6 @@ input {
     z-index: 3;
     cursor: pointer;
     background-color: #7400c2;
-    padding: 0.5rem;
     border-radius: 8px;
 
     --tw-text-opacity: 1;
@@ -40,6 +39,8 @@ input {
         --tw-bg-opacity: 1;
         background-color: #aa42f0;
     }
+
+    @media(max-width: 768px) {}
 }
 
 button,
@@ -49,6 +50,12 @@ a {
 
 .submit-btn {
     height: 56px;
+
+    @media(max-width: 639px) {
+        height: 50px;
+        font-size: 1rem;
+        line-height: 1.15rem;
+    }
 }
 
 .text-danger {
@@ -76,16 +83,46 @@ a {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
 }
 
+
+.resp-text-sm {
+    @media(max-width: 639px) {
+        font-size: 0.9rem;
+    }
+}
+
 /* bungee-shade-regular - latin */
 @font-face {
-    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-display: swap;
+    /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
     font-family: "Bungee Shade";
     font-style: normal;
     font-weight: 400;
-    src: url("../src/assets/fonts/bungee-shade-v13-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("../src/assets/fonts/bungee-shade-v13-latin-regular.woff2") format("woff2");
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+.custom-left-extra {
+    left: -40rem;
+
+    @media(max-width: 835px) {
+        left: -30rem;
+    }
+
+    @media(max-width: 639px) {
+        left: -20rem;
+    }
+}
+
+.opa-022 {
+    opacity: 0.22 !important;
+
+    @media(max-width: 639px) {
+        opacity: 0.35 !important;
+    }
 }

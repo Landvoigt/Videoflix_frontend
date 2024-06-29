@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { SendMailFormModel } from '../interfaces/auth.interface';
 import { EmailRegex } from '../utils/regex';
 import { RestService } from '../services/rest.service';
 import { AlertService } from '../services/alert.service';
 import { ErrorService } from '../services/error.service';
 import { fadeInPage } from '../utils/animations';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-send-mail',
@@ -28,8 +28,7 @@ export class SendMailComponent {
   loading: boolean = false;
 
   constructor(
-    private router: Router,
-    private location: Location,
+    public navService: NavigationService,
     private restService: RestService,
     private errorService: ErrorService,
     private alertService: AlertService) { }
@@ -45,25 +44,15 @@ export class SendMailComponent {
       this.restService.sendMail(email!).subscribe({
         next: (response) => {
           this.alertService.showAlert('Email sent successfully!', 'success');
-          this.router.navigate(['/login']);
-
-          /////
-          console.log(response);
+          this.navService.login();
         },
         error: (err) => {
           this.errorService.handleSendMailError(err);
-
-          /////
-          console.error('Registration error', err);
         },
         complete: () => {
           this.loading = false;
         }
       });
     }
-  }
-
-  navigateBack() {
-    this.location.back();
   }
 }

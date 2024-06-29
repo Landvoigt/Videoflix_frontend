@@ -1,0 +1,6 @@
+.resp-f-column {
+    @media(max-width: 639px) {
+        display: flex;
+        flex-direction: column;
+    }
+}

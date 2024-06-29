@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { fadeInPage } from '../utils/animations';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { RestService } from '../services/rest.service';
 import { Observable } from 'rxjs';
 import { Profile, ProfileImages } from '../../models/profile.model';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-user-selection',
@@ -30,8 +30,7 @@ export class UserSelectionComponent implements OnInit {
   hoveredIndex: number | null = null;
 
   constructor(
-    private router: Router,
-    private location: Location,
+    public navService: NavigationService,
     private restService: RestService) {
 
     this.profiles$ = this.restService.profiles$;
@@ -65,7 +64,6 @@ export class UserSelectionComponent implements OnInit {
   openEditProfile(event: MouseEvent, profileId: number): void {
     event.stopPropagation();
     this.currentProfileId = profileId;
-    console.log(this.currentProfileId);
     this.isEdit = true;
     this.isDialogOpen = true;
   }
@@ -82,12 +80,15 @@ export class UserSelectionComponent implements OnInit {
     this.loadingApp = true;
     setTimeout(() => {
       this.loadingApp = false;
-      this.router.navigate(['/mainpage']);
+      this.navService.main();
     }, 2500);
 
   }
 
-  navigateBack() {
-    this.location.back();
+  getProfileImage(avatarId: number) {
+    // console.log(avatarId);
+    // return this.profileImages?.find((profile: Profile) => profile.avatar_id === avatarId);
+
+    return this.profileImages[avatarId];
   }
 }

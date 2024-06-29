@@ -27,27 +27,25 @@ export class LogoComponent implements OnDestroy {
   }
 
   runAnimation() {
-    const logoTextDivs = document.querySelectorAll('.logo-text div');
-    logoTextDivs.forEach((div: HTMLElement, index: number) => {
-      div.style.animation = 'none'; // Reset animation
-      div.style.animationDelay = `${index * 0.1}s`; // Slower delay
-      setTimeout(() => {
-        div.style.animation = ''; // Re-apply animation
-        div.classList.add('animating');
-      }, 10);
+    const tspans = document.querySelectorAll<SVGTSpanElement>('tspan');
+    tspans.forEach((tspan: SVGTSpanElement, index: number) => {
+      tspan.style.animation = 'none'; // Reset animation
+      tspan.getBBox(); // Trigger reflow to restart the animation
+      tspan.style.animationDelay = `${index * 0.1}s`;
+      tspan.style.animation = ''; // Re-apply animation
+      tspan.classList.add('animating');
     });
 
-    const animationDuration = (this.letters.length * 0.5 + 1) * 600; // duration of the animation + delay for the last element
+    const animationDuration = (this.letters.length * 0.1 + 1.9) * 1000; // duration of the animation + delay for the last element
     this.timeoutId = setTimeout(() => {
+      this.isAnimating = false;
       if (this.isHovering) {
-        this.runAnimation();
-      } else {
-        this.isAnimating = false;
+        this.startAnimation();
       }
     }, animationDuration);
   }
 
   ngOnDestroy() {
-    clearTimeout(this.timeoutId); // Cleanup on component destroy
+    clearTimeout(this.timeoutId);
   }
 }
