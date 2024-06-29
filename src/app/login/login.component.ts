@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
 import { RestService } from '../services/rest.service';
 import { ErrorService } from '../services/error.service';
 import { LoginFormModel } from '../interfaces/auth.interface';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
 import { AlertService } from '../services/alert.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-login',
@@ -31,8 +32,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private location: Location,
+    public navService: NavigationService,
     private restService: RestService,
     private errorService: ErrorService,
     private authService: AuthService,
@@ -73,17 +73,5 @@ export class LoginComponent implements OnInit {
 
   get passwordFormField() {
     return this.loginForm.get('password');
-  }
-
-  navigateBack() {
-    this.location.back();
-  }
-
-  navigateToSendMail() {
-    this.router.navigate(['/send_mail']);
-  }
-
-  navigateToRegister() {
-    this.router.navigate(['/register']);
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationService } from '../services/navigation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +8,7 @@ export class AuthService {
 
   private readonly TOKEN_KEY = 'authToken';
 
-  constructor(private router: Router) { }
+  constructor(private navService: NavigationService) { }
 
   private isLocalStorageAvailable(): boolean {
     try {
@@ -32,23 +32,31 @@ export class AuthService {
     if (this.isLoggedIn()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.navService.login();
       return false;
     }
+  }
+
+  redirectIfLoggedIn(): boolean {
+    if (this.isLoggedIn()) {
+      this.navService.profile();
+      return false;
+    }
+    return true;
   }
 
   login(token: string): void {
     if (this.isLocalStorageAvailable()) {
       localStorage.setItem(this.TOKEN_KEY, token);
     }
-    this.router.navigate(['/selection']);
+    this.navService.profile();
   }
 
   logout(): void {
     if (this.isLocalStorageAvailable()) {
       localStorage.removeItem(this.TOKEN_KEY);
     }
-    this.router.navigate(['/login']);
+    this.navService.welcome();
   }
 
   getAuthenticationToken(): string | null {

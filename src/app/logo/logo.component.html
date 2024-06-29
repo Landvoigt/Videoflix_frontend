@@ -1,0 +1,9 @@
+<svg viewBox="-10 0 500 150" width="1500" height="500" (mouseenter)="startAnimation()" (mouseleave)="stopAnimation()">
+    <path id="curve" d="M20,90 Q250,10 490,100" />
+    <text width="500">
+        <textPath xlink:href="#curve">
+            <tspan *ngFor="let letter of letters; let i = index" [ngClass]="{'animating': isAnimating}"
+                [attr.startOffset]="i * 60">{{ letter }}</tspan>
+        </textPath>
+    </text>
+</svg>

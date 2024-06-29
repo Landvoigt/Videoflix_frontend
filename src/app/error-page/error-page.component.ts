@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { fadeInPage } from '../utils/animations';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-error-page',
@@ -14,11 +14,6 @@ import { CommonModule, Location } from '@angular/common';
 })
 export class ErrorPageComponent {
 
-  constructor(
-    private router: Router,
-    private location: Location) { }
-    
-  navigateBack() {
-    this.location.back();
-  }
+  constructor(public navService: NavigationService) { }
+
 }

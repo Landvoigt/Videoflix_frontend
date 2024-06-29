@@ -5,4 +5,29 @@
     transform: translate(-50%, -50%);
     width: 450px;
     opacity: 0.15;
+
+    @media(max-width: 1025px) {
+        top: 45%;
+        width: 350px;
+    }
+
+    @media(max-width: 768px) {
+        top: 35%;
+        width: 250px;
+    }
+}
+
+.logo-container {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    @media(max-width: 1440px) {
+        top: 70px;
+    }
+
+    @media(max-width: 640px) {
+        top: 70px;
+    }
 }

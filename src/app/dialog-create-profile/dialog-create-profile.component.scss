@@ -7,7 +7,8 @@
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: start;
+    padding-top: 5rem;
     z-index: 1000;
 }
 
@@ -22,7 +23,7 @@
     width: 100%;
     border: 1px solid;
     border-color: #2528eb;
-    
+
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(116 0 194 / var(--tw-ring-opacity));
     --tw-ring-inset: inset;
@@ -63,8 +64,8 @@
         justify-content: center;
         align-items: center;
         background-color: aliceblue;
-        height: 121px;
-        width: 121px;
+        height: 110px;
+        width: 110px;
         border-radius: 8px;
         overflow: hidden;
         border: 1px solid lightgrey;
@@ -100,6 +101,11 @@
                 opacity: 0.8 !important;
             }
         }
+
+        @media(max-width: 1025px) {
+            height: 85px;
+            width: 85px;
+        }
     }
 }
 
@@ -120,10 +126,10 @@
 }
 
 .btn-delete {
-    background-color: #e03140;
+    background-color: #cf3945;
 
     &:hover {
-        background-color: #ff919b;
+        background-color: #f87782;
     }
 }
 
@@ -146,4 +152,14 @@ h2 {
 
 .input-box {
     max-width: 600px;
+}
+
+.submit-btn {
+    height: 56px;
+
+    @media(max-width: 768px) {
+        height: 50px;
+        font-size: 1rem;
+        line-height: 1.15rem;
+    }
 }

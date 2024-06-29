@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, AbstractControl, ValidatorFn, FormControl } from '@angular/forms';
 import { RestService } from '../services/rest.service';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { EmailRegex, PasswordRegex } from '../utils/regex';
 import { RegisterFormModel } from '../interfaces/auth.interface';
 import { ErrorService } from '../services/error.service';
-import { AlertService } from '../services/alert.service';
 import { fadeInPage } from '../utils/animations';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-register',
@@ -33,11 +32,9 @@ export class RegisterComponent {
   loading: boolean = false;
 
   constructor(
-    private router: Router,
-    private location: Location,
+    public navService: NavigationService,
     private restService: RestService,
-    private errorService: ErrorService,
-    private alertService: AlertService) { }
+    private errorService: ErrorService) { }
 
   get emailFormField() {
     return this.registerForm.get('email');
@@ -72,26 +69,15 @@ export class RegisterComponent {
       this.loading = true;
       this.restService.register(email!, password!).subscribe({
         next: (response) => {
-          // this.alertService.showAlert('User created successfully!', 'success');
-          this.router.navigate(['/register_success']);
-
-          /////
-          console.log(response);
+          this.navService.registerSuccess();
         },
         error: (err) => {
           this.errorService.handleRegisterError(err);
-
-          /////
-          console.error('Registration error', err);
         },
         complete: () => {
           this.loading = false;
         }
       });
     }
-  }
-
-  navigateBack() {
-    this.location.back();
   }
 }

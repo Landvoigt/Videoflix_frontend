@@ -1,23 +1,32 @@
-<div @fadeInPage class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-default">
-    <div class="btn-container" (click)="navigateBack()">
+<div @fadeInPage
+    class="flex min-h-full flex-col justify-center items-center px-6 py-12 lg:px-8 bg-gradient-to-r from-default-from to-default-to">
+    <div class="btn-container px-2 py-2" (click)="navService.welcome()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="size-7">
+            class="size-6 sm:size-6 md:size-7 lg:size-7">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
     </div>
+    <div class="relative isolate px-6 pt-14 lg:px-8">
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 custom-left-extra"
+            aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] opa-022"
+                style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
+            </div>
+        </div>
+    </div>
 
     <div class="lg:mx-auto lg:w-full lg:max-w-lg">
-        <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company">
-        <h2 class="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-defaultTextColor">Log in to your
-            account
+        <h2 class="mt-10 text-center text-2xl sm:text-3xl md:text-3xl lg:text-3xl 
+            font-bold leading-9 tracking-tight text-textColorPrimary">
+            Log in to your account
         </h2>
     </div>
 
-    <div class="mt-10 lg:mx-auto lg:w-full lg:max-w-lg mb-20">
+    <div class="mt-10 lg:mx-auto w-full sm:max-w-full md:max-w-lg lg:max-w-lg mb-40">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
             <div>
-                <label for="identifier" class="block text-lg font-medium leading-6 text-defaultTextColor">
+                <label for="identifier"
+                    class="block text-md sm:text-lg md:text-lg lg:text-lg font-medium leading-6 text-textColorPrimary">
                     Email or Username</label>
                 <div class="mt-2 relative">
                     <input id="identifier" formControlName="identifier" name="identifier" autocomplete="email" required
@@ -34,17 +43,16 @@
             <div>
                 <div class="flex items-center justify-between">
                     <label for="password"
-                        class="block text-lg font-medium leading-6 text-defaultTextColor">Password</label>
-                    <div class="text-md">
-                        <a (click)="navigateToSendMail()"
+                        class="block text-md sm:text-lg md:text-lg lg:text-lg font-medium leading-6 text-textColorPrimary">Password</label>
+                    <div class="sm:text-md resp-text-sm">
+                        <a (click)="navService.sendMail()"
                             class="font-semibold text-accentColor hover:text-accentColorHover cursor-pointer">Forgot
                             password?</a>
                     </div>
                 </div>
                 <div class="mt-2 relative">
                     <input id="password" formControlName="password" name="password" type="password"
-                        autocomplete="current-password" required
-                        class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset 
+                        autocomplete="current-password" required class="block w-full rounded-lg border-0 py-2.5 text-gray-900 shadow-lg ring-1 ring-inset 
                         ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-accentColor 
                         lg:text-lg lg:leading-6">
                     <span *ngIf="(passwordFormField?.dirty || passwordFormField?.touched)"
@@ -66,9 +74,9 @@
             </div>
         </form>
 
-        <p class="mt-10 text-center text-lg text-defaultTextColor">
+        <p class="mt-10 text-center text-md sm:text-lg md:text-lg lg:text-lg text-textColorPrimary resp-f-column">
             Not a member?
-            <a (click)="navigateToRegister()"
+            <a (click)="navService.register()"
                 class="font-semibold leading-6 text-accentColor hover:text-accentColorHover cursor-pointer">Create an
                 account
                 right now!</a>
