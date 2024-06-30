@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
+import { Profile } from '../../models/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,8 @@ import { NavigationService } from '../services/navigation.service';
 export class AuthService {
 
   private readonly TOKEN_KEY = 'authToken';
+
+  private currentProfile: Profile;
 
   constructor(private navService: NavigationService) { }
 
@@ -65,5 +68,14 @@ export class AuthService {
       return `Token ${storageToken}`;
     }
     return null;
+  }
+
+  setProfile(profile: Profile) {
+    this.currentProfile = profile;
+    localStorage.setItem('currentProfile', JSON.stringify(profile));
+  }
+
+  getProfile() {
+    return this.currentProfile || JSON.parse(localStorage.getItem('currentProfile'));
   }
 }

@@ -4,6 +4,7 @@ export class Profile {
     name: string;
     description?: string;
     avatar_id: number;
+    active?: boolean;
     language: string;
     created_at?: any;
     view_list?: any[];

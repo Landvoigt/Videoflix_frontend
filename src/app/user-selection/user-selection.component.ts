@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { RestService } from '../services/rest.service';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of, switchMap } from 'rxjs';
 import { Profile, ProfileImages } from '../../models/profile.model';
 import { NavigationService } from '../services/navigation.service';
+import { AlertService } from '../services/alert.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-user-selection',
@@ -31,7 +33,9 @@ export class UserSelectionComponent implements OnInit {
 
   constructor(
     public navService: NavigationService,
-    private restService: RestService) {
+    private restService: RestService,
+    private authService: AuthService,
+    private alertService: AlertService) {
 
     this.profiles$ = this.restService.profiles$;
   }
@@ -73,22 +77,28 @@ export class UserSelectionComponent implements OnInit {
     this.isDialogOpen = false;
   }
 
-  startApp(index: number) {
-    // let profileId = this.profiles[index].id;
-    //// find id in users.profiles take correct setup
-
-    this.loadingApp = true;
-    setTimeout(() => {
-      this.loadingApp = false;
-      this.navService.main();
-    }, 2500);
-
+  startApp(profileId: number) {
+    this.restService.updateProfile(profileId, { active: true }).pipe(
+      switchMap(() => this.restService.getProfile(profileId)),
+      catchError((error) => {
+        this.alertService.showAlert('An unexpected error occured. Please try again!', 'error');
+        return of(null);
+      })
+    ).subscribe(profile => {
+      if (profile) {
+        this.authService.setProfile(profile);
+        this.loadingApp = true;
+        setTimeout(() => {
+          this.loadingApp = false;
+          this.navService.main();
+        }, 2500);
+      } else {
+        this.alertService.showAlert('Profile could not be loaded', 'error');
+      }
+    });
   }
 
   getProfileImage(avatarId: number) {
-    // console.log(avatarId);
-    // return this.profileImages?.find((profile: Profile) => profile.avatar_id === avatarId);
-
     return this.profileImages[avatarId];
   }
 }

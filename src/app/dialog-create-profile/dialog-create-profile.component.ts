@@ -73,7 +73,7 @@ export class DialogCreateProfileComponent implements OnInit {
 
   update() {
     this.profile.avatar_id = this.selectedImageIndex ? this.selectedImageIndex : 0;
-    this.updateProfile(this.profile, this.profile.id!);
+    this.updateProfile(this.profile.id!, this.profile);
   }
 
   delete() {
@@ -94,10 +94,10 @@ export class DialogCreateProfileComponent implements OnInit {
     });
   }
 
-  updateProfile(payload: any, id: number): void {
+  updateProfile(id: number, payload: any): void {
     this.loading = true;
     this.loadingBtn = 'edit';
-    this.restService.updateProfile(payload, id).subscribe({
+    this.restService.updateProfile(id, payload).subscribe({
       error: (error) => {
         console.error(`Error updating profile ${id}:`, error);
       },

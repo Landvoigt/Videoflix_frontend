@@ -10,6 +10,9 @@ module.exports = {
 
         'default-to': '#320e4d',
         'default-from': '#000510',
+
+        'nav-to': '#2c246b',
+        'nav-from': '#9727a5cf', 
       },
       colors: {
         defaultColor: 'rgb(29, 29, 29)',
@@ -23,6 +26,8 @@ module.exports = {
         borderColorPopup: '#e3d9ffb8',
 
         inputColorFocus: '#2528eb',
+
+        navColorHover: 'rgb(186 213 255 / 44%)',
       },
     },
   },

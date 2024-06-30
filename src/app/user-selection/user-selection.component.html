@@ -6,7 +6,7 @@
         </svg>
     </div>
 
-    <div class="relative isolate px-6 pt-14 lg:px-8">
+    <div class="relative isolate px-6 pt-14 lg:px-8 z-0">
         <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 custom-left-extra"
             aria-hidden="true">
             <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] opa-022 opa-022 opa-022"
@@ -15,16 +15,14 @@
         </div>
     </div>
 
-    <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-8">
-        <!-- <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"> -->
+    <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-8 z-10">
         <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-textColorPrimary
             lg:text-3xl">
             {{ (profiles$ | async)?.length === 0 ? 'Create up to 3 profiles' : 'Select a profile or create a new one' }}
         </h2>
     </div>
-    <div class="tile-wrapper flex justify-center content-center gap-8 mb-60">
-        <div *ngFor="let profile of (profiles$ | async); let i = index" (click)="startApp(i)"
+    <div class="tile-wrapper flex justify-center content-center gap-8 mb-60 z-10">
+        <div *ngFor="let profile of (profiles$ | async); let i = index" (click)="startApp(profile.id)"
             (mouseover)="toggleEditBtn(i)" (mouseleave)="toggleEditBtn(null)" class="selection-tile"
             id="profile{{ i }}">
             <div class="selection-tile-img-box">

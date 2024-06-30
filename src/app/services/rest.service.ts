@@ -88,7 +88,7 @@ export class RestService {
     );
   }
 
-  updateProfile(payload: any, id: number): Observable<any> {
+  updateProfile(id: number, payload: any): Observable<any> {
     return this.http.patch(`${this.apiBaseUrl}profiles/${id}/`, payload, { headers: this.getHeaders() }).pipe(
       tap(() => this.getProfiles().subscribe()),
       catchError(this.handleError)
