@@ -190,8 +190,10 @@ export class MainpageComponent implements OnInit {
     }
   }
 
+
+  // Sorry Tim, ich musste hier es auskommenteieren, "TypeError: Cannot read properties of null (reading 'avatar_id')"
   getProfileImage() {
-    return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
+    //return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
   }
 
   toggleUserMenu() {
