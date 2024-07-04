@@ -1,18 +1,19 @@
-import { ApplicationRef, Component, ElementRef, NgZone, OnInit, ViewChild, inject} from '@angular/core';
+import { ApplicationRef, Component, ElementRef, NgZone, OnInit, ViewChild, inject } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { RestService } from '../services/rest.service';
-import { ProfileImages } from '../../models/profile.model';
 import { fadeInPage } from '../utils/animations';
 import { CommonModule } from '@angular/common';
-import Hls from 'hls.js'; 
+import Hls from 'hls.js';
 import { first } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { FooterComponent } from '../footer/footer.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-mainpage',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NavbarComponent, FooterComponent],
   templateUrl: './mainpage.component.html',
   styleUrl: './mainpage.component.scss',
   animations: [fadeInPage]
@@ -25,9 +26,8 @@ export class MainpageComponent implements OnInit {
   @ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
 
   currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
-  userMenuOpen: boolean = false;
-  mobileMenuOpen: boolean = false;
-  
+  closeMenu: boolean = false;
+
   ///// ToDo make components for each page
   allFilms: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   allSeries: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -104,6 +104,18 @@ export class MainpageComponent implements OnInit {
   //   });
 
 
+  closeUserMenu() {
+    this.closeMenu = true;
+    setTimeout(() => this.closeMenu = false, 0);
+  }
+
+  onPageChanged(page: 'dashboard' | 'films' | 'series' | 'userList') {
+    this.currentPage = page;
+  }
+
+  activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
+    return this.currentPage === page;
+  }
 
   // ngAfterView() {
   //   const resolution = this.getResolution();
@@ -168,7 +180,7 @@ export class MainpageComponent implements OnInit {
 
 
 
-  
+
 
 
 
@@ -181,45 +193,10 @@ export class MainpageComponent implements OnInit {
   }
 
 
-  //// ToDo fix boolean active for profile
-  goToProfiles() {
-    let profileId = this.authService.getProfile().id;
-    if (profileId) {
-      // this.restService.updateProfile(profileId, { active: false })
-      this.navService.profile();
-    }
-  }
 
 
-  // Sorry Tim, ich musste hier es auskommenteieren, "TypeError: Cannot read properties of null (reading 'avatar_id')"
-  getProfileImage() {
-   // return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
-  }
 
-  toggleUserMenu() {
-    this.userMenuOpen = !this.userMenuOpen;
-  }
 
-  closeUserMenu() {
-    this.userMenuOpen = false;
-  }
-
-  toggleMobileMenu() {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
-  }
-
-  closeMobileMenu() {
-    this.mobileMenuOpen = false;
-  }
-
-  changePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
-    this.currentPage = page;
-    this.closeUserMenu();
-  }
-
-  activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
-    return this.currentPage === page;
-  }
 
   private scrollElementById(id: string, scrollAmount: number): void {
     setTimeout(() => {

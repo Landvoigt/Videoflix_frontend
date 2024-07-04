@@ -24,6 +24,7 @@ module.exports = {
         textColorHover: 'rgb(207 135 255)',
 
         borderColorPopup: '#e3d9ffb8',
+        borderColorLight: '#e5e7eb38',
 
         inputColorFocus: '#2528eb',
 
