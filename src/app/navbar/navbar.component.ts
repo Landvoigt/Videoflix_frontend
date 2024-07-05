@@ -32,7 +32,12 @@ export class NavbarComponent {
   }
 
   getProfileImage() {
-    return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
+    const profile = this.authService.getProfile();
+    if (profile && profile.avatar_id) {
+      return ProfileImages[profile.avatar_id] || "/assets/svg/default_avatar.svg";
+    } else {
+      return "/assets/svg/default_avatar.svg";
+    }
   }
 
   toggleUserMenu() {

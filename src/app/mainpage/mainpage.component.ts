@@ -106,7 +106,7 @@ export class MainpageComponent implements OnInit {
 
   closeUserMenu() {
     this.closeMenu = true;
-    setTimeout(() => this.closeMenu = false, 0);
+    setTimeout(() => this.closeMenu = false, 10);
   }
 
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'userList') {

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { Profile } from '../../models/profile.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,14 @@ export class AuthService {
 
   private readonly TOKEN_KEY = 'authToken';
 
-  private currentProfile: Profile;
+  private currentProfile: Profile | null = null;
+  private isBrowser: boolean;
 
-  constructor(private navService: NavigationService) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: any, private navService: NavigationService) {
+
+    //// we need this extra control because we are using this server-side rendering from angular
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   private isLocalStorageAvailable(): boolean {
     try {
@@ -70,12 +76,24 @@ export class AuthService {
     return null;
   }
 
-  setProfile(profile: Profile) {
+  setProfile(profile: Profile): void {
     this.currentProfile = profile;
-    localStorage.setItem('currentProfile', JSON.stringify(profile));
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
+      localStorage.setItem('currentProfile', JSON.stringify(profile));
+    }
   }
 
-  getProfile() {
-    return this.currentProfile || JSON.parse(localStorage.getItem('currentProfile'));
+  getProfile(): Profile | null {
+    if (this.currentProfile) {
+      return this.currentProfile;
+    }
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
+      const profile = localStorage.getItem('currentProfile');
+      if (profile) {
+        this.currentProfile = JSON.parse(profile) as Profile;
+        return this.currentProfile;
+      }
+    }
+    return null;
   }
 }

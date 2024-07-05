@@ -41,26 +41,6 @@ export class RestService {
     return this.http.post(`${this.apiBaseUrl}api/password_reset/confirm/`, payload);
   }
 
-  private getHeaders(): HttpHeaders {
-    const authToken = this.authService.getAuthenticationToken();
-    let headers: { [key: string]: string } = {
-      'Content-Type': 'application/json'
-    };
-
-    if (authToken) {
-      headers['Authorization'] = authToken;
-    }
-
-    return new HttpHeaders(headers);
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.status === 401) {
-      this.alertService.showAlert('Not authorized', 'error');
-    }
-    return throwError(() => { });
-  }
-
   updateUsername(new_username: string) {
     const payload = { new_username };
     return this.http.post(`${this.apiBaseUrl}api/update_username/`, payload, { headers: this.getHeaders() }).pipe(
@@ -100,5 +80,29 @@ export class RestService {
       tap(() => this.getProfiles().subscribe()),
       catchError(this.handleError)
     );
+  }
+
+  contact(payload: any) {
+
+  }
+
+  private getHeaders(): HttpHeaders {
+    const authToken = this.authService.getAuthenticationToken();
+    let headers: { [key: string]: string } = {
+      'Content-Type': 'application/json'
+    };
+
+    if (authToken) {
+      headers['Authorization'] = authToken;
+    }
+
+    return new HttpHeaders(headers);
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    if (error.status === 401) {
+      this.alertService.showAlert('Not authorized', 'error');
+    }
+    return throwError(() => { });
   }
 }
