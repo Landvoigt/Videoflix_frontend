@@ -1,0 +1,14 @@
+.footer-mobile {
+    @media(max-width: 768px) {
+        // flex-direction: column;
+
+        span {
+            white-space: nowrap;
+        }
+    }
+}
+
+a,
+.logo-span {
+    line-height: 1.1rem;
+}

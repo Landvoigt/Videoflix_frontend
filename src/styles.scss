@@ -126,3 +126,12 @@ a {
         opacity: 0.35 !important;
     }
 }
+
+.logo-span {
+    font-family: "Bungee Shade";
+    margin-right: 1rem;
+
+    @media(max-width: 768px) {
+        margin: 0;
+    }
+}

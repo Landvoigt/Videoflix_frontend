@@ -41,6 +41,18 @@ export class NavigationService {
     this.router.navigate(['/mainpage']);
   }
 
+  imprint() {
+    this.router.navigate(['/imprint']);
+  }
+
+  contact() {
+    this.router.navigate(['/contact']);
+  }
+
+  policy() {
+    this.router.navigate(['/policy']);
+  }
+
   error(params: any) {
     this.router.navigate(['/error'], params);
   }

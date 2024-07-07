@@ -2,20 +2,19 @@ import { AfterViewInit, ApplicationRef, Component, ElementRef, NgZone, OnInit, R
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { RestService } from '../services/rest.service';
-import { ProfileImages } from '../../models/profile.model';
 import { fadeInPage } from '../utils/animations';
 import { CommonModule } from '@angular/common';
-import Hls from 'hls.js'; 
+import Hls from 'hls.js';
 import { first } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { VideoComponent } from '../video/video.component';
+import { FooterComponent } from '../footer/footer.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-mainpage',
   standalone: true,
-  imports: [CommonModule, VideoComponent,FormsModule],
+  imports: [CommonModule, NavbarComponent, FooterComponent],
   templateUrl: './mainpage.component.html',
   styleUrl: './mainpage.component.scss',
   animations: [fadeInPage]
@@ -34,9 +33,8 @@ export class MainpageComponent implements AfterViewInit {
 
 
   currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
-  userMenuOpen: boolean = false;
-  mobileMenuOpen: boolean = false;
-  
+  closeMenu: boolean = false;
+
   ///// ToDo make components for each page
   allFilms: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   allSeries: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -56,6 +54,18 @@ export class MainpageComponent implements AfterViewInit {
 
 
 
+  closeUserMenu() {
+    this.closeMenu = true;
+    setTimeout(() => this.closeMenu = false, 10);
+  }
+
+  onPageChanged(page: 'dashboard' | 'films' | 'series' | 'userList') {
+    this.currentPage = page;
+  }
+
+  activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
+    return this.currentPage === page;
+  }
 
 
   
@@ -214,34 +224,13 @@ export class MainpageComponent implements AfterViewInit {
   }
 
 
-  getProfileImage() {
-   return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
-  }
+  // getProfileImage() {
+  //  return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
+  // }
 
-  toggleUserMenu() {
-    this.userMenuOpen = !this.userMenuOpen;
-  }
 
-  closeUserMenu() {
-    this.userMenuOpen = false;
-  }
 
-  toggleMobileMenu() {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
-  }
 
-  closeMobileMenu() {
-    this.mobileMenuOpen = false;
-  }
-
-  changePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
-    this.currentPage = page;
-    this.closeUserMenu();
-  }
-
-  activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
-    return this.currentPage === page;
-  }
 
   private scrollElementById(id: string, scrollAmount: number): void {
     setTimeout(() => {

@@ -107,6 +107,11 @@ export class ErrorService {
   }
 
 
+  handleContactError(error: HttpErrorResponse): void {
+
+  }
+
+
   /**
    * Displays an alert message using the AlertService.
    * @param message The message to display in the alert.
