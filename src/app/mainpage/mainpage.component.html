@@ -1,3 +1,6 @@
+<main>
+
+
 <div @fadeInPage (click)="closeUserMenu()"
   class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to">
 
@@ -104,108 +107,148 @@
   <ng-container *ngIf="activePage('dashboard')">
     <div class="w-full h-96 flex video-wrapper">
       <div class="video-container">
-        <h1 class="title">Jellyfish</h1>
-        <p class="description">Jellyfish are ancient and fascinating sea creatures who can be found in waters all over
-          the world. Most distinctly known for their stinging abilities, striking fear in beach dwellers and deep sea
-          diver alike. But there is a lot more to jellies than just their treacherous tentacles and squidgy physique.
+        <h1 class="title">DANTEGRAFICO Art</h1>
+        <p class="description">Pixabay
+          pixabay.com/es/users/dantegráfico-15862390
         </p>
-        <video #videoPlayerStart class="video-content" loop>
+        <video #videoPlayerStart class="video-content" loop >
           Your browser does not support the video tag.
         </video>
       </div>
     </div>
+    
+<!-- <div  class="line-wrapper">
+    <div id="line1" class="line" >
 
-    <div class="main">
-      <div class="sor">
-        <img id="left1" (click)="scrollingLeft1()" src="/assets/img/barni/arrow-left.png" alt="">
-        <div id="line1" class="line ">
-
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <div>
-            <video  class="video-js vjs-default-skin" controls preload="auto" width="240" height="134"
-              data-setup="{}">
-              <source src="https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8" type="application/x-mpegURL">
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/lost_in_space.png">
-
-        </div>
-        <img id="right1" (click)="scrollingRight1()" src="/assets/img/barni/arrow-right.png" alt="">
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
+      </div>
+      <div class="hüle">
+        <app-video></app-video>
       </div>
 
+      
+  </div>
+     <div  class="line-wrapper-left">
+       <img  id="left1" (click)="scrollingLeft1()" src="/assets/img/barni/arrow-left.png" alt="">
+     </div>
+     <div  class="line-wrapper-right" >
+       <img  id="right1" (click)="scrollingRight1()" src="/assets/img/barni/arrow-right.png" alt="">
+     </div>
+</div>
+ 
+
+<div  class="line-wrapper">
+  <div id="line2" class="line" >
+
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
+    </div>
+    <div class="hüle">
+      <app-video></app-video>
     </div>
 
-    <div class="main">
-      <div class="sor">
-        <img id="left2" (click)="scrollingLeft2()" src="/assets/img/barni/arrow-left.png" alt="">
-        <div id="line2" class="line">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/am_gang.png">
+    
+</div>
+   <div class="line-wrapper-left">
+     <img id="left2" (click)="scrollingLeft2()" src="/assets/img/barni/arrow-left.png" alt="">
+   </div>
+   <div class="line-wrapper-right" >
+     <img id="right2" (click)="scrollingRight2()" src="/assets/img/barni/arrow-right.png" alt="">
+   </div>
+</div>
+ -->
 
 
-        </div>
-        <img id="right2" (click)="scrollingRight2()" src="/assets/img/barni/arrow-right.png" alt="">
-      </div>
+ <div class="line-wrapper">
+  <div id="line3" class="line">
+    <app-video *ngFor="let video of videoData"
+     [videoUrlGcs]="video.videoUrlGcs"
+      [posterUrlGcs]="video.posterUrlGcs"
+      (hover)="onVideoHover($event)"
+      ></app-video>
+  </div>
+  <div class="line-wrapper-left">
+    <img id="left3" (click)="scrollingLeft3()" src="/assets/img/barni/arrow-left.png" alt="">
+  </div>
+  <div class="line-wrapper-right">
+    <img id="right3" (click)="scrollingRight3()" src="/assets/img/barni/arrow-right.png" alt="">
+  </div>
+</div>
 
+
+<!-- <div  class="line-wrapper">
+  <div id="line3" class="line" >
+
+      <app-video></app-video>
+     
+</div>
+   <div class="line-wrapper-left">
+     <img id="left3" (click)="scrollingLeft3()" src="/assets/img/barni/arrow-left.png" alt="">
+   </div>
+   <div class="line-wrapper-right" >
+     <img id="right3" (click)="scrollingRight3()" src="/assets/img/barni/arrow-right.png" alt="">
+   </div>
+</div> -->
+
+
+
+
+<!-- TEST  -->
+<!-- <div *ngIf="posterUrls.length > 0">
+  <h2>Poster</h2>
+  <div class="poster-container">
+    <div *ngFor="let url of posterUrls">
+      <img [src]="url" alt="Poster">
+      <h3 style="color: white;">{{ url }}</h3>
     </div>
+  </div>
+</div>
 
-    <div class="main">
-      <div class="sor">
-        <img id="left3" (click)="scrollingLeft3()" src="/assets/img/barni/arrow-left.png" alt="">
-        <div id="line3" class="line">
+<div *ngIf="posterUrls.length === 0">
+  <p>Keine Poster verfügbar.</p>
+</div> -->
 
-
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-          <img style="margin-right: 12px;" src="/assets/img/barni/300.png">
-        </div>
-        <img id="right3" (click)="scrollingRight3()" src="/assets/img/barni/arrow-right.png" alt="">
-      </div>
-
-    </div>
-  </ng-container>
+<!-- <img src="https://storage.googleapis.com/videoflix-videos/video-posters/holiday_poster.jpg" alt=""> -->
+<!-- <img src="https://storage.googleapis.com/videoflix-videos/video-posters/waterfall_2_J0Kvtvu_poster.jpg" alt=""> -->
+ 
+</ng-container>
 
 
   <!-- ToDo Films Component -->
@@ -256,3 +299,5 @@
         </svg>
      </button> -->
 </div>
+
+</main>
