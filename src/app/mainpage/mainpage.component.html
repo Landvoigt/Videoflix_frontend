@@ -1,7 +1,7 @@
 <main>
 
 
-<!-- <navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar> -->
+<navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
 <div @fadeInPage (click)="closeUserMenu()"
   class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
 
@@ -102,7 +102,7 @@
     <app-video *ngFor="let video of videoData"
      [videoUrlGcs]="video.videoUrlGcs"
       [posterUrlGcs]="video.posterUrlGcs"
-      (hover)="onVideoHover($event)"
+      
       ></app-video>
   </div>
   <div class="line-wrapper-left">
@@ -113,7 +113,7 @@
   </div>
 </div>
 
-
+<!-- (hover)="onVideoHover($event)" -->
 <!-- <div  class="line-wrapper">
   <div id="line3" class="line" >
 

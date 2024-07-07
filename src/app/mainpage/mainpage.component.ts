@@ -10,11 +10,12 @@ import { HttpClient } from '@angular/common/http';
 import { FooterComponent } from '../footer/footer.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
+import { VideoComponent } from '../video/video.component';
 
 @Component({
   selector: 'app-mainpage',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule, NavbarComponent, FooterComponent, VideoComponent],
   templateUrl: './mainpage.component.html',
   styleUrl: './mainpage.component.scss',
   animations: [fadeInPage]

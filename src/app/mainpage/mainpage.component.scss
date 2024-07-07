@@ -48,8 +48,8 @@ img {
 
 .line-wrapper-right {
     z-index: 11;
-    width: 10%;
-    height: 100%;
+    width:10%;
+    height:100%;
     position: absolute;
     right: 0;
     &:hover {
@@ -66,7 +66,7 @@ img {
 
 .line {
     display: flex;
-    overflow-x:  visible;
+    overflow-x:visible;
     scroll-behavior: smooth;
     align-items: center;
     gap: 32px;
