@@ -107,8 +107,20 @@ export class ErrorService {
   }
 
 
+  /**
+   * Handles contact form submission specific HTTP errors.
+   * @param {HttpErrorResponse} error - The HttpErrorResponse object containing contact form error details.
+   */
   handleContactError(error: HttpErrorResponse): void {
-
+    const errorHandlers = {
+      400: (error: HttpErrorResponse) => {
+        this.alertService.showAlert('Invalid data submitted. Please check your inputs.', 'error');
+      },
+      500: (error: HttpErrorResponse) => {
+        this.alertService.showAlert('Server error. Please try again later.', 'error');
+      }
+    };
+    this.handleHttpError(error, errorHandlers);
   }
 
 

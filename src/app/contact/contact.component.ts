@@ -65,20 +65,21 @@ export class ContactComponent {
   }
 
   onSubmit() {
-    // if (this.contactForm.valid) {
-    //   const { firstName, lastName, company, email, message } = this.contactForm.value;
-    //   this.loading = true;
-    //   this.restService.contact(firstName!, lastName!, company!, email! message!).subscribe({
-    //     next: (response) => {
-    //       this.alertService.showAlert('success', 'Thank you for your message!');
-    //     },
-    //     error: (err) => {
-    //       this.errorService.handleContactError(err);
-    //     },
-    //     complete: () => {
-    //       this.loading = false;
-    //     }
-    //   });
-    // }
+    if (this.contactForm.valid) {
+      const { firstName, lastName, company, email, message } = this.contactForm.value;
+      this.loading = true;
+      this.restService.contact(firstName!, lastName!, company!, email!, message!).subscribe({
+        next: (response) => {
+          this.alertService.showAlert('Thank you for your message!', 'success');
+          this.contactForm.reset();
+        },
+        error: (err) => {
+          this.errorService.handleContactError(err);
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
+    }
   }
 }

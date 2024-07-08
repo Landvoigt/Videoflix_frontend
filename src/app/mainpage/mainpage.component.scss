@@ -1,14 +1,15 @@
-main {
-    overflow: hidden;
-    width: 100vw;
-    max-width: 100%;
-    height: 500vh;
-   }
+// main {
+//   overflow: hidden;
+//   width: 100vw;
+//   max-width: 100%;
+//   height: 500vh;
+// }
 
 
 .poster-container {
   display: flex;
   flex-wrap: wrap;
+
   img {
     width: 250px;
     height: 180px;
@@ -21,43 +22,49 @@ main {
 }
 
 img {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .line-wrapper {
-   display: flex;
-   justify-content:space-between ;
-   width: 100vw;
-   margin-left: 48px;
-   position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% - 48px);
+  margin-left: 48px;
+  position: relative;
 }
 
 .line-wrapper-left {
-    z-index: 11;
-    width: 5%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    &:hover {
-      #left1, #left2, #left3
-    {
-        display: flex;
+  z-index: 11;
+  width: 5%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+
+  &:hover {
+
+    #left1,
+    #left2,
+    #left3 {
+      display: flex;
     }
- }
+  }
 }
 
 .line-wrapper-right {
-    z-index: 11;
-    width:10%;
-    height:100%;
-    position: absolute;
-    right: 0;
-    &:hover {
-      #right1, #right2, #right3
-    {
-        display: block;
-    }  
- }
+  z-index: 11;
+  width: 10%;
+  height: 100%;
+  position: absolute;
+  right: 0;
+
+  &:hover {
+
+    #right1,
+    #right2,
+    #right3 {
+      display: block;
+    }
+  }
 }
 
 // .line.hovered {   // @Output
@@ -65,103 +72,99 @@ img {
 // }
 
 .line {
-    display: flex;
-    overflow-x:visible;
-    scroll-behavior: smooth;
-    align-items: center;
-    gap: 32px;
-    height: 190px;
-    transition: all 0.5s ease;
-    margin-top: 48px;  
+  display: flex;
+  overflow-x: visible;
+  scroll-behavior: smooth;
+  align-items: center;
+  gap: 32px;
+  height: 190px;
+  transition: all 0.5s ease;
+  margin-top: 48px;
 }
 
 .line::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 
 #left1,
 #left2,
 #left3 {
-    width: 50px;
-    height: 70px;
-    position: absolute;
-    top: 110px;
-    left: 16px;
-    z-index: 10;  
-    display: none; 
+  width: 50px;
+  height: 70px;
+  position: absolute;
+  top: 110px;
+  left: 16px;
+  z-index: 10;
+  display: none;
 }
 
 #right1,
 #right2,
 #right3 {
-    width: 50px;
-    height: 70px;
-    position: absolute;
-    top: 110px;
-    right: 16px;
-    z-index: 10;
-    display: none;
+  width: 50px;
+  height: 70px;
+  position: absolute;
+  top: 110px;
+  right: 16px;
+  z-index: 10;
+  display: none;
 }
 
 .video-box-wrapper {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 
 .logo-span {
-    font-family: "Bungee Shade";
-    margin-right: 1rem;
+  font-family: "Bungee Shade";
+  margin-right: 1rem;
 
-    @media(max-width: 768px) {
-        margin: 0;
-    }
+  @media(max-width: 768px) {
+    margin: 0;
+  }
 }
 
 
 .video-wrapper {
-    
-    width: 100%;
-  }
-  
-  .video-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .video-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    z-index: 0;
-  }
-  
-  .title {
-    color: white;
-    position: absolute;
-    bottom: 130px;
-    left: 50px;
-    font-size: 3rem;
-    font-weight: bold;
-    z-index: 1;
-  }
-  
-  .description {
-    color: white;
-    position: absolute;
-    bottom: 50px;
-    left: 50px;
-    font-size: 1rem;
-    margin-top: 0.5rem;
-    z-index: 1;
-  }
 
-  
+  width: 100%;
+}
 
- 
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.video-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.title {
+  color: white;
+  position: absolute;
+  bottom: 130px;
+  left: 50px;
+  font-size: 3rem;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.description {
+  color: white;
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  z-index: 1;
+}

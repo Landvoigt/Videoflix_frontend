@@ -82,8 +82,9 @@ export class RestService {
     );
   }
 
-  contact(payload: any) {
-
+  contact(firstName: string, lastName: string, company: string, email: string, message: string): Observable<any> {
+    const payload = { firstName, lastName, company, email, message };
+    return this.http.post(`${this.apiBaseUrl}/contact/`, payload);
   }
 
   private getHeaders(): HttpHeaders {
