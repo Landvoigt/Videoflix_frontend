@@ -1,8 +1,6 @@
 .footer-mobile {
     @media(max-width: 768px) {
-        // flex-direction: column;
-
-        span {
+        a, span {
             white-space: nowrap;
         }
     }

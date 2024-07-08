@@ -9,11 +9,12 @@ import { CompanyNameRegex, EmailRegex, NameRegex } from '../utils/regex';
 import { AlertService } from '../services/alert.service';
 import { RestService } from '../services/rest.service';
 import { ErrorService } from '../services/error.service';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NavbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NavbarComponent, FooterComponent],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
   animations: [fadeInPage]

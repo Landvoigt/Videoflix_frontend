@@ -1,21 +1,28 @@
-<div @fadeInPage
-    class="flex min-h-full flex-col justify-center items-center px-6 py-12 lg:px-8 bg-gradient-to-r from-default-from to-default-to">
-
-    <div class="relative isolate px-6 pt-14 lg:px-8">
-        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 custom-left-extra"
-            aria-hidden="true">
-            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] opa-022"
-                style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
-            </div>
+<navbar [closeMenu]="closeMenu"></navbar>
+<div @fadeInPage (click)="closeUserMenu()" class="bg-gradient-to-r from-default-from to-default-to px-6 py-12 lg:px-8"
+    style="height: calc(100% - 66px);">
+    <div class="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
+        aria-hidden="true">
+        <div class="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
+            style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
         </div>
     </div>
 
-    <div>
-        <p>
-            <b>Responsible instance:</b><br />Tim Voigt<br />Bogenackerstr. 24<br />8632
-            Tann<br />Switzerland<br /><strong>E-Mail</strong>:
-            mail&#64;timvoigt.ch<br /><br />
+    <div class="space-y-6 mx-auto max-w-xl">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-3xl font-bold tracking-tight text-textColorPrimary sm:text-4xl">Imprint</h2>
+        </div>
+        <p class="block text-md sm:text-lg md:text-lg lg:text-lg font-medium leading-6 text-textColorSecondary text-center !mt-10">
+            <b class="text-textColorPrimary">Responsible Instance:</b><br>
+            Tim Voigt<br>
+            Bogenackerstr. 24<br>
+            8632 Tann<br>
+            Switzerland<br><br>
+            <strong class="text-textColorPrimary">E-Mail</strong>:<br>
+            <a href="mailto:mail@timvoigt.ch" target="_blank" class="text-center hover:text-textColorHover">
+                mail&#64;timvoigt.ch
+            </a>
         </p>
     </div>
-
 </div>
+<footer></footer>
