@@ -3,13 +3,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProfileImages } from '../../models/profile.model';
 import { AuthService } from '../auth/auth.service';
 import { NavigationService } from '../services/navigation.service';
+import { fadeInPage } from '../utils/animations';
 
 @Component({
   selector: 'navbar',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrl: './navbar.component.scss',
+  animations: [fadeInPage]
 })
 export class NavbarComponent {
   @Input() closeMenu: boolean = false;
@@ -59,6 +61,7 @@ export class NavbarComponent {
   changePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
     this.navService.main();   //////// later remove and add each component
     this.closeUserMenu();
+    this.currentPage = page;
     this.pageChanged.emit(page);
   }
 
