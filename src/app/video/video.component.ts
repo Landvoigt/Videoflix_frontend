@@ -3,13 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // import { VideoService } from '../services/video.service';
 import { HttpClient } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-// import { catchError, map } from 'rxjs/operators';
 import videojs from 'video.js';
-import Hls from 'hls.js'; // Importiere hls.js
+import Hls from 'hls.js';
 import { first } from 'rxjs';
 import { VideoService } from '../services/video.service';
-//import 'video.js/dist/video-js.css';
 
 
 @Component({
@@ -30,24 +27,11 @@ videoUrl: string = '';
 @Input() videoUrlGcs: string;
 @Input() posterUrlGcs: string;
 @Output() hover = new EventEmitter<boolean>();
-@ViewChild('videoPlayer', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>
+@ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 
 
-  onHover() {
-    this.videoPlayer.nativeElement.play(); 
-    this.isVideoPlaing = true;
-    this.hover.emit(true);
-  }
-
-  onLeave() {
-    this.videoPlayer.nativeElement.pause();
-    this.videoPlayer.nativeElement.currentTime = 0; 
-    this.isVideoPlaing = false;
-    this.hover.emit(false);
-  }
   
-
-
+  
   constructor(
     private http: HttpClient,
     private ngZone: NgZone,
@@ -61,16 +45,28 @@ videoUrl: string = '';
   // }
   
 
-  ngAfterViewInit() {
+ngAfterViewInit() {
     this.appRef.isStable.pipe(first(isStable => isStable)).subscribe(() => {
       const resolution = '360p';
       // const resolution = this.getResolution();
-      console.log('Resolution: ', this.getResolution());
-     this.getVideoUrl('waterfall_1', resolution);
+      //console.log('Resolution: ', this.getResolution());
+       this.getVideoUrl('waterfall_1', resolution);
     });
-
 }
   
+onHover() {
+  this.videoPlayer.nativeElement.play(); 
+  this.isVideoPlaing = true;
+  this.hover.emit(true);
+}
+
+onLeave() {
+  this.videoPlayer.nativeElement.pause();
+  this.videoPlayer.nativeElement.currentTime = 0; 
+  this.isVideoPlaing = false;
+  this.hover.emit(false);
+}
+
 
   getResolution(): string {
     const width = window.innerWidth;
@@ -90,10 +86,10 @@ videoUrl: string = '';
 
     this.http.get<any>(apiUrl).subscribe({
       next: (data) => {
-        console.log('Response from server:', data);
+        //console.log('Response from server:', data);
         if (data && data.video_url) {
           this.videoUrl = data.video_url;
-          console.log('Updated videoUrl:', this.videoUrl);
+          //console.log('Updated videoUrl:', this.videoUrl);
           this.setupVideoPlayer();
         } else {
           console.error('Invalid response format from server');
@@ -114,7 +110,7 @@ videoUrl: string = '';
         hls.loadSource(this.videoUrlGcs);
         hls.attachMedia(this.videoPlayer.nativeElement);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('HLS manifest parsed');
+        //  console.log('HLS manifest parsed');
         });
       } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
         this.videoPlayer.nativeElement.src = this.videoUrlGcs;
@@ -127,23 +123,4 @@ videoUrl: string = '';
     });
   }
 
-//   setupVideoPlayer() {
-//     this.ngZone.runOutsideAngular(() => {
-//       if (Hls.isSupported()) {
-//         const hls = new Hls();
-//         hls.loadSource(this.videoUrl);
-//         hls.attachMedia(this.videoPlayer.nativeElement);
-//         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-//           console.log('HLS manifest parsed');
-//         });
-//       } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
-//         this.videoPlayer.nativeElement.src = this.videoUrl;
-//         this.videoPlayer.nativeElement.addEventListener('loadedmetadata', () => {
-//           console.log('Native HLS support, video loaded');
-//         });
-//       } else {
-//         console.error('HLS is not supported in this browser');
-//       }
-//     });
-//   }
  }

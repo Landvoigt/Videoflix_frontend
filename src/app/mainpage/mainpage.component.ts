@@ -30,7 +30,11 @@ export class MainpageComponent implements AfterViewInit {
   videoData: { videoUrlGcs: string; posterUrlGcs: string }[] = [] ;
   @ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
   @ViewChild('line1', { static: false }) line1: ElementRef;
-  
+
+  @ViewChild('line3', { static: false }) line3: ElementRef;
+  savedScrollLeft = 0;
+  savedRelativePositions: number[] = [];
+  isScrollable = false;
 
 
   currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
@@ -90,9 +94,9 @@ export class MainpageComponent implements AfterViewInit {
   
     this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
       next: (response) => {
-        console.log('Fetched video URLs:', response.video_urls);
+        //console.log('Fetched video URLs:', response.video_urls);
         this.videoUrls = response.video_urls;
-        console.log('Updated videoUrls:', this.videoUrls);
+        //console.log('Updated videoUrls:', this.videoUrls);
         this.setupVideoPlayer();
       },
       error: (error) => {
@@ -101,19 +105,17 @@ export class MainpageComponent implements AfterViewInit {
     });
   }
 
- 
-
 
   getVideoUrl(videoKey: string, resolution: string): void {
     const apiUrl = `http://localhost:8000/get-video-url/?video_key=${videoKey}&resolution=${resolution}`;
 
     this.http.get<any>(apiUrl).subscribe({
       next: (data) => {
-        console.log('Response from server:', data);
+       // console.log('Response from server:', data);
         if (data && data.video_url) {
           this.videoUrl = data.video_url;  // Hauptvideo
           this.videoUrls.push(data.video_url);
-          console.log('Updated videoUrls:', this.videoUrls);
+         // console.log('Updated videoUrls:', this.videoUrls);
           this.setupVideoPlayer();
         } else {
           console.error('Invalid response format from server');
@@ -126,10 +128,6 @@ export class MainpageComponent implements AfterViewInit {
   }
 
 
-
-
-
-
   setupVideoPlayer() {
     this.ngZone.runOutsideAngular(() => {
       if (Hls.isSupported()) {
@@ -137,7 +135,7 @@ export class MainpageComponent implements AfterViewInit {
         hls.loadSource(this.videoUrl);
         hls.attachMedia(this.videoPlayer.nativeElement);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('HLS manifest parsed');
+          //console.log('HLS manifest parsed');
           this.videoPlayer.nativeElement.play();
         });
       } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
@@ -154,13 +152,14 @@ export class MainpageComponent implements AfterViewInit {
  
 
   ngOnInit(): void {
+    
     this.loadPosterUrls();
     this.getVideoUrl('kino', '360p');
     this.loadAllVideoUrls();
     //const resolution = this.getResolution();
     //console.log('Resolution: ', this.getResolution());
     this.loadVideoUrls();
-    console.log('videoData', this.videoData)
+   // console.log('videoData', this.videoData)
     //const lineIds = ['line1', 'line2', 'line3'];
    // lineIds.forEach(id => this.scrollElementById(id, 500));
     // this.videoService.hoverState$.subscribe(state => {
@@ -173,13 +172,11 @@ export class MainpageComponent implements AfterViewInit {
    
   }
 
-
-
   loadVideoUrls(): void {
     const apiUrl = `http://localhost:8000/get-all-video-urls/`;
     this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
       next: (response) => {
-        console.log('Fetched video URLs:', response.video_urls);
+       // console.log('Fetched video URLs:', response.video_urls);
         this.videoUrls = response.video_urls;
         this.createVideoData();
       },
@@ -191,21 +188,18 @@ export class MainpageComponent implements AfterViewInit {
 
 
   createVideoData(): void {
-    for (let i = 0; i < Math.max(this.posterUrls.length, this.videoUrls.length); i++) {
-      this.videoData.push({
-        videoUrlGcs: this.videoUrls[i] || '/assets/img/barni/startvideo.png',
-        posterUrlGcs: this.posterUrls[i] || '/assets/img/barni/am_gang.png'
-      });
-    }
-  }
-
+    this.videoData = this.videoUrls.map((videoUrl, index) => ({
+        videoUrlGcs: videoUrl || '/assets/img/barni/startvideo.png',
+        posterUrlGcs: this.posterUrls[index] || '/assets/img/barni/am_gang.png'
+    }));
+}
 
   loadPosterUrls(): void {
     const apiUrl = 'http://localhost:8000/get_poster_urls/';
 
     this.http.get<any>(apiUrl).subscribe({
       next: (response) => {
-        console.log('Fetched poster URLs:', response.poster_urls);
+       // console.log('Fetched poster URLs:', response.poster_urls);
         this.posterUrls = response.poster_urls;
       },
       error: (error) => {
@@ -243,98 +237,72 @@ export class MainpageComponent implements AfterViewInit {
   }
 
 
-  scrollingRight1() {
-    const line1Element: HTMLElement = this.elementRef.nativeElement.querySelector('#line1');
-    if (line1Element) {
-     
-      document.getElementById("line1").classList.add('kabat'); 
-      line1Element.scrollLeft += 1000;
-      setTimeout(() => {
-        document.getElementById("line1").classList.remove('kabat'); 
-      }, 500);
-
-    }
+  savePositions() {
+    const outerContainer = this.line3.nativeElement;
+    this.savedScrollLeft = outerContainer.scrollLeft;
+    this.savedRelativePositions = Array.from(outerContainer.children).map((item: HTMLElement) => {
+      const itemRect = item.getBoundingClientRect();
+      const containerRect = outerContainer.getBoundingClientRect();
+      return itemRect.left - containerRect.left + outerContainer.scrollLeft;
+    });
   }
 
-  
+  toggleMode() {
+    const outerContainer = this.line3.nativeElement;
+    if (!this.isScrollable) {
+      this.savedScrollLeft = outerContainer.scrollLeft;
+      outerContainer.style.overflowX = 'visible';
+      const screenWidth = outerContainer.offsetWidth;
+      let previousPosition = 0;
+      Array.from(outerContainer.children).forEach((item: HTMLElement, index: number) => {
+        const originalRelativePosition = this.savedRelativePositions[index];
+        let newLeft = originalRelativePosition - this.savedScrollLeft;
+        
+        if (index > 0 && !this.isContainerScrollable(outerContainer)) {
+          newLeft = Math.min(newLeft, previousPosition);
+        }
+        
+        item.style.position = 'relative';
+        item.style.left = `${newLeft}px`;
+        
+        previousPosition = newLeft;
+      });
 
-  scrollingLeft1() {
-    const line1Element: HTMLElement = this.elementRef.nativeElement.querySelector('#line1');
-    if (line1Element) {
-      document.getElementById("line1").classList.add('kabat'); 
-      line1Element.scrollLeft += -1000;
-       setTimeout(() => {
-        document.getElementById("line1").classList.remove('kabat'); 
-      }, 500);
+    } else {
+      outerContainer.style.overflowX = 'scroll';
+      outerContainer.scrollLeft = this.savedScrollLeft;
+      Array.from(outerContainer.children).forEach((item: HTMLElement) => {
+        item.style.position = 'static';
+        item.style.left = '0px';
+      });
+
     }
+    this.isScrollable = !this.isScrollable;
   }
-
-
-  scrollingRight2() {
-    const line2Element: HTMLElement = this.elementRef.nativeElement.querySelector('#line2');
-    if (line2Element) {
-       
-      document.getElementById("line2").classList.add('kabat'); 
-      line2Element.scrollLeft += 1000;
-      setTimeout(() => {
-        document.getElementById("line2").classList.remove('kabat'); 
-      }, 500);
-
-    }
-  }
-
-
-  scrollingLeft2() {
-    const line2Element: HTMLElement = this.elementRef.nativeElement.querySelector('#line2');
-    if (line2Element) {
-      document.getElementById("line2").classList.add('kabat'); 
-      line2Element.scrollLeft -= 1000;
-      setTimeout(() => {
-        document.getElementById("line2").classList.remove('kabat'); 
-      }, 500);
-    }
-  }
-
-
-
-  scrollingRight3() {
-    const line3Element: HTMLElement = this.elementRef.nativeElement.querySelector('#line3');
-    if (line3Element) {
-     // document.getElementById("line3").classList.add('kabat'); 
-      line3Element.scrollLeft += 1000;
-     // setTimeout(() => {
-        //document.getElementById("line3").classList.remove('kabat'); 
-      //}, 500);
-    }
-  }
-
 
   scrollingLeft3() {
-    const line3Element: HTMLElement = this.elementRef.nativeElement.querySelector('#line3');
-    if (line3Element) {
-     // document.getElementById("line3").classList.add('kabat'); 
-      line3Element.scrollLeft -= 1000;
-     // setTimeout(() => {
-        //document.getElementById("line3").classList.remove('kabat'); 
-     // }, 500);
-    }
+    this.isScrollable = true;
+    this. toggleMode();
+    const outerContainer = this.line3.nativeElement;
+    outerContainer.scrollLeft -= 700; 
   }
 
-
-
-
-  onVideoHover(isHovering: boolean) {
-    const mainPageElement = document.querySelector('.line');
-    if (mainPageElement) {
-      if (isHovering) {
-        mainPageElement.classList.add('hovered');
-      } else {
-        mainPageElement.classList.remove('hovered');
-      }
-    }
+  scrollingRight3() {
+    this.isScrollable = true;
+    this.toggleMode();
+    const outerContainer = this.line3.nativeElement;
+    outerContainer.scrollLeft += 700; 
   }
 
+  toVisibleModus3() {
+    this.savePositions();
+    this.isScrollable = false;
+    this.toggleMode();
+  }
 
+  private isContainerScrollable(container: HTMLElement): boolean {
+    return container.scrollWidth > container.clientWidth;
+  }
 }
 
 

@@ -1,9 +1,8 @@
-// main {
-//   overflow: hidden;
-//   width: 100vw;
-//   max-width: 100%;
-//   height: 500vh;
-// }
+
+.mainpage-wrapper {
+  overflow-x: hidden;
+  //height: 100vh
+}
 
 
 .poster-container {
@@ -25,21 +24,52 @@ img {
   cursor: pointer;
 }
 
+// .line-wrapper {
+//   display: flex;
+//   justify-content: space-between;
+//   width: calc(100% - 48px);
+//   margin-left: 48px;
+//   position: relative;
+// }
+
+// .line {
+//   display: flex;
+//   overflow-x: visible;
+//   scroll-behavior: smooth;
+//   align-items: center;
+//   gap: 32px;
+//   height: 190px;
+//   transition: all 0.5s ease;
+//   margin-top: 48px;
+// }
+
+
 .line-wrapper {
   display: flex;
-  justify-content: space-between;
-  width: calc(100% - 48px);
-  margin-left: 48px;
+  //width: calc(100% - 48px);
+ // margin-left: 48px;
   position: relative;
 }
 
+.line {
+  display: flex;
+  overflow-x: visible;
+  scroll-behavior: smooth;
+  align-items: center;
+  gap: 32px;
+  height: 190px;
+  transition: all 0.5s ease;
+  margin-top: 48px;
+  //margin-left: 48px;
+}
+
+
 .line-wrapper-left {
-  z-index: 11;
-  width: 5%;
+  z-index: 102;
+  width: 10%;
   height: 100%;
   position: absolute;
   left: 0;
-
   &:hover {
 
     #left1,
@@ -51,7 +81,7 @@ img {
 }
 
 .line-wrapper-right {
-  z-index: 11;
+  z-index: 102;
   width: 10%;
   height: 100%;
   position: absolute;
@@ -67,19 +97,9 @@ img {
   }
 }
 
-// .line.hovered {   // @Output
-// overflow-x: visible !important;
-// }
 
-.line {
-  display: flex;
-  overflow-x: visible;
-  scroll-behavior: smooth;
-  align-items: center;
-  gap: 32px;
-  height: 190px;
-  transition: all 0.5s ease;
-  margin-top: 48px;
+.line-wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .line::-webkit-scrollbar {

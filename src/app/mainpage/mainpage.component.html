@@ -1,3 +1,7 @@
+<div class="mainpage-wrapper">
+
+
+
 <navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
 <div @fadeInPage (click)="closeUserMenu()"
   class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
@@ -9,140 +13,25 @@
         <p class="description">Pixabay
           pixabay.com/es/users/dantegráfico-15862390
         </p>
-        <video #videoPlayerStart class="video-content" loop>
+        <video #videoPlayerStart class="video-content" >
           Your browser does not support the video tag.
         </video>
       </div>
     </div>
 
-    <!-- <div  class="line-wrapper">
-    <div id="line1" class="line" >
-
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-      <div class="hüle">
-        <app-video></app-video>
-      </div>
-
-      
-  </div>
-     <div  class="line-wrapper-left">
-       <img  id="left1" (click)="scrollingLeft1()" src="/assets/img/barni/arrow-left.png" alt="">
-     </div>
-     <div  class="line-wrapper-right" >
-       <img  id="right1" (click)="scrollingRight1()" src="/assets/img/barni/arrow-right.png" alt="">
-     </div>
-</div>
- 
-
-<div  class="line-wrapper">
-  <div id="line2" class="line" >
-
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-    <div class="hüle">
-      <app-video></app-video>
-    </div>
-
-    
-</div>
-   <div class="line-wrapper-left">
-     <img id="left2" (click)="scrollingLeft2()" src="/assets/img/barni/arrow-left.png" alt="">
-   </div>
-   <div class="line-wrapper-right" >
-     <img id="right2" (click)="scrollingRight2()" src="/assets/img/barni/arrow-right.png" alt="">
-   </div>
-</div>
- -->
-
-
+  
     <div class="line-wrapper">
-      <div id="line3" class="line">
-        <app-video *ngFor="let video of videoData" [videoUrlGcs]="video.videoUrlGcs"
-          [posterUrlGcs]="video.posterUrlGcs"></app-video>
+      <div id="line3" #line3 class="line">
+        <app-video *ngFor="let video of videoData" [videoUrlGcs]="video.videoUrlGcs" [posterUrlGcs]="video.posterUrlGcs"></app-video>
       </div>
+    
       <div class="line-wrapper-left">
-        <img id="left3" (click)="scrollingLeft3()" src="/assets/img/barni/arrow-left.png" alt="">
+        <img id="left3" (click)="scrollingLeft3()" (mouseleave)="toVisibleModus3()" src="/assets/img/barni/arrow-left.png">
       </div>
       <div class="line-wrapper-right">
-        <img id="right3" (click)="scrollingRight3()" src="/assets/img/barni/arrow-right.png" alt="">
+        <img id="right3" (click)="scrollingRight3()"   (mouseleave)="toVisibleModus3()" src="/assets/img/barni/arrow-right.png">
       </div>
     </div>
-
-    <!-- (hover)="onVideoHover($event)" -->
-    <!-- <div  class="line-wrapper">
-  <div id="line3" class="line" >
-
-      <app-video></app-video>
-     
-</div>
-   <div class="line-wrapper-left">
-     <img id="left3" (click)="scrollingLeft3()" src="/assets/img/barni/arrow-left.png" alt="">
-   </div>
-   <div class="line-wrapper-right" >
-     <img id="right3" (click)="scrollingRight3()" src="/assets/img/barni/arrow-right.png" alt="">
-   </div>
-</div> -->
-
-
-
-
-    <!-- TEST  -->
-    <!-- <div *ngIf="posterUrls.length > 0">
-  <h2>Poster</h2>
-  <div class="poster-container">
-    <div *ngFor="let url of posterUrls">
-      <img [src]="url" alt="Poster">
-      <h3 style="color: white;">{{ url }}</h3>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="posterUrls.length === 0">
-  <p>Keine Poster verfügbar.</p>
-</div> -->
-
-    <!-- <img src="https://storage.googleapis.com/videoflix-videos/video-posters/holiday_poster.jpg" alt=""> -->
-    <!-- <img src="https://storage.googleapis.com/videoflix-videos/video-posters/waterfall_2_J0Kvtvu_poster.jpg" alt=""> -->
-
   </ng-container>
 
 
@@ -195,3 +84,5 @@
      </button> -->
 </div>
 <footer></footer>
+
+</div>
