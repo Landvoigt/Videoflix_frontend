@@ -1,12 +1,8 @@
-import { AfterViewInit, ApplicationRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild, inject} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, inject} from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
-import { RestService } from '../services/rest.service';
 import { fadeInPage } from '../utils/animations';
 import { CommonModule } from '@angular/common';
-import Hls from 'hls.js';
-import { first } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { FooterComponent } from '../footer/footer.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
@@ -22,42 +18,42 @@ import { VideoComponent } from '../video/video.component';
 })
 export class MainpageComponent implements AfterViewInit {
 
-  elementRef = inject(ElementRef);
+elementRef = inject(ElementRef);
+@ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
+@ViewChild('line3', { static: false }) line3: ElementRef;
+savedScrollLeft = 0;
+savedRelativePositions: number[] = [];
+isScrollable = false;
 
-  videoUrl: string = '';
-  posterUrls: string[] = [];
-  videoUrls: string[] = [];
-  videoData: { videoUrlGcs: string; posterUrlGcs: string }[] = [] ;
-  @ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
-  @ViewChild('line1', { static: false }) line1: ElementRef;
+currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
+closeMenu: boolean = false;
+///// ToDo make components for each page
+allFilms: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+allSeries: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+userVideos: any[] = [1, 2, 3, 4, 5, 6];
 
-  @ViewChild('line3', { static: false }) line3: ElementRef;
-  savedScrollLeft = 0;
-  savedRelativePositions: number[] = [];
-  isScrollable = false;
-
-
-  currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
-  closeMenu: boolean = false;
-
-  ///// ToDo make components for each page
-  allFilms: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  allSeries: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-  userVideos: any[] = [1, 2, 3, 4, 5, 6];
-
-  constructor(
+ constructor(
     public navService: NavigationService,
     public authService: AuthService,
-    private restService: RestService,
-    private http: HttpClient,
-    private ngZone: NgZone,
-    private appRef: ApplicationRef,
-    private videoService: VideoService,
-    private renderer: Renderer2
+    public videoService: VideoService,
   ) { }
 
 
+ ngOnInit(): void { 
+    this.videoService.loadPosterUrls();
+    this.videoService.getVideoUrl(this.videoPlayer,'kino', '360p');
+    this.videoService.loadAllVideoUrls(this.videoPlayer);   
+  }
 
+
+ ngAfterViewInit(): void {
+    if (this.videoPlayer) {
+      this.videoService.videoPlayer = this.videoPlayer;
+      this.videoService.loadAllVideoUrls(this.videoPlayer);
+    } else {
+      console.error('Video player element is not available');
+    }  
+  }
 
   closeUserMenu() {
     this.closeMenu = true;
@@ -71,143 +67,6 @@ export class MainpageComponent implements AfterViewInit {
   activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
     return this.currentPage === page;
   }
-
-
-  
-
-  getResolution(): string {
-    const width = window.innerWidth;
-    if (width >= 1920) {
-      return '1080p';
-    } else if (width >= 1280) {
-      return '720p';
-    } else if (width >= 854) {
-      return '480p';
-    } else {
-      return '360p';
-    }
-  }
-
-
-  loadAllVideoUrls(): void {
-    const apiUrl = `http://localhost:8000/get-all-video-urls/`;
-  
-    this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
-      next: (response) => {
-        //console.log('Fetched video URLs:', response.video_urls);
-        this.videoUrls = response.video_urls;
-        //console.log('Updated videoUrls:', this.videoUrls);
-        this.setupVideoPlayer();
-      },
-      error: (error) => {
-        console.error('Error fetching video URLs:', error);
-      }
-    });
-  }
-
-
-  getVideoUrl(videoKey: string, resolution: string): void {
-    const apiUrl = `http://localhost:8000/get-video-url/?video_key=${videoKey}&resolution=${resolution}`;
-
-    this.http.get<any>(apiUrl).subscribe({
-      next: (data) => {
-       // console.log('Response from server:', data);
-        if (data && data.video_url) {
-          this.videoUrl = data.video_url;  // Hauptvideo
-          this.videoUrls.push(data.video_url);
-         // console.log('Updated videoUrls:', this.videoUrls);
-          this.setupVideoPlayer();
-        } else {
-          console.error('Invalid response format from server');
-        }
-      },
-      error: (error) => {
-        console.error('Error fetching video URL:', error);
-      }
-    });
-  }
-
-
-  setupVideoPlayer() {
-    this.ngZone.runOutsideAngular(() => {
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(this.videoUrl);
-        hls.attachMedia(this.videoPlayer.nativeElement);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          //console.log('HLS manifest parsed');
-          this.videoPlayer.nativeElement.play();
-        });
-      } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
-        this.videoPlayer.nativeElement.src = this.videoUrl;
-        this.videoPlayer.nativeElement.addEventListener('loadedmetadata', () => {
-          console.log('Native HLS support, video loaded');
-          this.videoPlayer.nativeElement.play();
-        });
-      } else {
-        console.error('HLS is not supported in this browser');
-      }
-    });
-  }
- 
-
-  ngOnInit(): void {
-    
-    this.loadPosterUrls();
-    this.getVideoUrl('kino', '360p');
-    this.loadAllVideoUrls();
-    //const resolution = this.getResolution();
-    //console.log('Resolution: ', this.getResolution());
-    this.loadVideoUrls();
-   // console.log('videoData', this.videoData)
-    //const lineIds = ['line1', 'line2', 'line3'];
-   // lineIds.forEach(id => this.scrollElementById(id, 500));
-    // this.videoService.hoverState$.subscribe(state => {
-    //   this.isHovered = state;
-    // });
-  }
-
-
-  ngAfterViewInit(): void {
-   
-  }
-
-  loadVideoUrls(): void {
-    const apiUrl = `http://localhost:8000/get-all-video-urls/`;
-    this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
-      next: (response) => {
-       // console.log('Fetched video URLs:', response.video_urls);
-        this.videoUrls = response.video_urls;
-        this.createVideoData();
-      },
-      error: (error) => {
-        console.error('Error fetching video URLs:', error);
-      }
-    });
-  }
-
-
-  createVideoData(): void {
-    this.videoData = this.videoUrls.map((videoUrl, index) => ({
-        videoUrlGcs: videoUrl || '/assets/img/barni/startvideo.png',
-        posterUrlGcs: this.posterUrls[index] || '/assets/img/barni/am_gang.png'
-    }));
-}
-
-  loadPosterUrls(): void {
-    const apiUrl = 'http://localhost:8000/get_poster_urls/';
-
-    this.http.get<any>(apiUrl).subscribe({
-      next: (response) => {
-       // console.log('Fetched poster URLs:', response.poster_urls);
-        this.posterUrls = response.poster_urls;
-      },
-      error: (error) => {
-        console.error('Error fetching poster URLs:', error);
-      }
-    });
-  }
-
 
   //// ToDo fix boolean active for profile
   goToProfiles() {
@@ -224,9 +83,6 @@ export class MainpageComponent implements AfterViewInit {
   // }
 
 
-
-
-
   private scrollElementById(id: string, scrollAmount: number): void {
     setTimeout(() => {
       const element: HTMLElement = this.elementRef.nativeElement.querySelector(`#${id}`);
@@ -236,16 +92,6 @@ export class MainpageComponent implements AfterViewInit {
     }, 0);
   }
 
-
-  savePositions() {
-    const outerContainer = this.line3.nativeElement;
-    this.savedScrollLeft = outerContainer.scrollLeft;
-    this.savedRelativePositions = Array.from(outerContainer.children).map((item: HTMLElement) => {
-      const itemRect = item.getBoundingClientRect();
-      const containerRect = outerContainer.getBoundingClientRect();
-      return itemRect.left - containerRect.left + outerContainer.scrollLeft;
-    });
-  }
 
   toggleMode() {
     const outerContainer = this.line3.nativeElement;
@@ -298,6 +144,17 @@ export class MainpageComponent implements AfterViewInit {
     this.savePositions();
     this.isScrollable = false;
     this.toggleMode();
+  }
+
+
+  savePositions() {
+    const outerContainer = this.line3.nativeElement;
+    this.savedScrollLeft = outerContainer.scrollLeft;
+    this.savedRelativePositions = Array.from(outerContainer.children).map((item: HTMLElement) => {
+      const itemRect = item.getBoundingClientRect();
+      const containerRect = outerContainer.getBoundingClientRect();
+      return itemRect.left - containerRect.left + outerContainer.scrollLeft;
+    });
   }
 
   private isContainerScrollable(container: HTMLElement): boolean {

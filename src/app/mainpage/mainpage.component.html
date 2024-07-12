@@ -22,7 +22,7 @@
   
     <div class="line-wrapper">
       <div id="line3" #line3 class="line">
-        <app-video *ngFor="let video of videoData" [videoUrlGcs]="video.videoUrlGcs" [posterUrlGcs]="video.posterUrlGcs"></app-video>
+        <app-video *ngFor="let video of videoService.videoData" [videoUrlGcs]="video.videoUrlGcs" [posterUrlGcs]="video.posterUrlGcs"></app-video>
       </div>
     
       <div class="line-wrapper-left">

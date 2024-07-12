@@ -115,12 +115,15 @@ onLeave() {
       } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
         this.videoPlayer.nativeElement.src = this.videoUrlGcs;
         this.videoPlayer.nativeElement.addEventListener('loadedmetadata', () => {
-          console.log('Native HLS support, video loaded');
+          //console.log('Native HLS support, video loaded');
         });
       } else {
         console.error('HLS is not supported in this browser');
       }
     });
   }
+
+
+ 
 
  }
