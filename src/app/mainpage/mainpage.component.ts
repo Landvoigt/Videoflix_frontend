@@ -56,7 +56,7 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
 
  ngAfterViewInit(): void {
     if (this.videoPlayer) {
-      console.log('this,videiplayer', this.videoPlayer);
+      //console.log('this,videiplayer', this.videoPlayer);
       this.videoService.videoPlayer = this.videoPlayer;
             } else {
       console.error('Video player element is not available');

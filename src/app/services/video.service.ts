@@ -2,6 +2,7 @@ import { ElementRef, Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import Hls from 'hls.js';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 interface Video {
   id: number;
@@ -41,7 +42,6 @@ export class VideoService {
     return this.http.get<VideosResponse>(this.apiUrl);
   }
 
- 
 
   loadAllVideoUrls(videoPlayer: ElementRef): void {
     const apiUrl = `http://localhost:8000/get-all-video-urls/`;
@@ -49,21 +49,42 @@ export class VideoService {
     this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
       next: (response) => {
         this.videoUrls = response.video_urls;
-        this.setupVideoPlayer(videoPlayer, this.videoUrl);
-        this.createVideoData();
-        this.getRandomVideoUrl();
-          },
+        this.setupVideoPlayer(videoPlayer, this.videoUrls.length > 0 ? this.videoUrls[0] : 'default-video-url.mp4');
+
+        if (this.videoUrls && this.videoUrls.length > 0) {
+          this.getRandomVideoUrl();
+          this.checkVideoDataAvailability().subscribe(isAvailable => {
+            if (isAvailable) {
+              this.createVideoData();             
+            } else {
+              console.warn('Required video data not available in Django');
+            }
+          });
+        } else {
+          console.warn('No video URLs found in the response');
+        }
+      },
       error: (error) => {
         console.error('Error fetching video URLs:', error);
       }
     });
-   
   }
+
+  
+
+  checkVideoDataAvailability(): Observable<boolean> {
+    const apiUrl = `http://localhost:8000/check-video-data/`;
+
+    return this.http.post<{ is_available: boolean }>(apiUrl, { video_urls: this.videoUrls }).pipe(
+      map(response => response.is_available),
+    );
+  }
+
 
 
   getRandomVideoUrl(): string {
     const randomIndex = Math.floor(Math.random() * this.videoUrls.length);
-    console.log('videoUrls[randomIndex]: ', this.videoUrls[randomIndex]);
+    //console.log('videoUrls[randomIndex]: ', this.videoUrls[randomIndex]);
       const randomDataName = this.getDirectoryNameFromUrl(this.videoUrls[randomIndex]);
       this.getVideoUrl(randomDataName,'360p');
     return this.videoUrls[randomIndex];
@@ -97,7 +118,7 @@ export class VideoService {
           title: video.title,
           description: video.description,
         }));
-        console.log('this.videoData:', this.videoData);
+        //console.log('this.videoData:', this.videoData);
       },
       error: (error) => {
         console.error('Error fetching video data:', error);
@@ -115,7 +136,7 @@ export class VideoService {
           this.videoUrl = data.video_url;  // Hauptvideo
           this.videoUrls.push(data.video_url);
           this.setupVideoPlayer(this.videoPlayer, this.videoUrl);
-          console.log('this.videoUrllllll',this.videoUrl);
+          //console.log('this.videoUrl',this.videoUrl);
       
           
         } else {

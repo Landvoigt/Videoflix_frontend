@@ -7,27 +7,26 @@
   class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
 
   <ng-container *ngIf="activePage('dashboard')">
+   
     <div class="w-full h-96 flex video-wrapper">
       <div class="video-container">
-        <h1 class="title">{{title}}</h1>
-        <p class="description">{{description}}
-        </p>
-        <video #videoPlayerStart class="video-content" >
+        <h1 class="title">{{title || 'Default Title'}}</h1>
+        <p class="description">{{description || 'Default Description...'}}</p>
+        <video #videoPlayerStart class="video-content">
           Your browser does not support the video tag.
         </video>
       </div>
     </div>
-   
     
     
   
     <div class="line-wrapper">
       <div id="line3" #line3 class="line">
         <app-video  *ngFor="let video of videoService.videoData; let index = index"
-         [videoUrlGcs]="video.videoUrlGcs"
-          [posterUrlGcs]="video.posterUrlGcs"
-          [title]="video.title"
-          [description]="video.description"
+         [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
+          [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/barni/300.png'"
+          [title]="video.title || 'Default Title'"
+          [description]="video.description || 'Default Description...'"
           ></app-video>
       </div>
     
