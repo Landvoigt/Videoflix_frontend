@@ -1,13 +1,10 @@
-import { AfterViewInit, ApplicationRef, Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, ViewChild} from '@angular/core';
+import { AfterViewInit, ApplicationRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common'; 
-import { FormsModule } from '@angular/forms';
-// import { VideoService } from '../services/video.service';
 import { HttpClient } from '@angular/common/http';
-import videojs from 'video.js';
 import Hls from 'hls.js';
 import { first } from 'rxjs';
 import { VideoService } from '../services/video.service';
-
+import { Video } from '../../models/video.model';
 
 @Component({
   selector: 'app-video',
@@ -20,18 +17,18 @@ import { VideoService } from '../services/video.service';
 
 export class VideoComponent implements AfterViewInit {
 
-
  
 isVideoPlaing = true;
 videoUrl: string = '';
+videos: Video[] = [];
+@Input() title: string;
+@Input() description: string;
 @Input() videoUrlGcs: string;
 @Input() posterUrlGcs: string;
 @Output() hover = new EventEmitter<boolean>();
 @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 
 
-  
-  
   constructor(
     private http: HttpClient,
     private ngZone: NgZone,
@@ -40,16 +37,14 @@ videoUrl: string = '';
   ) {}
 
 
-  // ngOnInit(): void {
-  //   this.setupVideoPlayer();
-  // }
-  
+   ngOnInit(): void {
+    
+   }
+
 
 ngAfterViewInit() {
     this.appRef.isStable.pipe(first(isStable => isStable)).subscribe(() => {
       const resolution = '360p';
-      // const resolution = this.getResolution();
-      //console.log('Resolution: ', this.getResolution());
        this.getVideoUrl('waterfall_1', resolution);
     });
 }
@@ -68,28 +63,13 @@ onLeave() {
 }
 
 
-  getResolution(): string {
-    const width = window.innerWidth;
-    if (width >= 1920) {
-      return '1080p';
-    } else if (width >= 1280) {
-      return '720p';
-    } else if (width >= 854) {
-      return '480p';
-    } else {
-      return '360p';
-    }
-  }
-
   getVideoUrl(videoKey: string, resolution: string) {
     const apiUrl = `http://localhost:8000/get-video-url/?video_key=${videoKey}&resolution=${resolution}`;
 
     this.http.get<any>(apiUrl).subscribe({
       next: (data) => {
-        //console.log('Response from server:', data);
         if (data && data.video_url) {
           this.videoUrl = data.video_url;
-          //console.log('Updated videoUrl:', this.videoUrl);
           this.setupVideoPlayer();
         } else {
           console.error('Invalid response format from server');
@@ -110,20 +90,15 @@ onLeave() {
         hls.loadSource(this.videoUrlGcs);
         hls.attachMedia(this.videoPlayer.nativeElement);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        //  console.log('HLS manifest parsed');
         });
       } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
         this.videoPlayer.nativeElement.src = this.videoUrlGcs;
         this.videoPlayer.nativeElement.addEventListener('loadedmetadata', () => {
-          //console.log('Native HLS support, video loaded');
         });
       } else {
         console.error('HLS is not supported in this browser');
       }
     });
   }
-
-
- 
 
  }

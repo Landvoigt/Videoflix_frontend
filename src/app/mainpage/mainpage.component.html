@@ -9,20 +9,26 @@
   <ng-container *ngIf="activePage('dashboard')">
     <div class="w-full h-96 flex video-wrapper">
       <div class="video-container">
-        <h1 class="title">DANTEGRAFICO Art</h1>
-        <p class="description">Pixabay
-          pixabay.com/es/users/dantegráfico-15862390
+        <h1 class="title">{{title}}</h1>
+        <p class="description">{{description}}
         </p>
         <video #videoPlayerStart class="video-content" >
           Your browser does not support the video tag.
         </video>
       </div>
     </div>
-
+   
+    
+    
   
     <div class="line-wrapper">
       <div id="line3" #line3 class="line">
-        <app-video *ngFor="let video of videoService.videoData" [videoUrlGcs]="video.videoUrlGcs" [posterUrlGcs]="video.posterUrlGcs"></app-video>
+        <app-video  *ngFor="let video of videoService.videoData; let index = index"
+         [videoUrlGcs]="video.videoUrlGcs"
+          [posterUrlGcs]="video.posterUrlGcs"
+          [title]="video.title"
+          [description]="video.description"
+          ></app-video>
       </div>
     
       <div class="line-wrapper-left">

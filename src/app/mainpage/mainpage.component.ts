@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, inject} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Output, ViewChild, inject} from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
@@ -7,6 +7,12 @@ import { FooterComponent } from '../footer/footer.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
 import { VideoComponent } from '../video/video.component';
+import { Video } from '../../models/video.model';
+import { HttpClient } from '@angular/common/http';
+
+interface VideosResponse {
+  videos: Video[];
+}
 
 @Component({
   selector: 'app-mainpage',
@@ -24,6 +30,8 @@ elementRef = inject(ElementRef);
 savedScrollLeft = 0;
 savedRelativePositions: number[] = [];
 isScrollable = false;
+title: string;
+description: string;
 
 currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
 closeMenu: boolean = false;
@@ -36,23 +44,24 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     public navService: NavigationService,
     public authService: AuthService,
     public videoService: VideoService,
+    private http: HttpClient
   ) { }
 
 
  ngOnInit(): void { 
     this.videoService.loadPosterUrls();
-    this.videoService.getVideoUrl(this.videoPlayer,'kino', '360p');
-    this.videoService.loadAllVideoUrls(this.videoPlayer);   
+   //this.videoService.getVideoUrl(this.videoPlayer,'kino', '360p');
+    this.videoService.loadAllVideoUrls(this.videoPlayer); 
   }
-
 
  ngAfterViewInit(): void {
     if (this.videoPlayer) {
+      console.log('this,videiplayer', this.videoPlayer);
       this.videoService.videoPlayer = this.videoPlayer;
-      this.videoService.loadAllVideoUrls(this.videoPlayer);
-    } else {
+            } else {
       console.error('Video player element is not available');
     }  
+  
   }
 
   closeUserMenu() {
