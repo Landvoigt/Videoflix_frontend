@@ -1,8 +1,8 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import Hls from 'hls.js';
-import { Observable, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, Observable, ReplaySubject } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 interface Video {
   id: number;
@@ -30,6 +30,9 @@ export class VideoService {
   randomVideo: string;
   descriptionUrl:string = "";
   titleUrl:string = "";
+  gcsData: any[] = [];
+
+  
  
  
   constructor(private http: HttpClient, private ngZone: NgZone) {}
@@ -45,10 +48,10 @@ export class VideoService {
         this.setupVideoPlayer(videoPlayer, this.videoUrls.length > 0 ? this.videoUrls[0] : '/assets/img/videostore/300.png');
         this.getRandomVideoUrl();
         if (this.videoUrls && this.videoUrls.length > 0) {
-         
+          this.createVideoData();  
           this.checkVideoDataAvailability().subscribe(isAvailable => {
             if (isAvailable) {
-              this.createVideoData();             
+              //this.createVideoData();           
             } else {
               console.warn('Required video data not available in Django');
             }
@@ -82,7 +85,7 @@ export class VideoService {
 
 
   textForMainVideo(randomDataName: string): void {
-    console.log('randomDataName',randomDataName);
+    //console.log('randomDataName',randomDataName);
       this.descriptionUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/description.txt`;
       this.titleUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/title.txt`;
   }
@@ -114,23 +117,98 @@ export class VideoService {
   }
   
 
+  // createVideoData(): void {                // Grundversio
+  //   this.getAllVideos().subscribe({
+  //     next: (data) => {
+  //       this.videoData = data.videos.map((video) => ({
+  //         videoUrlGcs: video.hls_playlist,
+  //         posterUrlGcs: (video.hls_playlist ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}` : '/assets/img/videostore/300.png'),
+  //         title: video.title,
+  //         description: video.description,
+  //       }));
+  //       //console.log('this.videoData:', this.videoData);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error fetching video data:', error);
+  //     }
+  //   });
+  // }
+
+
+  // createVideoData(): void {                                // es ist mit django daten !!!!!!!
+  //   this.getAllVideos().subscribe({
+  //     next: (data) => {
+  //       this.videoData = data.videos.map((video) => ({
+  //         videoUrlGcs: video.hls_playlist,
+  //         posterUrlGcs: (video.hls_playlist ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}` : '/assets/img/videostore/300.png'),
+  //         title: video.title,
+  //         description: video.description,
+  //       }));
+  
+  //       // Now update title and description from gcsData if local data is missing
+  //       this.videoData.forEach((video) => {
+  //         if (!video.title || !video.description) {
+  //           const subfolder = this.getSubfolderFromUrl(video.videoUrlGcs);
+  //           const gcsInfo = this.gcsData.find((item) => item.subfolder === subfolder);
+  //           console.log('gcsInfo.title',gcsInfo.title);
+  //           if (gcsInfo) {
+  //             video.title = video.title || gcsInfo.title || 'Default Title';
+  //             video.description = video.description || gcsInfo.description || 'Default Description';
+  //             console.log('gcsInfo.title',gcsInfo.title);
+  //           }
+  //         }
+  //       });
+  
+  //       console.log('Updated videoData:', this.videoData);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error fetching video data:', error);
+  //     }
+  //   });
+  // }
+
+
+
   createVideoData(): void {
     this.getAllVideos().subscribe({
       next: (data) => {
         this.videoData = data.videos.map((video) => ({
           videoUrlGcs: video.hls_playlist,
-          posterUrlGcs: (video.hls_playlist ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}` : '/assets/img/default-poster.png'),
-          title: video.title,
-          description: video.description,
+          posterUrlGcs: video.hls_playlist
+            ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}`
+            : '/assets/img/videostore/300.png',
+          title: '', 
+          description: '', 
         }));
-        //console.log('this.videoData:', this.videoData);
+  
+        this.videoData.forEach((video) => {
+         setTimeout(() => {
+
+          const subfolder = this.getSubfolderFromUrl(video.videoUrlGcs);
+          const gcsInfo = this.gcsData.find((item) => item.subfolder === subfolder);
+          if (gcsInfo) {
+            video.title = gcsInfo.title || 'Default Title';
+            video.description = gcsInfo.description || 'Default Description';
+          }
+          
+         }, 2500);
+        });
+  
+        //console.log('Updated videoData:', this.videoData);
       },
       error: (error) => {
         console.error('Error fetching video data:', error);
       }
     });
   }
-
+  
+  
+  getSubfolderFromUrl(videoUrlGcs: string): string {
+    const parts = videoUrlGcs.split('/');
+    const subfolder = parts[parts.length - 2]; 
+    return subfolder;
+  }
+  
 
   getAllVideos(): Observable<VideosResponse> {
     const apiUrlVideos = 'http://localhost:8000/api/videos/';
@@ -200,6 +278,64 @@ setupVideoPlayer(videoPlayer: ElementRef, videoUrl:any): void {
       }
     });
    
+  }
+
+// Text laden von gcs  
+private gcsDataUrl = 'http://localhost:8000/gcs-data/';
+
+  fetchGcsData(): Observable<any[]> {
+       return this.http.get<any[]>(this.gcsDataUrl);
+  }
+
+  getGcsData(): any[] {
+    return this.gcsData;
+  }
+
+  loadGcsData(): void {
+    this.fetchGcsData().subscribe({
+      next: (data) => {
+        this.gcsData = data.map(item => ({
+          description_url: item.description_url,
+          subfolder: item.subfolder,
+          title_url: item.title_url,
+          description: '',
+          title: ''
+        }));
+        this.loadTextFileContents();
+       // console.log('GCS Data loaded:', this.gcsData);
+      },
+      error: (error) => {
+        console.error('Error fetching GCS data:', error);
+      }
+    });
+  }
+
+  private loadTextFileContents(): void {
+    const requests: Observable<any>[] = this.gcsData.map(item => {
+      const descriptionRequest = this.http.get(item.description_url, { responseType: 'text' });
+      const titleRequest = this.http.get(item.title_url, { responseType: 'text' });
+
+      return forkJoin({
+        description: descriptionRequest,
+        title: titleRequest
+      }).pipe(
+        map(response => {
+          item.description = response.description;
+          item.title = response.title;
+          return item;
+        })
+      );
+    });
+
+    forkJoin(requests).subscribe({
+      next: (updatedData) => {
+        this.gcsData = updatedData;
+        //console.log('GCS Data with text content loaded:', this.gcsData);
+      },
+      error: (error) => {
+        console.error('Error loading text file contents:', error);
+      }
+    });
   }
 
 }

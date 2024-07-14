@@ -64,8 +64,21 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
            error: error => console.error('Error fetching data:', error)
          }); 
          }, 2500); 
+  this.loadGcsData();
+         
   }
 
+  //gcsData: any[] = [];
+  loadGcsData(): void {
+    this.videoService.loadGcsData();
+    // setTimeout(() => {  
+    // this.gcsData = this.videoService.getGcsData();
+    // this.gcsData = this.videoService.gcsData;
+    // console.log('this.gcsData mainpage',this.gcsData);
+  
+    // }, 3000);
+    
+  }
 
   ngAfterViewInit(): void {
     if (this.videoPlayer) {
@@ -73,6 +86,7 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
       } else {
       console.error('Video player element is not available');
     } 
+    
   }
 
 
