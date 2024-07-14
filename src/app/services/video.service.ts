@@ -42,7 +42,7 @@ export class VideoService {
     this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
       next: (response) => {
         this.videoUrls = response.video_urls;
-        this.setupVideoPlayer(videoPlayer, this.videoUrls.length > 0 ? this.videoUrls[0] : '/assets/img/barni/300.png');
+        this.setupVideoPlayer(videoPlayer, this.videoUrls.length > 0 ? this.videoUrls[0] : '/assets/img/videostore/300.png');
         this.getRandomVideoUrl();
         if (this.videoUrls && this.videoUrls.length > 0) {
          
