@@ -49,6 +49,8 @@ img {
   //width: calc(100% - 48px);
  // margin-left: 48px;
    position: relative;
+   
+  
 }
 
 .line {
@@ -58,11 +60,15 @@ img {
   align-items: center;
   gap: 32px;
   height: 190px;
-  transition: all 0.5s ease;
+  //transition: all 0.5s ease;
   margin-top: 48px;
-  //margin-left: 48px;
+  opacity: 0;
+  transition: opacity 2s ease;
 }
 
+.line.flex {
+  opacity: 1;
+}
 
 .line-wrapper-left {
   z-index: 102;
@@ -157,6 +163,12 @@ img {
   position: relative;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.video-container.flex {
+  opacity: 1;
 }
 
 .video-content {
@@ -188,4 +200,14 @@ img {
   font-size: 1rem;
   margin-top: 0.5rem;
   z-index: 1;
+}
+
+.position {
+  position: absolute;
+  left: 48%;
+  top: 43%;
+  width: 70px;
+  height: 70px;
+  border: 4px solid rgba(255, 255, 255, 0.25);
+  border-top: 4px solid white;
 }

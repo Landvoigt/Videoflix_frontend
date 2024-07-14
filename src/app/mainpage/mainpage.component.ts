@@ -33,6 +33,7 @@ savedRelativePositions: number[] = [];
 isScrollable = false;
 title: string;
 description: string;
+loading: boolean = false;
 
 currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
 closeMenu: boolean = false;
@@ -50,6 +51,7 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
 
 
  ngOnInit(): void { 
+  this.loading = true;
     this.videoService.loadPosterUrls();
     this.videoService.loadAllVideoUrls(this.videoPlayer); 
     setTimeout(() => {
@@ -63,7 +65,20 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
            },
            error: error => console.error('Error fetching data:', error)
          }); 
-         }, 2500); 
+         }, 3000); 
+         setTimeout(() => {
+          const lineElement = document.querySelector('.line');
+          if (lineElement) {
+            lineElement.classList.add('flex');
+          }
+        }, 5000);
+        setTimeout(() => {
+          const lineElement = document.querySelector('.video-container');
+          if (lineElement) {
+            lineElement.classList.add('flex');
+          }
+          this.loading = false;
+        }, 3000);
   this.loadGcsData();
          
   }
