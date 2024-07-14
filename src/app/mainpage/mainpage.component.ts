@@ -9,6 +9,7 @@ import { VideoService } from '../services/video.service';
 import { VideoComponent } from '../video/video.component';
 import { Video } from '../../models/video.model';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin, Observable } from 'rxjs';
 
 interface VideosResponse {
   videos: Video[];
@@ -50,19 +51,30 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
 
  ngOnInit(): void { 
     this.videoService.loadPosterUrls();
-   //this.videoService.getVideoUrl(this.videoPlayer,'kino', '360p');
     this.videoService.loadAllVideoUrls(this.videoPlayer); 
+    setTimeout(() => {
+      forkJoin({
+           title: this.videoService.getTitle(),
+           description: this.videoService.getDescription()
+         }).subscribe({
+           next: data => {
+             this.title = data.title;
+             this.description = data.description;
+           },
+           error: error => console.error('Error fetching data:', error)
+         }); 
+         }, 2500); 
   }
 
- ngAfterViewInit(): void {
+
+  ngAfterViewInit(): void {
     if (this.videoPlayer) {
-      //console.log('this,videiplayer', this.videoPlayer);
       this.videoService.videoPlayer = this.videoPlayer;
-            } else {
+      } else {
       console.error('Video player element is not available');
-    }  
-  
+    } 
   }
+
 
   closeUserMenu() {
     this.closeMenu = true;
@@ -135,6 +147,7 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     this.isScrollable = !this.isScrollable;
   }
 
+  
   scrollingLeft3() {
     this.isScrollable = true;
     this. toggleMode();
@@ -142,12 +155,14 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     outerContainer.scrollLeft -= 700; 
   }
 
+
   scrollingRight3() {
     this.isScrollable = true;
     this.toggleMode();
     const outerContainer = this.line3.nativeElement;
     outerContainer.scrollLeft += 700; 
   }
+
 
   toVisibleModus3() {
     this.savePositions();
@@ -169,6 +184,8 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
   private isContainerScrollable(container: HTMLElement): boolean {
     return container.scrollWidth > container.clientWidth;
   }
+
+
 }
 
 
