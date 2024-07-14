@@ -191,7 +191,7 @@ export class VideoService {
             video.description = gcsInfo.description || 'Default Description';
           }
           
-         }, 2500);
+         }, 5000);
         });
   
         //console.log('Updated videoData:', this.videoData);
