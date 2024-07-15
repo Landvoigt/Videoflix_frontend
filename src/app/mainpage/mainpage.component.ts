@@ -7,21 +7,17 @@ import { FooterComponent } from '../footer/footer.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
 import { VideoComponent } from '../video/video.component';
-import { Video } from '../../models/video.model';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { FilmsComponent } from '../categories/films/films.component';
 import { SeriesComponent } from '../categories/series/series.component';
 import { PlaylistComponent } from '../categories/playlist/playlist.component';
-
-interface VideosResponse {
-  videos: Video[];
-}
+import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 
 @Component({
   selector: 'app-mainpage',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, VideoComponent, FilmsComponent, SeriesComponent, PlaylistComponent],
+  imports: [CommonModule, LoadingScreenComponent, NavbarComponent, FooterComponent, VideoComponent, FilmsComponent, SeriesComponent, PlaylistComponent],
   templateUrl: './mainpage.component.html',
   styleUrl: './mainpage.component.scss',
   animations: [fadeInPage]
@@ -36,7 +32,8 @@ export class MainpageComponent implements AfterViewInit {
   isScrollable = false;
   title: string;
   description: string;
-  loading: boolean = false;
+
+  loadingApp: boolean = false;
 
   currentPage: 'dashboard' | 'films' | 'series' | 'playlist' = 'dashboard';
   closeMenu: boolean = false;
@@ -48,27 +45,25 @@ export class MainpageComponent implements AfterViewInit {
     private http: HttpClient
   ) { }
 
-
   ngOnInit(): void {
-    this.loading = true;
+    this.loadingApp = true;
     this.videoService.loadPosterUrls();
-    this.videoService.loadAllVideoUrls(this.videoPlayer); 
+    this.videoService.loadAllVideoUrls(this.videoPlayer);
     this.videoService.loadGcsData();
     setTimeout(() => {  // Mainvideo
       forkJoin({
-           title: this.videoService.getTitle(),
-           description: this.videoService.getDescription()
-         }).subscribe({
-           next: data => {
-             this.title = data.title;
-             this.description = data.description;
-           },
-           error: error => console.error('Error fetching data:', error)
-         }); 
-         }, 1000);       
+        title: this.videoService.getTitle(),
+        description: this.videoService.getDescription()
+      }).subscribe({
+        next: data => {
+          this.title = data.title;
+          this.description = data.description;
+          this.loadingApp = false;
+        },
+        error: error => console.error('Error fetching data:', error)
+      });
+    }, 2250);
   }
-
-  
 
   ngAfterViewInit(): void {
     if (this.videoPlayer) {
@@ -76,9 +71,7 @@ export class MainpageComponent implements AfterViewInit {
     } else {
       console.error('Video player element is not available');
     }
-
   }
-
 
   closeUserMenu() {
     this.closeMenu = true;
@@ -101,12 +94,6 @@ export class MainpageComponent implements AfterViewInit {
       this.navService.profiles();
     }
   }
-
-
-  // getProfileImage() {
-  //  return ProfileImages[this.authService.getProfile().avatar_id] || "/assets/svg/default_avatar.svg";
-  // }
-
 
   private scrollElementById(id: string, scrollAmount: number): void {
     setTimeout(() => {

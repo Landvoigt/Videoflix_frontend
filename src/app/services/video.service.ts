@@ -1,21 +1,9 @@
+import Hls from 'hls.js';
 import { ElementRef, Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import Hls from 'hls.js';
-import { forkJoin, Observable, ReplaySubject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-
-interface Video {
-  id: number;
-  title: string;
-  description: string;
-  video_url: string;
-  hls_playlist: string;
-  video_file:string;
-}
-interface VideosResponse {
-  videos: Video[];
-}
-
+import { forkJoin, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { VideoResponse } from '../interfaces/video.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -25,30 +13,25 @@ export class VideoService {
   videoUrls: string[] = [];
   videoUrl: string = '';
   posterUrls: string[] = [];
-  videoData: { videoUrlGcs: string; posterUrlGcs: string;title: string; description: string }[] = [];
-  videoPlayer:ElementRef;
+  videoData: { videoUrlGcs: string; posterUrlGcs: string; title: string; description: string }[] = [];
+  videoPlayer: ElementRef;
   randomVideo: string;
-  descriptionUrl:string = "";
-  titleUrl:string = "";
+  descriptionUrl: string = "";
+  titleUrl: string = "";
   gcsData: any[] = [];
 
-  
- 
- 
-  constructor(private http: HttpClient, private ngZone: NgZone) {}
-
- 
+  constructor(private http: HttpClient, private ngZone: NgZone) { }
 
   loadAllVideoUrls(videoPlayer: ElementRef): void {
     const apiUrl = `http://localhost:8000/get-all-video-urls/`;
-   
+
     this.http.get<{ video_urls: string[] }>(apiUrl).subscribe({
       next: (response) => {
         this.videoUrls = response.video_urls;
         this.setupVideoPlayer(videoPlayer, this.videoUrls.length > 0 ? this.videoUrls[0] : '/assets/img/videostore/300.png');
         this.getRandomVideoUrl();
         if (this.videoUrls && this.videoUrls.length > 0) {
-          this.createVideoData();  
+          this.createVideoData();
           this.checkVideoDataAvailability().subscribe(isAvailable => {
             if (isAvailable) {
               //this.createVideoData();           
@@ -66,7 +49,7 @@ export class VideoService {
     });
   }
 
-  
+
   checkVideoDataAvailability(): Observable<boolean> {
     const apiUrl = `http://localhost:8000/check-video-data/`;
     return this.http.post<{ is_available: boolean }>(apiUrl, { video_urls: this.videoUrls }).pipe(
@@ -78,7 +61,7 @@ export class VideoService {
   getRandomVideoUrl(): string {
     const randomIndex = Math.floor(Math.random() * this.videoUrls.length);
     const randomDataName = this.getDirectoryNameFromUrl(this.videoUrls[randomIndex]);
-    this.getVideoUrl(randomDataName,'360p');
+    this.getVideoUrl(randomDataName, '360p');
     this.textForMainVideo((randomDataName));
     return this.videoUrls[randomIndex];
   }
@@ -86,11 +69,11 @@ export class VideoService {
 
   textForMainVideo(randomDataName: string): void {
     //console.log('randomDataName',randomDataName);
-      this.descriptionUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/description.txt`;
-      this.titleUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/title.txt`;
+    this.descriptionUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/description.txt`;
+    this.titleUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/title.txt`;
   }
 
- 
+
   getDescription(): Observable<string> {
     return this.http.get(this.descriptionUrl, { responseType: 'text' });
   }
@@ -108,14 +91,14 @@ export class VideoService {
 
   getPosterFileName(videoUrlGcs: string): string {
     if (!videoUrlGcs) {
-      return 'default-poster.jpg'; 
+      return 'default-poster.jpg';
     }
     const urlParts = videoUrlGcs.split('/');
-    const lastPart = urlParts[urlParts.length - 2]; 
-    const fileName = lastPart + '.jpg'; 
+    const lastPart = urlParts[urlParts.length - 2];
+    const fileName = lastPart + '.jpg';
     return fileName;
   }
-  
+
 
   // createVideoData(): void {                // Grundversio
   //   this.getAllVideos().subscribe({
@@ -144,7 +127,7 @@ export class VideoService {
   //         title: video.title,
   //         description: video.description,
   //       }));
-  
+
   //       // Now update title and description from gcsData if local data is missing
   //       this.videoData.forEach((video) => {
   //         if (!video.title || !video.description) {
@@ -158,7 +141,7 @@ export class VideoService {
   //           }
   //         }
   //       });
-  
+
   //       console.log('Updated videoData:', this.videoData);
   //     },
   //     error: (error) => {
@@ -177,23 +160,23 @@ export class VideoService {
           posterUrlGcs: video.hls_playlist
             ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}`
             : '/assets/img/videostore/300.png',
-          title: '', 
-          description: '', 
+          title: '',
+          description: '',
         }));
-  
-        this.videoData.forEach((video) => {
-         setTimeout(() => {
 
-          const subfolder = this.getSubfolderFromUrl(video.videoUrlGcs);
-          const gcsInfo = this.gcsData.find((item) => item.subfolder === subfolder);
-          if (gcsInfo) {
-            video.title = gcsInfo.title || 'Default Title';
-            video.description = gcsInfo.description || 'Default Description';
-          }
-          
-         }, 3500);
+        this.videoData.forEach((video) => {
+          setTimeout(() => {
+
+            const subfolder = this.getSubfolderFromUrl(video.videoUrlGcs);
+            const gcsInfo = this.gcsData.find((item) => item.subfolder === subfolder);
+            if (gcsInfo) {
+              video.title = gcsInfo.title || 'Default Title';
+              video.description = gcsInfo.description || 'Default Description';
+            }
+
+          }, 3500);
         });
-  
+
         //console.log('Updated videoData:', this.videoData);
       },
       error: (error) => {
@@ -201,23 +184,23 @@ export class VideoService {
       }
     });
   }
-  
-  
+
+
   getSubfolderFromUrl(videoUrlGcs: string): string {
     const parts = videoUrlGcs.split('/');
-    const subfolder = parts[parts.length - 2]; 
+    const subfolder = parts[parts.length - 2];
     return subfolder;
   }
-  
 
-  getAllVideos(): Observable<VideosResponse> {
+
+  getAllVideos(): Observable<VideoResponse> {
     const apiUrlVideos = 'http://localhost:8000/api/videos/';
-    return this.http.get<VideosResponse>(apiUrlVideos);
+    return this.http.get<VideoResponse>(apiUrlVideos);
   }
-  
-  
 
-  getVideoUrl( videoKey: string, resolution: string): void {
+
+
+  getVideoUrl(videoKey: string, resolution: string): void {
     const apiUrl = `http://localhost:8000/get-video-url/?video_key=${videoKey}&resolution=${resolution}`;
     this.http.get<any>(apiUrl).subscribe({
       next: (data) => {
@@ -249,11 +232,11 @@ export class VideoService {
         console.error('Error fetching poster URLs:', error);
       }
     });
-    
+
   }
 
 
-setupVideoPlayer(videoPlayer: ElementRef, videoUrl:any): void {
+  setupVideoPlayer(videoPlayer: ElementRef, videoUrl: any): void {
     videoPlayer = this.videoPlayer;
     if (!videoPlayer) {
       console.error('Video player element is undefined');
@@ -277,14 +260,14 @@ setupVideoPlayer(videoPlayer: ElementRef, videoUrl:any): void {
         console.error('HLS is not supported in this browser');
       }
     });
-   
+
   }
 
-// Text laden von gcs  
-private gcsDataUrl = 'http://localhost:8000/gcs-data/';
+  // Text laden von gcs  
+  private gcsDataUrl = 'http://localhost:8000/gcs-data/';
 
   fetchGcsData(): Observable<any[]> {
-       return this.http.get<any[]>(this.gcsDataUrl);
+    return this.http.get<any[]>(this.gcsDataUrl);
   }
 
   getGcsData(): any[] {
@@ -302,7 +285,7 @@ private gcsDataUrl = 'http://localhost:8000/gcs-data/';
           title: ''
         }));
         this.loadTextFileContents();
-       // console.log('GCS Data loaded:', this.gcsData);
+        // console.log('GCS Data loaded:', this.gcsData);
       },
       error: (error) => {
         console.error('Error fetching GCS data:', error);

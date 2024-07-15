@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { fadeInPage } from '../utils/animations';
 import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
-import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { RestService } from '../services/rest.service';
 import { Observable, catchError, of, switchMap } from 'rxjs';
 import { Profile, ProfileImages } from '../../models/profile.model';
@@ -13,7 +12,7 @@ import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [CommonModule, DialogCreateProfileComponent, LoadingScreenComponent],
+  imports: [CommonModule, DialogCreateProfileComponent],
   templateUrl: './profiles.component.html',
   styleUrl: './profiles.component.scss',
   animations: [fadeInPage]
@@ -27,7 +26,6 @@ export class ProfilesComponent implements OnInit {
   isEdit: boolean = false;
   currentProfileId: number | null = null;
 
-  loadingApp: boolean = false;
   loading: boolean = false;
   hoveredIndex: number | null = null;
 
@@ -87,11 +85,7 @@ export class ProfilesComponent implements OnInit {
     ).subscribe(profile => {
       if (profile) {
         this.authService.setProfile(profile);
-        this.loadingApp = true;
-        setTimeout(() => {
-          this.loadingApp = false;
-          this.navService.main();
-        }, 2500);
+        this.navService.main();
       } else {
         this.alertService.showAlert('Profile could not be loaded', 'error');
       }

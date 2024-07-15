@@ -17,17 +17,14 @@
           </video>
         </div>
       </div>
-    </div>
-    
-    <!-- <div *ngIf="loading" class="spinner position"></div> -->
-    <div class="line-wrapper">
-      <div id="line3" #line3 class="line">
-        <app-video  *ngFor="let video of videoService.videoData; let index = index"
-         [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
-          [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'"
-          [title]="video.title || ''"
-          [description]="video.description || ''"
-          ></app-video>
+
+      <div class="line-wrapper">
+        <div id="line3" #line3 class="line">
+          <app-video *ngFor="let video of videoService.videoData; let index = index"
+            [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
+            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
+            [description]="video.description || ''"></app-video>
+        </div>
       </div>
     </ng-container>
 
@@ -60,3 +57,4 @@
   </div>
   <footer></footer>
 </div>
+<app-loading-screen *ngIf="loadingApp"></app-loading-screen>

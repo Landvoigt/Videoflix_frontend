@@ -9,7 +9,7 @@ import { AlertService } from './alert.service';
   providedIn: 'root'
 })
 export class RestService {
-  apiBaseUrl: string = 'http://127.0.0.1:8000/';
+  apiBaseUrl: string = 'http://127.0.0.1:8000/api/';
 
   private profilesSubject = new BehaviorSubject<Profile[]>([]);
   profiles$: Observable<Profile[]> = this.profilesSubject.asObservable();
@@ -28,22 +28,22 @@ export class RestService {
 
   sendMail(email: string): Observable<any> {
     const payload = { email };
-    return this.http.post(`${this.apiBaseUrl}api/password_reset/`, payload);
+    return this.http.post(`${this.apiBaseUrl}password_reset/`, payload);
   }
 
   validateResetToken(token: string): Observable<any> {
     const payload = { token };
-    return this.http.post(`${this.apiBaseUrl}api/password_reset/validate/`, payload);
+    return this.http.post(`${this.apiBaseUrl}password_reset/validate/`, payload);
   }
 
   resetPassword(token: string, password: string): Observable<any> {
     const payload = { token, password };
-    return this.http.post(`${this.apiBaseUrl}api/password_reset/confirm/`, payload);
+    return this.http.post(`${this.apiBaseUrl}password_reset/confirm/`, payload);
   }
 
   updateUsername(new_username: string) {
     const payload = { new_username };
-    return this.http.post(`${this.apiBaseUrl}api/update_username/`, payload, { headers: this.getHeaders() }).pipe(
+    return this.http.post(`${this.apiBaseUrl}update_username/`, payload, { headers: this.getHeaders() }).pipe(
       catchError(this.handleError)
     );
   }
