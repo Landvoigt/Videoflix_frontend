@@ -1,0 +1,12 @@
+input {
+    border-width: 1px !important;
+
+    &:focus {
+        border-color: #2528eb !important;
+    }
+}
+
+.input-error {
+    bottom: -21px;
+    right: 4px;
+}

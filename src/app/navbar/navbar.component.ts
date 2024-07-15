@@ -15,9 +15,9 @@ import { fadeInPage } from '../utils/animations';
 })
 export class NavbarComponent {
   @Input() closeMenu: boolean = false;
-  @Output() pageChanged: EventEmitter<'dashboard' | 'films' | 'series' | 'userList'> = new EventEmitter<'dashboard' | 'films' | 'series' | 'userList'>();
+  @Output() pageChanged: EventEmitter<'dashboard' | 'films' | 'series' | 'playlist'> = new EventEmitter<'dashboard' | 'films' | 'series' | 'playlist'>();
 
-  currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
+  currentPage: 'dashboard' | 'films' | 'series' | 'playlist' = 'dashboard';
   userMenuOpen: boolean = false;
   mobileMenuOpen: boolean = false;
 
@@ -58,14 +58,14 @@ export class NavbarComponent {
     this.mobileMenuOpen = false;
   }
 
-  changePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
+  changePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.navService.main();   //////// later remove and add each component
     this.closeUserMenu();
     this.currentPage = page;
     this.pageChanged.emit(page);
   }
 
-  activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
+  activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     return this.currentPage === page;
   }
 
@@ -74,7 +74,7 @@ export class NavbarComponent {
     let profileId = this.authService.getProfile().id;
     if (profileId) {
       // this.restService.updateProfile(profileId, { active: false })
-      this.navService.profile();
+      this.navService.profiles();
     }
   }
 }

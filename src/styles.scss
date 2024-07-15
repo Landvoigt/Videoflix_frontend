@@ -1,6 +1,20 @@
+@use 'assets/scss/fonts/fonts.scss';
+
+@use 'assets/scss/keyframes/keyframes.scss';
+
+@use 'assets/scss/utils/scrollbar.scss';
+
+@use "assets/scss/elements/buttons.scss";
+@use "assets/scss/elements/inputs.scss";
+@use "assets/scss/elements/links.scss";
+
+@use "assets/scss/core/form.scss";
+@use "assets/scss/core/logo.scss";
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
 
 html,
 body {
@@ -8,104 +22,10 @@ body {
     background-color: rgb(29, 29, 29);
 }
 
-input {
-    border-width: 1px !important;
-
-    &:focus {
-        border-color: #2528eb !important;
-    }
-}
-
-.btn-container {
-    position: absolute;
-    top: 2rem;
-    left: 2rem;
-    z-index: 3;
-    cursor: pointer;
-    background-color: #7400c2;
-    border-radius: 8px;
-
-    --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
-
-    --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-    --tw-bg-opacity: 1;
-
-    transition: all 105ms ease-in-out;
-
-    &:hover {
-        --tw-bg-opacity: 1;
-        background-color: #aa42f0;
-    }
-
-    @media(max-width: 768px) {}
-}
-
-button,
-a {
-    transition: all 105ms ease-in-out;
-}
-
-.submit-btn {
-    height: 56px;
-
-    @media(max-width: 639px) {
-        height: 50px;
-        font-size: 1rem;
-        line-height: 1.15rem;
-    }
-}
-
-.text-danger {
-    font-size: 14px;
-    font-style: italic;
-    color: #f55c5c;
-}
-
-.input-error {
-    bottom: -21px;
-    right: 4px;
-}
-
-.spinner {
-    border: 4px solid rgba(255, 255, 255, 0.25);
-    border-top: 4px solid white;
-    border-radius: 50%;
-    width: 27px;
-    height: 27px;
-    animation: spin 1s linear infinite;
-    margin-top: -2px;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
 
 
-.resp-text-sm {
-    @media(max-width: 639px) {
-        font-size: 0.9rem;
-    }
-}
 
-/* bungee-shade-regular - latin */
-@font-face {
-    font-display: swap;
-    /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: "Bungee Shade";
-    font-style: normal;
-    font-weight: 400;
-    src: url("../src/assets/fonts/bungee-shade-v13-latin-regular.woff2") format("woff2");
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-}
+
 
 .custom-left-extra {
     left: -40rem;
@@ -127,11 +47,8 @@ a {
     }
 }
 
-.logo-span {
-    font-family: "Bungee Shade";
-    margin-right: 1rem;
 
-    @media(max-width: 768px) {
-        margin: 0;
-    }
+.video-box-wrapper {
+    display: flex;
+    flex-wrap: wrap;
 }

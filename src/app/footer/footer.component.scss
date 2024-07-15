@@ -1,12 +1,14 @@
+a,
+.logo-text {
+    line-height: 1.1rem;
+}
+
 .footer-mobile {
     @media(max-width: 768px) {
-        a, span {
+
+        a,
+        span {
             white-space: nowrap;
         }
     }
-}
-
-a,
-.logo-span {
-    line-height: 1.1rem;
 }

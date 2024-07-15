@@ -2,81 +2,59 @@
 
 
 
-<navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
-<div @fadeInPage (click)="closeUserMenu()"
-  class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
+  <navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
+  <div @fadeInPage (click)="closeUserMenu()"
+    class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
 
-  <ng-container *ngIf="activePage('dashboard')">
-   
-    <div class="w-full h-96 flex video-wrapper">
-      <div class="video-container">
-        <h1 class="title">{{title || ''}}</h1>
-        <p class="description">{{description || ''}}</p>
-        <video autoplay #videoPlayerStart class="video-content" >
-          Your browser does not support the video tag.
-        </video>
+    <ng-container *ngIf="activePage('dashboard')">
+
+      <div class="w-full h-96 flex video-wrapper">
+        <div class="video-container">
+          <h1 class="title">{{title || ''}}</h1>
+          <p class="description">{{description || ''}}</p>
+          <video autoplay #videoPlayerStart class="video-content">
+            Your browser does not support the video tag.
+          </video>
+        </div>
       </div>
-    </div>
-    
-    <div *ngIf="loading" class="spinner position"></div>
-    <div class="line-wrapper">
-      <div id="line3" #line3 class="line">
-        <app-video  *ngFor="let video of videoService.videoData; let index = index"
-         [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
-          [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'"
-          [title]="video.title || ''"
-          [description]="video.description || ''"
-          ></app-video>
+
+      <div *ngIf="loading" class="spinner position"></div>
+      <div class="line-wrapper">
+        <div id="line3" #line3 class="line">
+          <app-video *ngFor="let video of videoService.videoData; let index = index"
+            [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
+            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
+            [description]="video.description || ''"></app-video>
+        </div>
+
+        <div class="line-wrapper-left">
+          <img id="left3" (click)="scrollingLeft3()" (mouseleave)="toVisibleModus3()"
+            src="/assets/img/videostore/arrow-left.png">
+        </div>
+        <div class="line-wrapper-right">
+          <img id="right3" (click)="scrollingRight3()" (mouseleave)="toVisibleModus3()"
+            src="/assets/img/videostore/arrow-right.png">
+        </div>
       </div>
-    
-      <div class="line-wrapper-left">
-        <img id="left3" (click)="scrollingLeft3()" (mouseleave)="toVisibleModus3()" src="/assets/img/videostore/arrow-left.png">
-      </div>
-      <div class="line-wrapper-right">
-        <img id="right3" (click)="scrollingRight3()"   (mouseleave)="toVisibleModus3()" src="/assets/img/videostore/arrow-right.png">
-      </div>
-    </div>
-  </ng-container>
+    </ng-container>
 
 
-  <!-- ToDo Films Component -->
-  <ng-container *ngIf="activePage('films')">
-    <div class="video-box-wrapper p-8 gap-8">
-      <div *ngFor="let video of allFilms; let i = index"
-        class="h-36 w-52 bg-navColorHover rounded-lg flex items-center justify-center text-3xl text-textColorPrimary">
-        Film {{
-        i }}
-      </div>
-    </div>
-  </ng-container>
+    <ng-container *ngIf="activePage('films')">
+      <app-films></app-films>
+    </ng-container>
 
-  <!-- ToDo Series Component -->
-  <ng-container *ngIf="activePage('series')">
+    <ng-container *ngIf="activePage('series')">
+      <app-series></app-series>
+    </ng-container>
 
-    <div class="video-box-wrapper p-8 gap-8">
-      <div *ngFor="let video of allSeries; let i = index"
-        class="h-36 w-52 bg-navColorHover rounded-lg flex items-center justify-center text-3xl text-textColorPrimary">
-        Serie
-        {{ i }}
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- ToDo Meine Liste Component -->
-  <ng-container *ngIf="activePage('userList')">
-    <div class="video-box-wrapper p-8 gap-8">
-      <div *ngFor="let video of userVideos; let i = index"
-        class="h-36 w-52 bg-navColorHover rounded-lg flex items-center justify-center text-3xl text-textColorPrimary">
-        Mein
-        Video {{ i }}
-      </div>
-    </div>
-  </ng-container>
+    <ng-container *ngIf="activePage('playlist')">
+      <app-playlist></app-playlist>
+    </ng-container>
 
 
-  <!-- Notification Button -->
+    <!-- Notification Button -->
 
-  <!-- <button type="button"
+    <!-- <button type="button"
         class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
         <span class="absolute -inset-1.5"></span>
         <span class="sr-only">View notifications</span>
@@ -86,7 +64,6 @@
             d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
         </svg>
      </button> -->
-</div>
-<footer></footer>
-
+  </div>
+  <footer></footer>
 </div>

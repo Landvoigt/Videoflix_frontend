@@ -1,0 +1,11 @@
+.text-danger {
+    font-size: 14px;
+    font-style: italic;
+    color: #f55c5c;
+}
+
+.resp-text-sm {
+    @media(max-width: 639px) {
+        font-size: 0.9rem;
+    }
+}

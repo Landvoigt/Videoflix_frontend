@@ -1,0 +1,8 @@
+.logo-text {
+    font-family: "Bungee Shade";
+    margin-right: 1rem;
+
+    @media(max-width: 768px) {
+        margin: 0;
+    }
+}

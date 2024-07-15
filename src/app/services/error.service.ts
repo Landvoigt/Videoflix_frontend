@@ -108,6 +108,23 @@ export class ErrorService {
 
 
   /**
+   * Handles update username specific HTTP errors.
+   * @param {HttpErrorResponse} error - The HttpErrorResponse object containing update username error details.
+   */
+  handleUpdateUsernameError(error: HttpErrorResponse): void {
+    const errorHandlers = {
+      400: (error: HttpErrorResponse) => {
+        this.alertService.showAlert('New username is required.', 'error');
+      },
+      409: (error: HttpErrorResponse) => {
+        this.alertService.showAlert('Username already taken.', 'error');
+      }
+    };
+    this.handleHttpError(error, errorHandlers);
+  }
+
+
+  /**
    * Handles contact form submission specific HTTP errors.
    * @param {HttpErrorResponse} error - The HttpErrorResponse object containing contact form error details.
    */

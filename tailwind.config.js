@@ -4,12 +4,12 @@ module.exports = {
   ],
   theme: {
     extend: {
-      gradientColorStops: {
-        'custom-to': '#3a0b4f',
-        'custom-from': '#000510',
-
+      gradientColorStops: { 
         'default-to': '#320e4d',
         'default-from': '#000510',
+
+        'welcome-to': '#3a0b4f',
+        'welcome-from': '#000510',
 
         'nav-to': '#2c246b',
         'nav-from': '#9727a5cf', 

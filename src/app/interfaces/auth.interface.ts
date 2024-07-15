@@ -19,3 +19,7 @@ export interface ResetPasswordFormModel {
     password: FormControl<string | null>;
     confirmPassword: FormControl<string | null>;
 }
+
+export interface UpdateUsernameFormModel {
+    username: FormControl<string | null>;
+}

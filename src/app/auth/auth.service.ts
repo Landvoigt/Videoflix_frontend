@@ -48,7 +48,7 @@ export class AuthService {
 
   redirectIfLoggedIn(): boolean {
     if (this.isLoggedIn()) {
-      this.navService.profile();
+      this.navService.profiles();
       return false;
     }
     return true;
@@ -58,7 +58,7 @@ export class AuthService {
     if (this.isLocalStorageAvailable()) {
       localStorage.setItem(this.TOKEN_KEY, token);
     }
-    this.navService.profile();
+    this.navService.profiles();
   }
 
   logout(): void {

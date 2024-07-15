@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Output, ViewChild, inject} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Output, ViewChild, inject } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
@@ -10,6 +10,9 @@ import { VideoComponent } from '../video/video.component';
 import { Video } from '../../models/video.model';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable } from 'rxjs';
+import { FilmsComponent } from '../categories/films/films.component';
+import { SeriesComponent } from '../categories/series/series.component';
+import { PlaylistComponent } from '../categories/playlist/playlist.component';
 
 interface VideosResponse {
   videos: Video[];
@@ -18,31 +21,27 @@ interface VideosResponse {
 @Component({
   selector: 'app-mainpage',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, VideoComponent],
+  imports: [CommonModule, NavbarComponent, FooterComponent, VideoComponent, FilmsComponent, SeriesComponent, PlaylistComponent],
   templateUrl: './mainpage.component.html',
   styleUrl: './mainpage.component.scss',
   animations: [fadeInPage]
 })
 export class MainpageComponent implements AfterViewInit {
 
-elementRef = inject(ElementRef);
-@ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
-@ViewChild('line3', { static: false }) line3: ElementRef;
-savedScrollLeft = 0;
-savedRelativePositions: number[] = [];
-isScrollable = false;
-title: string;
-description: string;
-loading: boolean = false;
+  elementRef = inject(ElementRef);
+  @ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
+  @ViewChild('line3', { static: false }) line3: ElementRef;
+  savedScrollLeft = 0;
+  savedRelativePositions: number[] = [];
+  isScrollable = false;
+  title: string;
+  description: string;
+  loading: boolean = false;
 
-currentPage: 'dashboard' | 'films' | 'series' | 'userList' = 'dashboard';
-closeMenu: boolean = false;
-///// ToDo make components for each page
-allFilms: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-allSeries: any[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-userVideos: any[] = [1, 2, 3, 4, 5, 6];
+  currentPage: 'dashboard' | 'films' | 'series' | 'playlist' = 'dashboard';
+  closeMenu: boolean = false;
 
- constructor(
+  constructor(
     public navService: NavigationService,
     public authService: AuthService,
     public videoService: VideoService,
@@ -50,37 +49,37 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
   ) { }
 
 
- ngOnInit(): void { 
-  this.loading = true;
+  ngOnInit(): void {
+    this.loading = true;
     this.videoService.loadPosterUrls();
-    this.videoService.loadAllVideoUrls(this.videoPlayer); 
+    this.videoService.loadAllVideoUrls(this.videoPlayer);
     setTimeout(() => {
       forkJoin({
-           title: this.videoService.getTitle(),
-           description: this.videoService.getDescription()
-         }).subscribe({
-           next: data => {
-             this.title = data.title;
-             this.description = data.description;
-           },
-           error: error => console.error('Error fetching data:', error)
-         }); 
-         }, 3000); 
-         setTimeout(() => {
-          const lineElement = document.querySelector('.line');
-          if (lineElement) {
-            lineElement.classList.add('flex');
-          }
-        }, 5000);
-        setTimeout(() => {
-          const lineElement = document.querySelector('.video-container');
-          if (lineElement) {
-            lineElement.classList.add('flex');
-          }
-          this.loading = false;
-        }, 3000);
-  this.loadGcsData();
-         
+        title: this.videoService.getTitle(),
+        description: this.videoService.getDescription()
+      }).subscribe({
+        next: data => {
+          this.title = data.title;
+          this.description = data.description;
+        },
+        error: error => console.error('Error fetching data:', error)
+      });
+    }, 3000);
+    setTimeout(() => {
+      const lineElement = document.querySelector('.line');
+      if (lineElement) {
+        lineElement.classList.add('flex');
+      }
+    }, 5000);
+    setTimeout(() => {
+      const lineElement = document.querySelector('.video-container');
+      if (lineElement) {
+        lineElement.classList.add('flex');
+      }
+      this.loading = false;
+    }, 3000);
+    this.loadGcsData();
+
   }
 
   //gcsData: any[] = [];
@@ -90,18 +89,18 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     // this.gcsData = this.videoService.getGcsData();
     // this.gcsData = this.videoService.gcsData;
     // console.log('this.gcsData mainpage',this.gcsData);
-  
+
     // }, 3000);
-    
+
   }
 
   ngAfterViewInit(): void {
     if (this.videoPlayer) {
       this.videoService.videoPlayer = this.videoPlayer;
-      } else {
+    } else {
       console.error('Video player element is not available');
-    } 
-    
+    }
+
   }
 
 
@@ -110,11 +109,11 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     setTimeout(() => this.closeMenu = false, 10);
   }
 
-  onPageChanged(page: 'dashboard' | 'films' | 'series' | 'userList') {
+  onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.currentPage = page;
   }
 
-  activePage(page: 'dashboard' | 'films' | 'series' | 'userList') {
+  activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     return this.currentPage === page;
   }
 
@@ -123,7 +122,7 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     let profileId = this.authService.getProfile().id;
     if (profileId) {
       //this.restService.updateProfile(profileId, { active: false })
-      this.navService.profile();
+      this.navService.profiles();
     }
   }
 
@@ -153,14 +152,14 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
       Array.from(outerContainer.children).forEach((item: HTMLElement, index: number) => {
         const originalRelativePosition = this.savedRelativePositions[index];
         let newLeft = originalRelativePosition - this.savedScrollLeft;
-        
+
         if (index > 0 && !this.isContainerScrollable(outerContainer)) {
           newLeft = Math.min(newLeft, previousPosition);
         }
-        
+
         item.style.position = 'relative';
         item.style.left = `${newLeft}px`;
-        
+
         previousPosition = newLeft;
       });
 
@@ -176,12 +175,12 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     this.isScrollable = !this.isScrollable;
   }
 
-  
+
   scrollingLeft3() {
     this.isScrollable = true;
-    this. toggleMode();
+    this.toggleMode();
     const outerContainer = this.line3.nativeElement;
-    outerContainer.scrollLeft -= 700; 
+    outerContainer.scrollLeft -= 700;
   }
 
 
@@ -189,7 +188,7 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
     this.isScrollable = true;
     this.toggleMode();
     const outerContainer = this.line3.nativeElement;
-    outerContainer.scrollLeft += 700; 
+    outerContainer.scrollLeft += 700;
   }
 
 

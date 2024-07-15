@@ -33,7 +33,11 @@ export class NavigationService {
     this.router.navigate(['/send_mail']);
   }
 
-  profile() {
+  updateUsername() {
+    this.router.navigate(['/update_username']);
+  }
+
+  profiles() {
     this.router.navigate(['/selection']);
   }
 

@@ -1,0 +1,55 @@
+button {
+    transition: all 105ms ease-in-out;
+}
+
+.btn-container {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 3;
+    cursor: pointer;
+    background-color: #7400c2;
+    border-radius: 8px;
+
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+
+    --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    --tw-bg-opacity: 1;
+
+    transition: all 105ms ease-in-out;
+
+    &:hover {
+        --tw-bg-opacity: 1;
+        background-color: #aa42f0;
+    }
+
+    @media(max-width: 768px) {}
+}
+
+.btn-container-right {
+    left: unset !important;
+    right: 2rem;
+}
+
+.submit-btn {
+    height: 56px;
+
+    @media(max-width: 639px) {
+        height: 50px;
+        font-size: 1rem;
+        line-height: 1.15rem;
+    }
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.25);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 27px;
+    height: 27px;
+    animation: spin 1s linear infinite;
+    margin-top: -2px;
+}

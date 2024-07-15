@@ -11,14 +11,14 @@ import { AlertService } from '../services/alert.service';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
-  selector: 'app-user-selection',
+  selector: 'app-profiles',
   standalone: true,
   imports: [CommonModule, DialogCreateProfileComponent, LoadingScreenComponent],
-  templateUrl: './user-selection.component.html',
-  styleUrl: './user-selection.component.scss',
+  templateUrl: './profiles.component.html',
+  styleUrl: './profiles.component.scss',
   animations: [fadeInPage]
 })
-export class UserSelectionComponent implements OnInit {
+export class ProfilesComponent implements OnInit {
 
   profiles$: Observable<Profile[]>;
   profileImages: any[] = ProfileImages;
