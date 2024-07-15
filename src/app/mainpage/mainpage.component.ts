@@ -54,7 +54,8 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
   this.loading = true;
     this.videoService.loadPosterUrls();
     this.videoService.loadAllVideoUrls(this.videoPlayer); 
-    setTimeout(() => {
+    this.videoService.loadGcsData();
+    setTimeout(() => {  // Mainvideo
       forkJoin({
            title: this.videoService.getTitle(),
            description: this.videoService.getDescription()
@@ -65,35 +66,10 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
            },
            error: error => console.error('Error fetching data:', error)
          }); 
-         }, 3000); 
-        //  setTimeout(() => {
-        //   const lineElement = document.querySelector('.line');
-        //   if (lineElement) {
-        //     lineElement.classList.add('flex');
-        //   }
-        // }, 5000);
-        // setTimeout(() => {
-        //   const lineElement = document.querySelector('.video-container');
-        //   if (lineElement) {
-        //     lineElement.classList.add('flex');
-        //   }
-        //   this.loading = false;
-        // }, 3000);
-  this.loadGcsData();
-         
+         }, 1000);       
   }
 
-  //gcsData: any[] = [];
-  loadGcsData(): void {
-    this.videoService.loadGcsData();
-    // setTimeout(() => {  
-    // this.gcsData = this.videoService.getGcsData();
-    // this.gcsData = this.videoService.gcsData;
-    // console.log('this.gcsData mainpage',this.gcsData);
   
-    // }, 3000);
-    
-  }
 
   ngAfterViewInit(): void {
     if (this.videoPlayer) {
