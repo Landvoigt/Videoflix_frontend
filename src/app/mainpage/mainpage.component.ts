@@ -52,47 +52,23 @@ export class MainpageComponent implements AfterViewInit {
   ngOnInit(): void {
     this.loading = true;
     this.videoService.loadPosterUrls();
-    this.videoService.loadAllVideoUrls(this.videoPlayer);
-    setTimeout(() => {
-      forkJoin({
-        title: this.videoService.getTitle(),
-        description: this.videoService.getDescription()
-      }).subscribe({
-        next: data => {
-          this.title = data.title;
-          this.description = data.description;
-        },
-        error: error => console.error('Error fetching data:', error)
-      });
-    }, 3000);
-    setTimeout(() => {
-      const lineElement = document.querySelector('.line');
-      if (lineElement) {
-        lineElement.classList.add('flex');
-      }
-    }, 5000);
-    setTimeout(() => {
-      const lineElement = document.querySelector('.video-container');
-      if (lineElement) {
-        lineElement.classList.add('flex');
-      }
-      this.loading = false;
-    }, 3000);
-    this.loadGcsData();
-
-  }
-
-  //gcsData: any[] = [];
-  loadGcsData(): void {
+    this.videoService.loadAllVideoUrls(this.videoPlayer); 
     this.videoService.loadGcsData();
-    // setTimeout(() => {  
-    // this.gcsData = this.videoService.getGcsData();
-    // this.gcsData = this.videoService.gcsData;
-    // console.log('this.gcsData mainpage',this.gcsData);
-
-    // }, 3000);
-
+    setTimeout(() => {  // Mainvideo
+      forkJoin({
+           title: this.videoService.getTitle(),
+           description: this.videoService.getDescription()
+         }).subscribe({
+           next: data => {
+             this.title = data.title;
+             this.description = data.description;
+           },
+           error: error => console.error('Error fetching data:', error)
+         }); 
+         }, 1000);       
   }
+
+  
 
   ngAfterViewInit(): void {
     if (this.videoPlayer) {

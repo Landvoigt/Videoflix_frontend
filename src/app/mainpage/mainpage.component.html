@@ -17,24 +17,17 @@
           </video>
         </div>
       </div>
-
-      <div *ngIf="loading" class="spinner position"></div>
-      <div class="line-wrapper">
-        <div id="line3" #line3 class="line">
-          <app-video *ngFor="let video of videoService.videoData; let index = index"
-            [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
-            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
-            [description]="video.description || ''"></app-video>
-        </div>
-
-        <div class="line-wrapper-left">
-          <img id="left3" (click)="scrollingLeft3()" (mouseleave)="toVisibleModus3()"
-            src="/assets/img/videostore/arrow-left.png">
-        </div>
-        <div class="line-wrapper-right">
-          <img id="right3" (click)="scrollingRight3()" (mouseleave)="toVisibleModus3()"
-            src="/assets/img/videostore/arrow-right.png">
-        </div>
+    </div>
+    
+    <!-- <div *ngIf="loading" class="spinner position"></div> -->
+    <div class="line-wrapper">
+      <div id="line3" #line3 class="line">
+        <app-video  *ngFor="let video of videoService.videoData; let index = index"
+         [videoUrlGcs]="video.videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'"
+          [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'"
+          [title]="video.title || ''"
+          [description]="video.description || ''"
+          ></app-video>
       </div>
     </ng-container>
 
