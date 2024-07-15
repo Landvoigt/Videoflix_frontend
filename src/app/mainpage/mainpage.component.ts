@@ -66,19 +66,19 @@ userVideos: any[] = [1, 2, 3, 4, 5, 6];
            error: error => console.error('Error fetching data:', error)
          }); 
          }, 3000); 
-         setTimeout(() => {
-          const lineElement = document.querySelector('.line');
-          if (lineElement) {
-            lineElement.classList.add('flex');
-          }
-        }, 5000);
-        setTimeout(() => {
-          const lineElement = document.querySelector('.video-container');
-          if (lineElement) {
-            lineElement.classList.add('flex');
-          }
-          this.loading = false;
-        }, 3000);
+        //  setTimeout(() => {
+        //   const lineElement = document.querySelector('.line');
+        //   if (lineElement) {
+        //     lineElement.classList.add('flex');
+        //   }
+        // }, 5000);
+        // setTimeout(() => {
+        //   const lineElement = document.querySelector('.video-container');
+        //   if (lineElement) {
+        //     lineElement.classList.add('flex');
+        //   }
+        //   this.loading = false;
+        // }, 3000);
   this.loadGcsData();
          
   }
