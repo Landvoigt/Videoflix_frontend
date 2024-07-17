@@ -62,7 +62,7 @@ export class MainpageComponent implements AfterViewInit {
         },
         error: error => console.error('Error fetching data:', error)
       });
-    }, 2250);
+    }, 2500);
   }
 
   ngAfterViewInit(): void {

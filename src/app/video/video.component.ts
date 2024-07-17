@@ -45,8 +45,8 @@ videos: Video[] = [];
 
 ngAfterViewInit() {
     this.appRef.isStable.pipe(first(isStable => isStable)).subscribe(() => {
-     // const resolution = '360p';
-       //this.getVideoUrl('waterfall_1', resolution);
+      const resolution = '360p';
+       this.getVideoUrl('waterfall_1', resolution);
     });
 }
   
