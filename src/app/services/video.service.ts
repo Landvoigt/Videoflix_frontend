@@ -5,9 +5,12 @@ import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { VideoResponse } from '../interfaces/video.interface';
 
+
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class VideoService {
 
   videoUrls: string[] = [];
@@ -19,6 +22,8 @@ export class VideoService {
   descriptionUrl: string = "";
   titleUrl: string = "";
   gcsData: any[] = [];
+  randomDataName:string;
+
 
   constructor(private http: HttpClient, private ngZone: NgZone) { }
 
@@ -29,16 +34,9 @@ export class VideoService {
       next: (response) => {
         this.videoUrls = response.video_urls;
         this.setupVideoPlayer(videoPlayer, this.videoUrls.length > 0 ? this.videoUrls[0] : '/assets/img/videostore/300.png');
-        this.getRandomVideoUrl();
         if (this.videoUrls && this.videoUrls.length > 0) {
           this.createVideoData();
-          this.checkVideoDataAvailability().subscribe(isAvailable => {
-            if (isAvailable) {
-              //this.createVideoData();           
-            } else {
-              console.warn('Required video data not available in Django');
-            }
-          });
+          this.getRandomVideoUrl();      
         } else {
           console.warn('No video URLs found in the response');
         }
@@ -50,36 +48,11 @@ export class VideoService {
   }
 
 
-  checkVideoDataAvailability(): Observable<boolean> {
-    const apiUrl = `http://localhost:8000/check-video-data/`;
-    return this.http.post<{ is_available: boolean }>(apiUrl, { video_urls: this.videoUrls }).pipe(
-      map(response => response.is_available),
-    );
-  }
-
-
   getRandomVideoUrl(): string {
     const randomIndex = Math.floor(Math.random() * this.videoUrls.length);
-    const randomDataName = this.getDirectoryNameFromUrl(this.videoUrls[randomIndex]);
-    this.getVideoUrl(randomDataName, '360p');
-    this.textForMainVideo((randomDataName));
+    this.randomDataName = this.getDirectoryNameFromUrl(this.videoUrls[randomIndex]);
+    this.getVideoUrl(this.randomDataName, '360p');
     return this.videoUrls[randomIndex];
-  }
-
-
-  textForMainVideo(randomDataName: string): void {
-    //console.log('randomDataName',randomDataName);
-    this.descriptionUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/description.txt`;
-    this.titleUrl = `https://storage.googleapis.com/videoflix-videos/text/${randomDataName}/title.txt`;
-  }
-
-
-  getDescription(): Observable<string> {
-    return this.http.get(this.descriptionUrl, { responseType: 'text' });
-  }
-
-  getTitle(): Observable<string> {
-    return this.http.get(this.titleUrl, { responseType: 'text' });
   }
 
 
@@ -100,58 +73,6 @@ export class VideoService {
   }
 
 
-  // createVideoData(): void {                // Grundversio
-  //   this.getAllVideos().subscribe({
-  //     next: (data) => {
-  //       this.videoData = data.videos.map((video) => ({
-  //         videoUrlGcs: video.hls_playlist,
-  //         posterUrlGcs: (video.hls_playlist ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}` : '/assets/img/videostore/300.png'),
-  //         title: video.title,
-  //         description: video.description,
-  //       }));
-  //       //console.log('this.videoData:', this.videoData);
-  //     },
-  //     error: (error) => {
-  //       console.error('Error fetching video data:', error);
-  //     }
-  //   });
-  // }
-
-
-  // createVideoData(): void {                                // es ist mit django daten !!!!!!!
-  //   this.getAllVideos().subscribe({
-  //     next: (data) => {
-  //       this.videoData = data.videos.map((video) => ({
-  //         videoUrlGcs: video.hls_playlist,
-  //         posterUrlGcs: (video.hls_playlist ? `https://storage.googleapis.com/videoflix-videos/video-posters/${this.getPosterFileName(video.hls_playlist)}` : '/assets/img/videostore/300.png'),
-  //         title: video.title,
-  //         description: video.description,
-  //       }));
-
-  //       // Now update title and description from gcsData if local data is missing
-  //       this.videoData.forEach((video) => {
-  //         if (!video.title || !video.description) {
-  //           const subfolder = this.getSubfolderFromUrl(video.videoUrlGcs);
-  //           const gcsInfo = this.gcsData.find((item) => item.subfolder === subfolder);
-  //           console.log('gcsInfo.title',gcsInfo.title);
-  //           if (gcsInfo) {
-  //             video.title = video.title || gcsInfo.title || 'Default Title';
-  //             video.description = video.description || gcsInfo.description || 'Default Description';
-  //             console.log('gcsInfo.title',gcsInfo.title);
-  //           }
-  //         }
-  //       });
-
-  //       console.log('Updated videoData:', this.videoData);
-  //     },
-  //     error: (error) => {
-  //       console.error('Error fetching video data:', error);
-  //     }
-  //   });
-  // }
-
-
-
   createVideoData(): void {
     this.getAllVideos().subscribe({
       next: (data) => {
@@ -166,23 +87,30 @@ export class VideoService {
 
         this.videoData.forEach((video) => {
           setTimeout(() => {
-
             const subfolder = this.getSubfolderFromUrl(video.videoUrlGcs);
             const gcsInfo = this.gcsData.find((item) => item.subfolder === subfolder);
             if (gcsInfo) {
-              video.title = gcsInfo.title || 'Default Title';
-              video.description = gcsInfo.description || 'Default Description';
+              video.title = gcsInfo.title || '';
+              video.description = gcsInfo.description || '';
             }
 
-          }, 3500);
+          }, 1000);
         });
 
-        //console.log('Updated videoData:', this.videoData);
+        console.log('Updated videoData:', this.videoData);
+       
       },
       error: (error) => {
         console.error('Error fetching video data:', error);
       }
     });
+  }
+
+
+  
+  getAllVideos(): Observable<VideoResponse> {
+    const apiUrlVideos = 'http://localhost:8000/api/videos/';
+    return this.http.get<VideoResponse>(apiUrlVideos);
   }
 
 
@@ -193,13 +121,6 @@ export class VideoService {
   }
 
 
-  getAllVideos(): Observable<VideoResponse> {
-    const apiUrlVideos = 'http://localhost:8000/api/videos/';
-    return this.http.get<VideoResponse>(apiUrlVideos);
-  }
-
-
-
   getVideoUrl(videoKey: string, resolution: string): void {
     const apiUrl = `http://localhost:8000/get-video-url/?video_key=${videoKey}&resolution=${resolution}`;
     this.http.get<any>(apiUrl).subscribe({
@@ -208,7 +129,10 @@ export class VideoService {
           this.videoUrl = data.video_url;  // Hauptvideo
           this.videoUrls.push(data.video_url);
           this.setupVideoPlayer(this.videoPlayer, this.videoUrl);
-          //console.log('this.videoUrl',this.videoUrl);  
+          setTimeout(() => {
+             this.textForMainVideo(this.videoUrl); 
+          }, 1500);
+         
         } else {
           console.error('Invalid response format from server');
         }
@@ -218,6 +142,22 @@ export class VideoService {
       }
     });
   }
+
+
+  textForMainVideo(url:string): void {
+    console.log('url',url);
+    for (let index = 0; index < this.videoData.length; index++) {
+        const element = this.videoData[index];
+        const videoUrlGcs = element.videoUrlGcs;
+        const title = element.title;
+        const description = element.description;
+        if (this.getDirectoryNameFromUrl(url) === this.getDirectoryNameFromUrl(videoUrlGcs)) {
+            this.titleUrl = title; 
+            this.descriptionUrl = description;
+            break; 
+        }
+    }
+}
 
 
 

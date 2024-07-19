@@ -50,20 +50,8 @@ export class MainpageComponent implements AfterViewInit {
     this.videoService.loadPosterUrls();
     this.videoService.loadAllVideoUrls(this.videoPlayer);
     this.videoService.loadGcsData();
-    setTimeout(() => {  // Mainvideo
-      forkJoin({
-        title: this.videoService.getTitle(),
-        description: this.videoService.getDescription()
-      }).subscribe({
-        next: data => {
-          this.title = data.title;
-          this.description = data.description;
-          this.loadingApp = false;
-        },
-        error: error => console.error('Error fetching data:', error)
-      });
-    }, 2500);
-  }
+   }
+
 
   ngAfterViewInit(): void {
     if (this.videoPlayer) {
@@ -73,6 +61,7 @@ export class MainpageComponent implements AfterViewInit {
     }
   }
 
+  
   closeUserMenu() {
     this.closeMenu = true;
     setTimeout(() => this.closeMenu = false, 10);
