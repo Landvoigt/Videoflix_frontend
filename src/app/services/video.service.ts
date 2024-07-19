@@ -94,7 +94,7 @@ export class VideoService {
               video.description = gcsInfo.description || '';
             }
 
-          }, 1000);
+          }, 3000);
         });
 
         console.log('Updated videoData:', this.videoData);
@@ -131,7 +131,7 @@ export class VideoService {
           this.setupVideoPlayer(this.videoPlayer, this.videoUrl);
           setTimeout(() => {
              this.textForMainVideo(this.videoUrl); 
-          }, 1500);
+          }, 3500);
          
         } else {
           console.error('Invalid response format from server');

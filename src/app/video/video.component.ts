@@ -28,7 +28,6 @@ videos: Video[] = [];
 @Output() hover = new EventEmitter<boolean>();
 @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 
-
   constructor(
     private http: HttpClient,
     private ngZone: NgZone,
@@ -54,6 +53,8 @@ onHover() {
   this.videoPlayer.nativeElement.play(); 
   this.isVideoPlaing = true;
   this.hover.emit(true);
+ 
+
 }
 
 onLeave() {
@@ -61,6 +62,17 @@ onLeave() {
   this.videoPlayer.nativeElement.currentTime = 0; 
   this.isVideoPlaing = false;
   this.hover.emit(false);
+}
+
+
+onFullScreen() {
+  const videoElement = this.videoPlayer.nativeElement;
+  if (videoElement.requestFullscreen) {
+    videoElement.requestFullscreen();
+     this.isVideoPlaing = true;
+     videoElement.play(); 
+     console.log('URL:', this.videoUrlGcs);
+  }
 }
 
 
