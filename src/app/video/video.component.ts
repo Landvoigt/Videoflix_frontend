@@ -19,7 +19,6 @@ export class VideoComponent implements AfterViewInit {
  
 isVideoPlaing = true;
 videoUrl: string = '';
-videos: Video[] = [];
 @Input() title: string;
 @Input() description: string;
 @Input() videoUrlGcs: string;
@@ -42,7 +41,6 @@ ngAfterViewInit() {}
   
 onHover() {
   const preViewName =  this.extractFilename(this.posterUrlGcs);
-  console.log('preViewName', preViewName);
   this.getVideoUrl(preViewName,'360p'); 
 }
 
@@ -52,7 +50,6 @@ extractFilename(posterUrl: string): string {
   const pathname = urlObject.pathname;
   const filenameWithExtension = pathname.substring(pathname.lastIndexOf('/') + 1);
   const filename = filenameWithExtension.split('.')[0];
-  console.log('filename',filename);
   return filename;
 }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Output, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, ElementRef, Output, ViewChild, inject } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
@@ -13,6 +13,7 @@ import { FilmsComponent } from '../categories/films/films.component';
 import { SeriesComponent } from '../categories/series/series.component';
 import { PlaylistComponent } from '../categories/playlist/playlist.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
+import Hls from 'hls.js';
 
 export interface VideoData {
   subfolder: string;
@@ -32,7 +33,7 @@ export interface VideoData {
 export class MainpageComponent implements AfterViewInit {
 
   elementRef = inject(ElementRef);
-  @ViewChild('videoPlayerStart', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
+  @ViewChild('videoPlayerMain', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
   @ViewChild('line3', { static: false }) line3: ElementRef;
   savedScrollLeft = 0;
   savedRelativePositions: number[] = [];
@@ -40,6 +41,9 @@ export class MainpageComponent implements AfterViewInit {
   title: string;
   description: string;
   videoDataGcs: VideoData[] = []; // NEU
+  videoUrl: string = ''; // NEU
+  hls: Hls | null = null; // NEU
+
 
   loadingApp: boolean = false;
 
@@ -50,37 +54,39 @@ export class MainpageComponent implements AfterViewInit {
     public navService: NavigationService,
     public authService: AuthService,
     public videoService: VideoService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private appRef: ApplicationRef
   ) { }
 
   ngOnInit(): void {
     this.loadingApp = true;
-    // this.videoService.loadPosterUrls();
-    // this.videoService.loadAllVideoUrls(this.videoPlayer);
-    // this.videoService.loadGcsData();
-    this.videoService.getVideoData().subscribe(data => {
-      this.videoDataGcs = data.gcs_video_text_data.map((item: any) => {
-        const posterUrl = data.poster_urls.find((url: string) => url.includes(item.subfolder));
-        return {
-          subfolder: item.subfolder,
-          title: item.title,
-          description: item.description,
-          posterUrlGcs: posterUrl
-        };
-      });
-      console.log('Processed video data:', this.videoDataGcs);
-    }, error => {
-      console.error('Error fetching video data:', error);
+
+
+    this.videoService.getVideoData().subscribe({
+      next: (data) => {
+        this.videoDataGcs = data.gcs_video_text_data.map((item: any) => {
+          const posterUrl = data.poster_urls.find((url: string) => url.includes(item.subfolder));
+          return {
+            subfolder: item.subfolder,
+            title: item.title,
+            description: item.description,
+            posterUrlGcs: posterUrl
+          };
+        });
+        console.log('Processed video data:', this.videoDataGcs);
+      },
+      error: (error) => {
+        console.error('Error fetching video data:', error);
+      }
     });
    }
 
 
   ngAfterViewInit(): void {
-    // if (this.videoPlayer) {
-    //   this.videoService.videoPlayer = this.videoPlayer;
-    // } else {
-    //   console.error('Video player element is not available');
-    // }
+     setTimeout(() => {
+      this. getRandomVideoData();
+   }, 2500);
   }
 
   
@@ -183,8 +189,65 @@ export class MainpageComponent implements AfterViewInit {
     });
   }
 
+
   private isContainerScrollable(container: HTMLElement): boolean {
     return container.scrollWidth > container.clientWidth;
+  }
+
+
+  getRandomVideoData(): void{
+    if (this.videoDataGcs.length === 0) {
+      console.error('No video data available');
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * this.videoDataGcs.length);
+    const randomVideoData = this.videoDataGcs[randomIndex];
+    this.title = randomVideoData.title;
+    this.description = randomVideoData.description;
+    this.getVideoUrl( randomVideoData.subfolder, '360p')
+  }
+
+
+  getVideoUrl(videoKey: string, resolution: string): void {
+    const apiUrl = `http://localhost:8000/preview-video/?video_key=${videoKey}&resolution=${resolution}`;
+    this.http.get<{ video_url: string }>(apiUrl).subscribe({
+      next: (data) => {
+        if (data && data.video_url) {
+          this.videoUrl = data.video_url;
+          this.cdr.detectChanges();  
+          this.setupVideoPlayer();
+        } else {
+          console.error('Invalid response format from server');
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching video URL:', error);
+      }
+    });
+  }
+  
+  
+  setupVideoPlayer(): void {
+    const video: HTMLVideoElement = this.videoPlayer.nativeElement;
+  
+    if (Hls.isSupported()) {
+      if (this.hls) {
+        this.hls.destroy();
+      }
+      this.hls = new Hls();
+      this.hls.loadSource(this.videoUrl);
+      this.hls.attachMedia(video);
+      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play();
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = this.videoUrl;
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+      });
+    } else {
+      console.error('HLS not supported');
+    }
   }
 
 

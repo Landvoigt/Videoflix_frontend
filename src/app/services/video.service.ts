@@ -13,16 +13,10 @@ import { VideoResponse } from '../interfaces/video.interface';
 
 export class VideoService {
 
-  //videoUrls: string[] = [];
-  //videoUrl: string = '';
-  //posterUrls: string[] = [];
-  //videoData: { videoUrlGcs: string; posterUrlGcs: string; title: string; description: string }[] = [];
+  
   videoPlayer: ElementRef;
-  //randomVideo: string;
   descriptionUrl: string = "";
   titleUrl: string = "";
-  //gcsData: any[] = [];
-  //randomDataName:string;
 
 
   constructor(private http: HttpClient, private ngZone: NgZone) { }
