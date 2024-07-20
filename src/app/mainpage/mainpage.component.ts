@@ -14,6 +14,13 @@ import { SeriesComponent } from '../categories/series/series.component';
 import { PlaylistComponent } from '../categories/playlist/playlist.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 
+export interface VideoData {
+  subfolder: string;
+  description: string;
+  title: string;
+  posterUrlGcs?: string; 
+}
+
 @Component({
   selector: 'app-mainpage',
   standalone: true,
@@ -32,6 +39,7 @@ export class MainpageComponent implements AfterViewInit {
   isScrollable = false;
   title: string;
   description: string;
+  videoDataGcs: VideoData[] = []; // NEU
 
   loadingApp: boolean = false;
 
@@ -47,18 +55,32 @@ export class MainpageComponent implements AfterViewInit {
 
   ngOnInit(): void {
     this.loadingApp = true;
-    this.videoService.loadPosterUrls();
-    this.videoService.loadAllVideoUrls(this.videoPlayer);
-    this.videoService.loadGcsData();
+    // this.videoService.loadPosterUrls();
+    // this.videoService.loadAllVideoUrls(this.videoPlayer);
+    // this.videoService.loadGcsData();
+    this.videoService.getVideoData().subscribe(data => {
+      this.videoDataGcs = data.gcs_video_text_data.map((item: any) => {
+        const posterUrl = data.poster_urls.find((url: string) => url.includes(item.subfolder));
+        return {
+          subfolder: item.subfolder,
+          title: item.title,
+          description: item.description,
+          posterUrlGcs: posterUrl
+        };
+      });
+      console.log('Processed video data:', this.videoDataGcs);
+    }, error => {
+      console.error('Error fetching video data:', error);
+    });
    }
 
 
   ngAfterViewInit(): void {
-    if (this.videoPlayer) {
-      this.videoService.videoPlayer = this.videoPlayer;
-    } else {
-      console.error('Video player element is not available');
-    }
+    // if (this.videoPlayer) {
+    //   this.videoService.videoPlayer = this.videoPlayer;
+    // } else {
+    //   console.error('Video player element is not available');
+    // }
   }
 
   

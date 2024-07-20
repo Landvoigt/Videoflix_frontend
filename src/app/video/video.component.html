@@ -1,6 +1,6 @@
 
 
- <div class="main-video-container"  (click)="onFullScreen()"  (mouseenter)="onHover()" (mouseleave)="onLeave()">
+ <div class="main-video-container"   (mouseenter)="onHover()" (mouseleave)="onLeave()">
                       
   <div class="video-container-above">
     <img id="posterImg" [src]="posterUrlGcs" alt="Video Poster"> 
@@ -17,10 +17,10 @@
       controls
       preload="auto"
       width="640" height="264"
-      [src]="videoUrlGcs"
       data-setup="{}"
       disablePictureInPicture
       type="application/x-mpegURL"
+      [src]="videoUrl"
       >
       Your browser does not support the video tag.
     </video>
