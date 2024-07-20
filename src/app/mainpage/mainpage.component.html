@@ -21,6 +21,7 @@
       <div class="line-wrapper">
         <div id="line3" #line3 class="line">
           <app-video *ngFor="let video of videoDataGcs; let index = index"
+            
             [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
             [description]="video.description || ''"></app-video>
         </div>
@@ -36,7 +37,9 @@
       </div>
     </ng-container>
 
-
+    <!-- [videoUrlGcs]="videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'" -->
+    
+    
     <ng-container *ngIf="activePage('films')">
       <app-films></app-films>
     </ng-container>

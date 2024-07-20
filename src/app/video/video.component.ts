@@ -1,8 +1,7 @@
-import { AfterViewInit, ApplicationRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { HttpClient } from '@angular/common/http';
 import Hls from 'hls.js';
-import { first } from 'rxjs';
 import { VideoService } from '../services/video.service';
 import { Video } from '../../models/video.model';
 
@@ -27,40 +26,24 @@ videos: Video[] = [];
 @Input() posterUrlGcs: string;
 @Output() hover = new EventEmitter<boolean>();
 @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
+hls: Hls | null = null;
 
   constructor(
     private http: HttpClient,
-    private ngZone: NgZone,
-    private appRef: ApplicationRef,
-    private videoService: VideoService
+    private videoService: VideoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
 
-   ngOnInit(): void {
-   
-    
-   }
+ngOnInit(): void {}
 
 
-ngAfterViewInit() {
-    // this.appRef.isStable.pipe(first(isStable => isStable)).subscribe(() => {
-    //   const resolution = '360p';
-    //    this.getVideoUrl('waterfall_1', resolution);
-    // });
-}
+ngAfterViewInit() {}
   
 onHover() {
-  // this.videoPlayer.nativeElement.play(); 
-  // this.isVideoPlaing = true;
-  // this.hover.emit(true);
-  
-  console.log('Title:', this.title);
-  console.log('Description:', this.description);
-  console.log('Poster URL:', this.posterUrlGcs);
   const preViewName =  this.extractFilename(this.posterUrlGcs);
   console.log('preViewName', preViewName);
   this.getVideoUrl(preViewName,'360p'); 
- 
 }
 
 
@@ -81,75 +64,35 @@ onLeave() {
 }
 
 
-// onFullScreen() {
-//   const videoElement = this.videoPlayer.nativeElement;
-//   if (videoElement.requestFullscreen) {
-//     videoElement.requestFullscreen();
-//      this.isVideoPlaing = true;
-//      videoElement.play(); 
-//      console.log('URL:', this.videoUrlGcs);
-//   }
-// }
-
-
-  // getVideoUrl(videoKey: string, resolution: string) {
-  //   const apiUrl = `http://storage.googleapis.com/videoflix-videos/hls/${videoKey}/${resolution}.m3u8`;
-
-  //   this.http.get<any>(apiUrl).subscribe({
-  //     next: (data) => {
-  //       if (data && data.video_url) {
-  //         this.videoUrl = data.video_url;
-  //         this.setupVideoPlayer();
-  //       } else {
-  //         console.error('Invalid response format from server');
-  //       }
-  //     },
-  //     error: (error) => {
-  //       console.error('Error fetching video URL:', error);
-  //     }
-  //   });
-  // }
-
- 
-//   getVideoUrl(videoKey: string, resolution: string): void {
-//     const apiUrl = `http://storage.googleapis.com/videoflix-videos/hls/${videoKey}/${resolution}.m3u8`;
-
-//     this.videoUrl = apiUrl;
-//     this.setupVideoPlayer();
-// }
-
-//   setupVideoPlayer(): void {
-//     this.ngZone.runOutsideAngular(() => {
-//       if (Hls.isSupported()) {
-//         const hls = new Hls();
-//         hls.loadSource(this.videoUrlGcs);
-//         hls.attachMedia(this.videoPlayer.nativeElement);
-//         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-//         });
-//       } else if (this.videoPlayer.nativeElement.canPlayType('application/vnd.apple.mpegurl')) {
-//         this.videoPlayer.nativeElement.src = this.videoUrlGcs;
-//         this.videoPlayer.nativeElement.addEventListener('loadedmetadata', () => {
-//         });
-//       } else {
-//         console.error('HLS is not supported in this browser');
-//       }
-//     });
-//   }
-
-
 getVideoUrl(videoKey: string, resolution: string): void {
-  const apiUrl = `https://storage.googleapis.com/videoflix-videos/hls/${videoKey}/${resolution}.m3u8`;
-  this.videoUrl = apiUrl;
-  this.setupVideoPlayer();
+  const apiUrl = `http://localhost:8000/preview-video/?video_key=${videoKey}&resolution=${resolution}`;
+  this.http.get<{ video_url: string }>(apiUrl).subscribe({
+    next: (data) => {
+      if (data && data.video_url) {
+        this.videoUrl = data.video_url;
+        this.cdr.detectChanges();  
+        this.setupVideoPlayer();
+      } else {
+        console.error('Invalid response format from server');
+      }
+    },
+    error: (error) => {
+      console.error('Error fetching video URL:', error);
+    }
+  });
 }
 
 setupVideoPlayer(): void {
   const video: HTMLVideoElement = this.videoPlayer.nativeElement;
+
   if (Hls.isSupported()) {
-    const hls = new Hls();
-    hls.loadSource(this.videoUrl);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+    if (this.hls) {
+      this.hls.destroy();
+    }
+    this.hls = new Hls();
+    this.hls.loadSource(this.videoUrl);
+    this.hls.attachMedia(video);
+    this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
       video.play();
     });
   } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -157,6 +100,10 @@ setupVideoPlayer(): void {
     video.addEventListener('loadedmetadata', () => {
       video.play();
     });
+  } else {
+    console.error('HLS not supported');
   }
 }
- }
+
+
+}
