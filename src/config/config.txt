@@ -2,6 +2,6 @@ Stelle sicher, dass das Google Cloud SDK auf deinem Rechner installiert ist.
 
 Kommandozeile: gcloud auth login
 
-Kommandozeile: gsutil cors set src/config/cors-config.json gs://videoflix-videos
+Kommandozeile: gsutil cors set src/config/cors-config.json gs://videoflix-storage
 
-Kommandozeile: gsutil cors get gs://videoflix-videos
+Kommandozeile: gsutil cors get gs://videoflix-storage
