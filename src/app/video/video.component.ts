@@ -27,8 +27,8 @@ videoUrl: string = '';
 @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 hls: Hls | null = null;
 isFullscreen: boolean = false;
-videoUrl360p: string;
-hls360p: Hls;
+//videoUrl360p: string;
+//hls360p: Hls;
 hoverClass: boolean = false;
 
 
@@ -36,8 +36,6 @@ hoverClass: boolean = false;
 
 constructor(
     private http: HttpClient,
-   // private videoService: VideoService,
-   // private cdr: ChangeDetectorRef
     ) {}
 
 ngOnInit(): void {
@@ -104,32 +102,26 @@ setupVideoPlayer(resolution: string): void {
 
 
 onHover() {
+
   if (!this.posterUrlGcs) {
     console.error('posterUrlGcs is not set');
     return;
   }
   this.hover.emit(true); // ?
   const preViewName = this.extractFilename(this.posterUrlGcs);
-  this.getVideoUrl(preViewName, '360p')  // hier noch bearbeiten, weil 360p nicht mehr stimmt
-    .then((videoUrl360p) => {
-      this.videoUrl360p = videoUrl360p;
-      //this.setupVideoPlayer360p();
-      this.hoverClass = true;
-        const resolution = this.getScreenSize();
-        this.setupVideoPlayer(resolution); 
-        this.startHoverTimeout();
-        // const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-        // video.currentTime = 0; 
-    })
-    .catch(error => {
-      console.error('Error loading 360p video:', error);
-    });
-
-
-}
+  setTimeout(() => {
+     this.hoverClass = true;
+  }, 0);
+ 
+  const resolution = this.getScreenSize();
+  this.getVideoUrl(preViewName, resolution); 
+  this.setupVideoPlayer(resolution); 
+  this.startHoverTimeout();
+ }
 
 
 onLeave() {
+   this.hoverClass = false;
   this.videoPlayer.nativeElement.pause();
   this.videoPlayer.nativeElement.currentTime = 0;
   this.hover.emit(false);
@@ -141,7 +133,6 @@ onLeave() {
     this.stopVideoPlayer();
   }
   this.clearHoverTimeout();
- // this.resetVideoPlayer();
 }
 
 
@@ -167,34 +158,6 @@ onFullscreenChange(event: Event) {
   } else {
     this.stopVideoPlayer(); 
     this.hoverClass = true;
-  }
-}
-
-
-// vielleicht brauche ich das überhaupt nicht mehr
-setupVideoPlayer360p(): void {
-  const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-  if (!this.videoUrl360p) {
-    console.error('360p video URL is not set');
-    return;
-  }
-  if (Hls.isSupported()) {
-    if (this.hls360p) {
-      this.hls360p.destroy();
-    }
-    this.hls360p = new Hls();
-    this.hls360p.loadSource(this.videoUrl360p);
-    this.hls360p.attachMedia(video);
-    this.hls360p.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.play(); 
-    });
-  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = this.videoUrl360p;
-    video.addEventListener('loadedmetadata', () => {
-      video.play(); 
-    });
-  } else {
-    console.error('HLS not supported');
   }
 }
 
@@ -237,7 +200,6 @@ stopVideoPlayer(): void {
 hoverTimeout: any;
 startHoverTimeout() {
   this.hoverTimeout = setTimeout(() => {
-    //this.resetVideoPlayer();
     this.hoverClass = true;
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     video.currentTime = 0; 
@@ -245,15 +207,6 @@ startHoverTimeout() {
   }, 25000); 
 }
 
-
-// resetVideoPlayer() {
-//   const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-//   video.currentTime = 0; 
-//   video.pause();
-//   if (this.hls) {
-//     this.hls.destroy();
-//   }
-// }
 
 clearHoverTimeout() {
   if (this.hoverTimeout) {

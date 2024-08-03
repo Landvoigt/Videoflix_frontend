@@ -50,6 +50,8 @@ export class MainpageComponent implements AfterViewInit {
   leftmostId: string;
   rightmostId: string;
   onHoverVideo:boolean = true;
+  activeVideoId: string | null = null;
+  disableEvents = false;
 
 
   loadingApp: boolean = true;
@@ -69,29 +71,43 @@ export class MainpageComponent implements AfterViewInit {
     ) { }
 
     onHover(id:string) {
+      if (this.disableEvents) {
+        return;
+      }
+      this.activeVideoId = id;
+      this.disableEvents = true;
+        setTimeout(() => {
+        this.disableEvents = false;
+      }, 300);
       this.scrollingLeft3();  // hier noch schauen , wie kann man es ersetzen!!
       this.toVisibleModus3();  // hier noch schauen , wie kann man es ersetzen!!
-     // this.onHoverVideo = true;
       if(this.onHoverVideo) {
-         setTimeout(() => {
         if(id === this.leftmostId) {
-         this.changeChildStylesLeft(id);
-      console.log('id',id);
-     
+         this.changeChildStylesLeft(id);     
       }
       if( id === this.rightmostId)
         {
           this.changeChildStylesRight(id);
-       console.log('id',id);
-      
        }
-      }, 200);
-      }
-        
-      
+      } 
     }
 
+
+    shouldHandleEvent(id: string): boolean {
+      return !this.disableEvents || this.activeVideoId === id;
+    }
+
+
     onLeave(id:string) {
+      if (this.activeVideoId === id) {
+        this.activeVideoId = null;
+      }
+      this.disableEvents = true;
+  
+      setTimeout(() => {
+        this.disableEvents = false;
+      }, 300);
+
       if(id === this.leftmostId) {
         this.changeBackChildStylesLeft(id);
      console.log('id',id)
@@ -119,6 +135,7 @@ export class MainpageComponent implements AfterViewInit {
       }
     }
 
+
     changeChildStylesRight(id:string) { 
       const childElement = this.elementRef.nativeElement.querySelector(`#${id}`);
       if (childElement) {
@@ -127,6 +144,7 @@ export class MainpageComponent implements AfterViewInit {
        this.renderer.setStyle(childElement, 'z-index', '1000');
       }
     }
+
 
     changeBackChildStylesLeft(id:string) {
       const childElement = this.elementRef.nativeElement.querySelector(`#${id}`);
@@ -275,98 +293,6 @@ export class MainpageComponent implements AfterViewInit {
     this.toggleMode();
   }
 
-
-  // savePositions() {
-  //   const outerContainer = this.line3.nativeElement;
-  //   this.savedScrollLeft = outerContainer.scrollLeft;
-  //   this.savedRelativePositions = Array.from(outerContainer.children).map((item: HTMLElement) => {
-  //     const itemRect = item.getBoundingClientRect();
-  //     const containerRect = outerContainer.getBoundingClientRect();
-  //     return itemRect.left - containerRect.left + outerContainer.scrollLeft;
-  //   });
-  // }
-
-
-  // savePositions() {
-  //   const outerContainer = this.line3.nativeElement;
-  //   this.savedScrollLeft = outerContainer.scrollLeft;
-  //   const children = Array.from(outerContainer.children) as HTMLElement[];
-  
-  //   let leftmostPosition = Number.POSITIVE_INFINITY;
-  //   let rightmostPosition = Number.NEGATIVE_INFINITY;
-  //   let leftmostElement: HTMLElement | null = null;
-  //   let rightmostElement: HTMLElement | null = null;
-  
-  //   this.savedRelativePositions = children.map((item) => {
-  //     const itemRect = item.getBoundingClientRect();
-  //     const containerRect = outerContainer.getBoundingClientRect();
-  //     const position = itemRect.left - containerRect.left + outerContainer.scrollLeft;
-  
-  //     if (position < leftmostPosition) {
-  //       leftmostPosition = position;
-  //       leftmostElement = item;
-  //     }
-  //     if (position > rightmostPosition) {
-  //       rightmostPosition = position;
-  //       rightmostElement = item;
-  //     }
-  
-  //     return position;
-  //   });
-  
-  //   console.log('Ganz links:', leftmostPosition, leftmostElement);
-  //   console.log('Ganz rechts:', rightmostPosition, rightmostElement);
-  // }
-  
-
-
-
-  // savePositions() {
-  //   const outerContainer = this.line3.nativeElement;
-  //   this.savedScrollLeft = outerContainer.scrollLeft;
-  //   const children = Array.from(outerContainer.children) as HTMLElement[];
-  
-  //   let leftmostPosition = Number.POSITIVE_INFINITY;
-  //   let rightmostPosition = Number.NEGATIVE_INFINITY;
-  //   let leftmostElement: HTMLElement | null = null;
-  //   let rightmostElement: HTMLElement | null = null;
-  
-  //   this.savedRelativePositions = children.map((item) => {
-  //     const itemRect = item.getBoundingClientRect();
-  //     const containerRect = outerContainer.getBoundingClientRect();
-  //     const position = itemRect.left - containerRect.left + outerContainer.scrollLeft;
-  
-  //     if (position < leftmostPosition) {
-  //       leftmostPosition = position;
-  //       leftmostElement = item;
-  //     }
-  //     if (position > rightmostPosition) {
-  //       rightmostPosition = position;
-  //       rightmostElement = item;
-  //     }
-  
-  //     return position;
-  //   });
-  //   // links und rechts stimmen die positionen nicht
-  //   if (leftmostElement) {
-  //     const leftmostElementId = leftmostElement.getAttribute('id') || 'No ID';
-  //     const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
-  //     const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-  //     console.log('Ganz links:', leftmostPosition, leftmostElementId, leftmostPosterUrl);
-  //   } else {
-  //     console.log('Ganz links:', leftmostPosition, 'No element found');
-  //   }
-  
-  //   if (rightmostElement) {
-  //     const rightmostElementId = rightmostElement.getAttribute('id') || 'No ID';
-  //     const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
-  //     const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-  //     console.log('Ganz rechts:', rightmostPosition, rightmostElementId, rightmostPosterUrl);
-  //   } else {
-  //     console.log('Ganz rechts:', rightmostPosition, 'No element found');
-  //   }
-  // }
-  
 
    private isContainerScrollable(container: HTMLElement): boolean {
      return container.scrollWidth > container.clientWidth;

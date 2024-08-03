@@ -31,8 +31,8 @@
             [id]="'videoLine3' + index"       
             [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
             [description]="video.description || ''"
-           (mouseenter)="onHover('videoLine3' + index)"
-           (mouseleave)="onLeave('videoLine3' + index)"
+         (mouseenter)="shouldHandleEvent('videoLine3' + index) ? onHover('videoLine3' + index) : null"
+         (mouseleave)="shouldHandleEvent('videoLine3' + index) ? onLeave('videoLine3' + index) : null"
             ></app-video>
         </div>
 
@@ -45,6 +45,7 @@
             src="/assets/img/videostore/arrow-right.png">
         </div>
       </div>
+
     </ng-container>
 
     <!-- [videoUrlGcs]="videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'" -->
