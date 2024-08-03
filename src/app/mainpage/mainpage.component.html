@@ -10,9 +10,12 @@
 
       <div class="w-full h-96 flex video-wrapper">
         <div class="video-container">
-          <h1 class="title">{{title || ''}}</h1>
-          <p class="description">{{description || ''}}</p>
-          <video autoplay
+          <img id="posterImgMain" *ngIf="!videoPlayingNow" [src]="posterUrlGcs">
+          <h1 *ngIf="!videoPlayingNow" class="title">{{title || ''}}</h1>
+          <p *ngIf="!videoPlayingNow" class="description">{{description || ''}}</p>
+          <video 
+           autoplay
+           preload="auto"
            #videoPlayerMain
            class="video-content"
            [src]="videoUrl"
@@ -22,11 +25,15 @@
         </div>
       </div>
 
-      <div class="line-wrapper">
+      <div class="line-wrapper" >
         <div id="line3" #line3 class="line">
-          <app-video *ngFor="let video of videoDataGcs; let index = index"        
+          <app-video class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
+            [id]="'videoLine3' + index"       
             [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
-            [description]="video.description || ''"></app-video>
+            [description]="video.description || ''"
+           (mouseenter)="onHover('videoLine3' + index)"
+           (mouseleave)="onLeave('videoLine3' + index)"
+            ></app-video>
         </div>
 
         <div class="line-wrapper-left">

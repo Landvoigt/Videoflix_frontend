@@ -25,33 +25,10 @@ img {
   cursor: pointer;
 }
 
-// .line-wrapper {
-//   display: flex;
-//   justify-content: space-between;
-//   width: calc(100% - 48px);
-//   margin-left: 48px;
-//   position: relative;
-// }
-
-// .line {
-//   display: flex;
-//   overflow-x: visible;
-//   scroll-behavior: smooth;
-//   align-items: center;
-//   gap: 32px;
-//   height: 190px;
-//   transition: all 0.5s ease;
-//   margin-top: 48px;
-// }
-
 
 .line-wrapper {
   display: flex;
-  //width: calc(100% - 48px);
- // margin-left: 48px;
-   position: relative;
-   
-  
+  position: relative;
 }
 
 .line {
@@ -59,27 +36,26 @@ img {
   overflow-x: visible;
   scroll-behavior: smooth;
   align-items: center;
-  gap: 32px;
   height: 190px;
-  //transition: all 0.5s ease;
   margin-top: 48px;
- // opacity: 0;
   transition: opacity 2s ease;
 }
 
-.line.flex {
-  opacity: 1;
+.videoInMainpage {
+  padding-left: 48px;
 }
+
 
 .line-wrapper-left {
   z-index: 102;
-  width: 10%;
+  width: 80px;
   height: 150px;
   position: absolute;
   left: 0;
-  
-  &:hover {
+  top: 68px;
 
+  &:hover {
+    background-color: #470a80;
     #left1,
     #left2,
     #left3 {
@@ -90,13 +66,14 @@ img {
 
 .line-wrapper-right {
   z-index: 102;
-  width: 10%;
-  height: 100%;
+  width: 80px;
+  height: 150px;
   position: absolute;
   right: 0;
-
+  top: 68px;
+ 
   &:hover {
-
+    background-color: #470a80;
     #right1,
     #right2,
     #right3 {
@@ -121,8 +98,8 @@ img {
   width: 50px;
   height: 70px;
   position: absolute;
-  top: 110px;
-  left: 16px;
+  top: 45px;
+  left: 10px;
   z-index: 10;
   display: none;
 }
@@ -133,8 +110,8 @@ img {
   width: 50px;
   height: 70px;
   position: absolute;
-  top: 110px;
-  right: 16px;
+  top: 45px;
+  right: 10px;
   z-index: 10;
   display: none;
 }
@@ -148,7 +125,6 @@ img {
   position: relative;
   width: 100%;
   height: 100%;
- // opacity: 0;
   transition: opacity 2s ease;
 }
 
@@ -187,12 +163,21 @@ img {
   z-index: 1;
 }
 
-.position {
+
+#posterImgMain {
   position: absolute;
-  left: 48%;
-  top: 43%;
-  width: 70px;
-  height: 70px;
-  border: 4px solid rgba(255, 255, 255, 0.25);
-  border-top: 4px solid white;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
+
+
+
+  .transition-slow {
+    transition: transform 0.5s ease-in-out, z-index 0.5s ease-in-out;
+  }

@@ -1,11 +1,15 @@
+
 .main-video-container {
   display: flex;
   flex-direction: column;
   width: 300px; 
   position: relative;
-  transition: transform 300ms ease-in-out;
+  //transition: transform 300ms ease-in-out;
+
+  transition: transform 500ms ease-in-out;
   
 }
+
 
 .video-container-above {
   width: 100%;
@@ -25,11 +29,11 @@
 
 
 .main-video-container:hover  #posterImg{
- display: none;
+  display: none;
 }
 
 .main-video-container:not(:hover) #my-videos {
- display: none;
+   display: none;
 }
 
 
@@ -48,9 +52,9 @@
   }
 }
 
-#my-videos {
-  border-radius: 22px ;
-  height: 168px;
+.br-top-l-r {
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
 }
 
 .video-container-below {
@@ -90,6 +94,9 @@
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
+.d-none {
+  display: none !important;
+}
 
 
 

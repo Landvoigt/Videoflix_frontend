@@ -1,8 +1,8 @@
 
 
- <div class="main-video-container"   (mouseenter)="onHover()" (mouseleave)="onLeave()">
+ <div class="main-video-container"  (mouseenter)="onHover()"  (mouseleave)="onLeave()">
                       
-  <div class="video-container-above">
+  <div class="video-container-above" >
     <img id="posterImg" [src]="posterUrlGcs" alt="Video Poster"> 
     <div  class="video-info">
       <h2>{{ title }}</h2>
@@ -11,12 +11,13 @@
     <h2 id="video-logo">VIDEOFLIX</h2>                     
   
   <div class="video-container">
-    <video
+    <video 
+      [ngClass]="{'br-top-l-r': hoverClass}"
       #videoPlayer id="my-videos"
-      class="video-js vjs-default-skin"
+      class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button bg-gradient-to-r from-default-from to-default-to"
       controls
       preload="auto"
-      width="640" height="264"
+     
       data-setup="{}"
       disablePictureInPicture
       type="application/x-mpegURL"
@@ -26,14 +27,14 @@
     </video>
   </div>
 </div>
-<div class="video-container-below">
+<div  class="video-container-below">
   <h2>{{ title }}</h2>
   <p>{{ description }}</p>
 </div>        
 </div>
 
 
-
+<!-- width="640" height="264" -->
 
 
   <!-- <div class="video-container">

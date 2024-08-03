@@ -17,11 +17,12 @@ export class VideoService {
   videoPlayer: ElementRef;
   descriptionUrl: string = "";
   titleUrl: string = "";
+  copyVideoUrl: string;
 
 
   constructor(private http: HttpClient, private ngZone: NgZone) { }
 
-  private apiUrl = 'http://localhost:8000/poster-and-text/';
+  private apiUrl = "http://localhost:8000/poster-and-text/";
 
   getVideoData(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}`);
