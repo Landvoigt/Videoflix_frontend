@@ -35,7 +35,6 @@ export class VideoService {
 
   private videoDataSubject = new BehaviorSubject<any[]>([]);
   videoData$ = this.videoDataSubject.asObservable();
-  randomVideoUrl:any;
 
   
   fetchAndStoreVideoData(): void {

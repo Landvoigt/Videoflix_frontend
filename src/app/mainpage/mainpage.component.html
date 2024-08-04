@@ -18,7 +18,8 @@
            preload="auto"
            #videoPlayerMain
            class="video-content"
-           [src]="videoUrl || videoService.randomVideoUrl"
+           [src]="videoUrl"
+         
           >
             Your browser does not support the video tag.
           </video>
@@ -50,11 +51,10 @@
 
     </ng-container>
 
-    <!-- [videoUrlGcs]="videoUrlGcs  || 'https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8'" -->
     
     
     <ng-container *ngIf="activePage('films')">
-      <app-films></app-films>
+      <app-films ></app-films>
     </ng-container>
 
     <ng-container *ngIf="activePage('series')">

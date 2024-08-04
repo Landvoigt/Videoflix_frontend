@@ -54,6 +54,7 @@ export class MainpageComponent implements AfterViewInit {
   onHoverVideo:boolean = true;
   activeVideoId: string | null = null;
   disableEvents = false;
+  videoCurrentTime = 0;
 
 
   loadingApp: boolean = true;
@@ -87,9 +88,11 @@ export class MainpageComponent implements AfterViewInit {
      setTimeout(() => {
          this.adjustChildClass(window.innerWidth);
       }, 2000);
+
      }
-  
-  
+
+
+
     ngAfterViewInit(): void {
      setTimeout(() => {
       this.savePositions();
@@ -98,6 +101,30 @@ export class MainpageComponent implements AfterViewInit {
      this.videoDataGcs = data;
      console.log('Processed video data in MainPageComponent:', this.videoDataGcs);
     });
+    // const savedTime = localStorage.getItem('videoCurrentTime');    /// Test
+    // if (savedTime) {
+    //   this.videoCurrentTime = +savedTime;
+    //   this.playVideo();
+    // }
+    }
+
+    ngOnDestroy() {
+      this.saveVideoState();
+    }
+
+    saveVideoState() {   /// test
+      if (this.videoPlayer && this.videoPlayer.nativeElement) {
+        this.videoCurrentTime = this.videoPlayer.nativeElement.currentTime;
+        localStorage.setItem('videoCurrentTime', this.videoCurrentTime.toString());
+      }
+    }
+
+
+    playVideo() {   //// test
+      if (this.videoPlayer && this.videoPlayer.nativeElement && this.videoUrl) {
+        this.videoPlayer.nativeElement.currentTime = this.videoCurrentTime;
+        this.videoPlayer.nativeElement.play();
+      }
     }
 
 
@@ -199,9 +226,15 @@ export class MainpageComponent implements AfterViewInit {
 
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.currentPage = page;
+    if(this.currentPage ==='dashboard') {
+     this.getVideoUrl( 'kino','360p') // Platzhalter, andere logik kommt
+   } else {
+    this.saveVideoState();
+   }
   }
 
   activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
+    
     return this.currentPage === page;
   }
 
@@ -383,8 +416,7 @@ export class MainpageComponent implements AfterViewInit {
     this.title = randomVideoData.title;
     this.description = randomVideoData.description;
     this.posterUrlGcs = randomVideoData.posterUrlGcs;
-    let randomVideo = this.getVideoUrl( randomVideoData.subfolder,this.getResolutionForVideoElement());
-    this.videoService.randomVideoUrl = randomVideo;
+    this.getVideoUrl( randomVideoData.subfolder,this.getResolutionForVideoElement());
   }
   
 
