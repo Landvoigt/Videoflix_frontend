@@ -1,7 +1,17 @@
-<div class="video-box-wrapper p-8 gap-8">
+<!-- <div class="video-box-wrapper p-8 gap-8">
     <div *ngFor="let video of allSeries; let i = index"
         class="h-36 w-52 bg-navColorHover rounded-lg flex items-center justify-center text-3xl text-textColorPrimary">
         Serie
         {{ i }}
     </div>
+</div> -->
+
+
+<div class="films-container">
+    <app-video #videoComponent class="videoInSeries" *ngFor="let video of series; let index = index"
+    [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
+    [title]="video.title || ''"
+    [description]="video.description || ''"
+    [category]="video.category || ''">  
+  </app-video>
 </div>

@@ -18,7 +18,7 @@
            preload="auto"
            #videoPlayerMain
            class="video-content"
-           [src]="videoUrl"
+           [src]="videoUrl || videoService.randomVideoUrl"
           >
             Your browser does not support the video tag.
           </video>

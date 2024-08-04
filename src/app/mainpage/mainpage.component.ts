@@ -72,6 +72,35 @@ export class MainpageComponent implements AfterViewInit {
 
     ) { }
 
+
+
+    ngOnInit(): void {
+      this.loadingApp = true;
+      setTimeout(() => {
+         this.getRandomVideoData();
+     },3000);
+     setTimeout(() => {
+         this.videoPlayingNow = false;
+     }, 20000);  
+     this.videoService.fetchAndStoreVideoData();
+     this.videoService.logWindowSize();
+     setTimeout(() => {
+         this.adjustChildClass(window.innerWidth);
+      }, 2000);
+     }
+  
+  
+    ngAfterViewInit(): void {
+     setTimeout(() => {
+      this.savePositions();
+     },2000);
+     this.videoService.getStoredVideoData().subscribe(data => {
+     this.videoDataGcs = data;
+     console.log('Processed video data in MainPageComponent:', this.videoDataGcs);
+    });
+    }
+
+
     onHover(id:string) {
       if (this.disableEvents) {
         return;
@@ -80,7 +109,7 @@ export class MainpageComponent implements AfterViewInit {
       this.disableEvents = true;
         setTimeout(() => {
         this.disableEvents = false;
-      }, 300);
+      }, 100);
       this.scrollingLeft3();  // hier noch schauen , wie kann man es ersetzen!!
       this.toVisibleModus3();  // hier noch schauen , wie kann man es ersetzen!!
       if(this.onHoverVideo) {
@@ -108,26 +137,21 @@ export class MainpageComponent implements AfterViewInit {
   
       setTimeout(() => {
         this.disableEvents = false;
-      }, 300);
+      }, 100);
 
       if(id === this.leftmostId) {
         this.changeBackChildStylesLeft(id);
-     console.log('id',id)
      }
-
      if(id ===  this.rightmostId) {
       this.changeBackChildStylesRight(id);
-   console.log('id',id)
-   }
+     }
     this.onHoverVideo = false;
     setTimeout(() => {
       this.onHoverVideo = true;
     }, 100);
- 
-    }
+   }
    
-   
-
+  
     changeChildStylesLeft(id:string) { 
       const childElement = this.elementRef.nativeElement.querySelector(`#${id}`);
       if (childElement) {
@@ -168,50 +192,6 @@ export class MainpageComponent implements AfterViewInit {
     }
 
 
-  ngOnInit(): void {
-    this.loadingApp = true;
-    setTimeout(() => {
-      this.getRandomVideoData();
-   },3000);
-   setTimeout(() => {
-    this.videoPlayingNow = false;
-   }, 20000);
-    this.videoService.getVideoData().subscribe({
-      next: (data) => {
-        this.videoDataGcs = data.gcs_video_text_data.map((item: any) => {
-          const posterUrl = data.poster_urls.find((url: string) => url.includes(item.subfolder));
-          return {
-            subfolder: item.subfolder,
-            title: item.title,
-            description: item.description,
-            posterUrlGcs: posterUrl,
-            category: item.category
-          };
-        });
-        console.log('Processed video data:', this.videoDataGcs);
-      },
-      error: (error) => {
-        console.error('Error fetching video data:', error);
-      }
-    });
-    this.logWindowSize();
-    setTimeout(() => {
-       this.adjustChildClass(window.innerWidth);
-    }, 2000);
-   
-   }
-
-
-  ngAfterViewInit(): void {
-   setTimeout(() => {
-    this.savePositions();
-   
-   },2000);
- 
-   
-  }
-
-  
   closeUserMenu() {
     this.closeMenu = true;
     setTimeout(() => this.closeMenu = false, 10);
@@ -306,8 +286,6 @@ export class MainpageComponent implements AfterViewInit {
    }
 
 
-
-
   savePositions() {
     if(window.innerWidth > 600) {
 
@@ -335,7 +313,7 @@ export class MainpageComponent implements AfterViewInit {
             leftmostElement = item;
             this.leftmostId = item.id;
             this.positionLeftMostVideo( this.leftmostId);
-            console.log(' this.positionLeftMostVideo( this.leftmostId)', this.positionLeftMostVideo( this.leftmostId));
+            //console.log(' this.positionLeftMostVideo( this.leftmostId)', this.positionLeftMostVideo( this.leftmostId));
    
           }
           if (position > rightmostPosition) {
@@ -343,7 +321,7 @@ export class MainpageComponent implements AfterViewInit {
             rightmostElement = item;
             this.rightmostId = item.id;
             this.positionRightMostVideo( this.rightmostId);
-            console.log('  this.positionRightMostVideo()',  this.positionRightMostVideo(this.rightmostId));
+            //console.log('  this.positionRightMostVideo()',  this.positionRightMostVideo(this.rightmostId));
           }
         }
     
@@ -351,26 +329,19 @@ export class MainpageComponent implements AfterViewInit {
       });
     
       if (leftmostElement) {
-        //const leftmostElementId = leftmostElement.getAttribute('id') || 'No ID';
         const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
         const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-        console.log('Ganz links:', leftmostPosition, this.leftmostId, leftmostPosterUrl);
       } else {
         console.log('Ganz links:', leftmostPosition, 'No element found');
       }
     
       if (rightmostElement) {
-        //const rightmostElementId = rightmostElement.getAttribute('id') || 'No ID';
         const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
         const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-        console.log('Ganz rechts:', rightmostPosition,  this.rightmostId, rightmostPosterUrl);
       } else {
         console.log('Ganz rechts:', rightmostPosition, 'No element found');
       }
-
-
-    }
-    
+    }    
   }
   
 
@@ -384,6 +355,7 @@ export class MainpageComponent implements AfterViewInit {
     return 0;
   }
   
+
   positionRightMostVideo(id: string): number {
     const childElement = this.elementRef.nativeElement.querySelector(`#${id}`);
     if (childElement) {
@@ -397,22 +369,10 @@ export class MainpageComponent implements AfterViewInit {
     return 0;
   }
   
+
   
 
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.logWindowSize();
-    this.adjustChildClass(window.innerWidth);
-  }
-
-  logWindowSize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    console.log(`Aktuelle Breite: ${width}px, Aktuelle Höhe: ${height}px`);
-  }
-
-
+  
   getRandomVideoData(): void{
     if (this.videoDataGcs.length === 0) {
       console.error('No video data available');
@@ -423,7 +383,8 @@ export class MainpageComponent implements AfterViewInit {
     this.title = randomVideoData.title;
     this.description = randomVideoData.description;
     this.posterUrlGcs = randomVideoData.posterUrlGcs;
-    this.getVideoUrl( randomVideoData.subfolder,this.getResolutionForVideoElement())
+    let randomVideo = this.getVideoUrl( randomVideoData.subfolder,this.getResolutionForVideoElement());
+    this.videoService.randomVideoUrl = randomVideo;
   }
   
 
@@ -433,7 +394,7 @@ export class MainpageComponent implements AfterViewInit {
       next: (data) => {
         if (data && data.video_url) {
           this.videoUrl = data.video_url;
-          console.log(' this.videoUrl', this.videoUrl);
+          //console.log(' this.videoUrl', this.videoUrl);
           this.cdr.detectChanges();
           this.setupVideoPlayer();
         } else {
@@ -455,7 +416,7 @@ export class MainpageComponent implements AfterViewInit {
         this.hls.destroy();
       }
       this.hls = new Hls();
-      console.log(' this.videoUrl hls', this.videoUrl);
+      //console.log(' this.videoUrl hls', this.videoUrl);
       this.hls.loadSource(this.videoUrl);
       this.hls.attachMedia(video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -509,9 +470,14 @@ export class MainpageComponent implements AfterViewInit {
     return filename;
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.videoService.logWindowSize();
+    this.adjustChildClass(window.innerWidth);
+  }
 
 
-  private adjustChildClass(width: number) {
+  public adjustChildClass(width: number) {
     const childElements = this.elementRef.nativeElement.querySelectorAll('.videoInMainpage');
     childElements.forEach((childElement: HTMLElement) => {
       if (childElement) {
@@ -525,7 +491,7 @@ export class MainpageComponent implements AfterViewInit {
       }
     });
   }
-
+ 
 
 }
 
