@@ -21,6 +21,7 @@ export class VideoComponent implements OnInit{
 videoUrl: string = '';
 @Input() title: string;
 @Input() description: string;
+@Input() category: string;
 @Input() videoUrlGcs: string;
 @Input() posterUrlGcs: string;
 @Output() hover = new EventEmitter<boolean>();

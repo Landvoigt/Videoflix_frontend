@@ -2,7 +2,7 @@
 .mainpage-wrapper {
   overflow-x: hidden;
   //height: 100vh
-  height: 100%;
+  height: auto;
 }
 
 
@@ -40,6 +40,34 @@ img {
   margin-top: 48px;
   transition: opacity 2s ease;
 }
+
+
+.video-size {  // bearbeiten!!!
+  display: flex;
+}
+
+
+@media (max-width: 600px) {
+  .line {
+  flex-wrap: wrap;
+  gap: 48px;
+  height: auto;
+  padding-top: 48px;
+  }
+
+
+  .line-wrapper-left {
+    display: none;
+  }
+
+  .line-wrapper-right {
+    display: none;
+  }
+}
+
+
+
+
 
 .videoInMainpage {
   padding-left: 48px;
@@ -181,3 +209,5 @@ img {
   .transition-slow {
     transition: transform 0.5s ease-in-out, z-index 0.5s ease-in-out;
   }
+
+

@@ -27,13 +27,15 @@
 
       <div class="line-wrapper" >
         <div id="line3" #line3 class="line">
-          <app-video class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
+          <app-video #videoComponent class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
             [id]="'videoLine3' + index"       
-            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" [title]="video.title || ''"
+            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
+            [title]="video.title || ''"
             [description]="video.description || ''"
-         (mouseenter)="shouldHandleEvent('videoLine3' + index) ? onHover('videoLine3' + index) : null"
-         (mouseleave)="shouldHandleEvent('videoLine3' + index) ? onLeave('videoLine3' + index) : null"
-            ></app-video>
+            [category]="video.category || ''"
+            (mouseenter)="shouldHandleEvent('videoLine3' + index) ? onHover('videoLine3' + index) : null"
+            (mouseleave)="shouldHandleEvent('videoLine3' + index) ? onLeave('videoLine3' + index) : null">
+          </app-video>
         </div>
 
         <div class="line-wrapper-left">

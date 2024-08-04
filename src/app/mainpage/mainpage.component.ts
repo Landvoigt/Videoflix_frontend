@@ -20,6 +20,7 @@ export interface VideoData {
   description: string;
   title: string;
   posterUrlGcs?: string; 
+  category: string;
 }
 
 @Component({
@@ -40,6 +41,7 @@ export class MainpageComponent implements AfterViewInit {
   isScrollable = false;
   title: string;
   description: string;
+  category: string;
   videoDataGcs: VideoData[] = []; 
   videoUrl: string = '';
   isFullscreen: boolean = false;
@@ -182,7 +184,8 @@ export class MainpageComponent implements AfterViewInit {
             subfolder: item.subfolder,
             title: item.title,
             description: item.description,
-            posterUrlGcs: posterUrl
+            posterUrlGcs: posterUrl,
+            category: item.category
           };
         });
         console.log('Processed video data:', this.videoDataGcs);
@@ -192,6 +195,10 @@ export class MainpageComponent implements AfterViewInit {
       }
     });
     this.logWindowSize();
+    setTimeout(() => {
+       this.adjustChildClass(window.innerWidth);
+    }, 2000);
+   
    }
 
 
@@ -302,62 +309,68 @@ export class MainpageComponent implements AfterViewInit {
 
 
   savePositions() {
-    const outerContainer = this.line3.nativeElement;
-    this.savedScrollLeft = outerContainer.scrollLeft;
-    const children = Array.from(outerContainer.children) as HTMLElement[];
-  
-    let leftmostPosition = Number.POSITIVE_INFINITY;
-    let rightmostPosition = Number.NEGATIVE_INFINITY;
-    let leftmostElement: HTMLElement | null = null;
-    let rightmostElement: HTMLElement | null = null;
-  
-    const containerRect = outerContainer.getBoundingClientRect();
-    const containerLeft = containerRect.left;
-    const containerRight = containerRect.right;
-  
-    this.savedRelativePositions = children.map((item) => {
-      const itemRect = item.getBoundingClientRect();
-      const position = itemRect.left - containerLeft + outerContainer.scrollLeft;
-  
-      const isVisible = itemRect.left < containerRight && itemRect.right > containerLeft;
-      if (isVisible) {
-        if (position < leftmostPosition) {
-          leftmostPosition = position;
-          leftmostElement = item;
-          this.leftmostId = item.id;
-          this.positionLeftMostVideo( this.leftmostId);
-          console.log(' this.positionLeftMostVideo( this.leftmostId)', this.positionLeftMostVideo( this.leftmostId));
- 
+    if(window.innerWidth > 600) {
+
+      const outerContainer = this.line3.nativeElement;
+      this.savedScrollLeft = outerContainer.scrollLeft;
+      const children = Array.from(outerContainer.children) as HTMLElement[];
+    
+      let leftmostPosition = Number.POSITIVE_INFINITY;
+      let rightmostPosition = Number.NEGATIVE_INFINITY;
+      let leftmostElement: HTMLElement | null = null;
+      let rightmostElement: HTMLElement | null = null;
+    
+      const containerRect = outerContainer.getBoundingClientRect();
+      const containerLeft = containerRect.left;
+      const containerRight = containerRect.right;
+    
+      this.savedRelativePositions = children.map((item) => {
+        const itemRect = item.getBoundingClientRect();
+        const position = itemRect.left - containerLeft + outerContainer.scrollLeft;
+    
+        const isVisible = itemRect.left < containerRight && itemRect.right > containerLeft;
+        if (isVisible) {
+          if (position < leftmostPosition) {
+            leftmostPosition = position;
+            leftmostElement = item;
+            this.leftmostId = item.id;
+            this.positionLeftMostVideo( this.leftmostId);
+            console.log(' this.positionLeftMostVideo( this.leftmostId)', this.positionLeftMostVideo( this.leftmostId));
+   
+          }
+          if (position > rightmostPosition) {
+            rightmostPosition = position;
+            rightmostElement = item;
+            this.rightmostId = item.id;
+            this.positionRightMostVideo( this.rightmostId);
+            console.log('  this.positionRightMostVideo()',  this.positionRightMostVideo(this.rightmostId));
+          }
         }
-        if (position > rightmostPosition) {
-          rightmostPosition = position;
-          rightmostElement = item;
-          this.rightmostId = item.id;
-          this.positionRightMostVideo( this.rightmostId);
-          console.log('  this.positionRightMostVideo()',  this.positionRightMostVideo(this.rightmostId));
-        }
+    
+        return position;
+      });
+    
+      if (leftmostElement) {
+        //const leftmostElementId = leftmostElement.getAttribute('id') || 'No ID';
+        const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
+        const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
+        console.log('Ganz links:', leftmostPosition, this.leftmostId, leftmostPosterUrl);
+      } else {
+        console.log('Ganz links:', leftmostPosition, 'No element found');
       }
-  
-      return position;
-    });
-  
-    if (leftmostElement) {
-      //const leftmostElementId = leftmostElement.getAttribute('id') || 'No ID';
-      const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
-      const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-      console.log('Ganz links:', leftmostPosition, this.leftmostId, leftmostPosterUrl);
-    } else {
-      console.log('Ganz links:', leftmostPosition, 'No element found');
+    
+      if (rightmostElement) {
+        //const rightmostElementId = rightmostElement.getAttribute('id') || 'No ID';
+        const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
+        const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
+        console.log('Ganz rechts:', rightmostPosition,  this.rightmostId, rightmostPosterUrl);
+      } else {
+        console.log('Ganz rechts:', rightmostPosition, 'No element found');
+      }
+
+
     }
-  
-    if (rightmostElement) {
-      //const rightmostElementId = rightmostElement.getAttribute('id') || 'No ID';
-      const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
-      const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-      console.log('Ganz rechts:', rightmostPosition,  this.rightmostId, rightmostPosterUrl);
-    } else {
-      console.log('Ganz rechts:', rightmostPosition, 'No element found');
-    }
+    
   }
   
 
@@ -390,6 +403,7 @@ export class MainpageComponent implements AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     this.logWindowSize();
+    this.adjustChildClass(window.innerWidth);
   }
 
   logWindowSize() {
@@ -493,6 +507,23 @@ export class MainpageComponent implements AfterViewInit {
     const segments = url.split('/');
     const filename = segments[segments.length - 2];
     return filename;
+  }
+
+
+
+  private adjustChildClass(width: number) {
+    const childElements = this.elementRef.nativeElement.querySelectorAll('.videoInMainpage');
+    childElements.forEach((childElement: HTMLElement) => {
+      if (childElement) {
+        if (width < 600) {
+          this.renderer.addClass(childElement, 'video-size');
+        } else {
+          this.renderer.removeClass(childElement, 'video-size');
+        }
+      } else {
+        console.warn('childElement is undefined or null');
+      }
+    });
   }
 
 
