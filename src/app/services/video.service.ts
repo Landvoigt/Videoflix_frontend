@@ -21,13 +21,13 @@ import { VideoResponse } from '../interfaces/video.interface';
 
 export class VideoService {
 
-  
   //videoPlayer: ElementRef;
   //descriptionUrl: string = "";
   //titleUrl: string = "";
   //videoDataGcs: VideoData[] = []; 
   constructor(
     private http: HttpClient, 
+    
     
   ) {}
 
@@ -78,4 +78,7 @@ export class VideoService {
     const height = window.innerHeight;
     //console.log(`Aktuelle Breite: ${width}px, Aktuelle Höhe: ${height}px`);
   }
+
+
+  
 }

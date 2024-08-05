@@ -1,4 +1,4 @@
-import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { AfterViewInit,ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild, inject } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
@@ -8,7 +8,6 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
 import { VideoComponent } from '../video/video.component';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
 import { FilmsComponent } from '../categories/films/films.component';
 import { SeriesComponent } from '../categories/series/series.component';
 import { PlaylistComponent } from '../categories/playlist/playlist.component';
@@ -35,7 +34,8 @@ export class MainpageComponent implements AfterViewInit {
 
   elementRef = inject(ElementRef);
   @ViewChild('videoPlayerMain', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
-  @ViewChild('line3', { static: false }) line3: ElementRef;
+  @ViewChild('line1', { static: false }) line1: ElementRef;
+  @ViewChild('line2', { static: false }) line2: ElementRef;
   savedScrollLeft = 0;
   savedRelativePositions: number[] = [];
   isScrollable = false;
@@ -46,7 +46,6 @@ export class MainpageComponent implements AfterViewInit {
   videoUrl: string = '';
   isFullscreen: boolean = false;
   hls: Hls | null = null; 
-  videoPlayingNow:boolean = false; 
   posterUrlGcs: string = '';
 
   leftmostId: string;
@@ -55,6 +54,7 @@ export class MainpageComponent implements AfterViewInit {
   activeVideoId: string | null = null;
   disableEvents = false;
   videoCurrentTime = 0;
+  isPosterImg:boolean = true;
 
 
   loadingApp: boolean = true;
@@ -68,7 +68,6 @@ export class MainpageComponent implements AfterViewInit {
     public videoService: VideoService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private appRef: ApplicationRef,
     private renderer: Renderer2
 
     ) { }
@@ -79,52 +78,24 @@ export class MainpageComponent implements AfterViewInit {
       this.loadingApp = true;
       setTimeout(() => {
          this.getRandomVideoData();
+         this.savePositions();
+         this.isPosterImg = false;
      },3000);
-     setTimeout(() => {
-         this.videoPlayingNow = false;
-     }, 20000);  
      this.videoService.fetchAndStoreVideoData();
      this.videoService.logWindowSize();
      setTimeout(() => {
-         this.adjustChildClass(window.innerWidth);
+         this.adjustChildClass(window.innerWidth); // ab 600px
       }, 2000);
-
      }
 
 
 
     ngAfterViewInit(): void {
-     setTimeout(() => {
-      this.savePositions();
-     },2000);
      this.videoService.getStoredVideoData().subscribe(data => {
      this.videoDataGcs = data;
      console.log('Processed video data in MainPageComponent:', this.videoDataGcs);
     });
-    // const savedTime = localStorage.getItem('videoCurrentTime');    /// Test
-    // if (savedTime) {
-    //   this.videoCurrentTime = +savedTime;
-    //   this.playVideo();
-    // }
-    }
-
-    ngOnDestroy() {
-      this.saveVideoState();
-    }
-
-    saveVideoState() {   /// test
-      if (this.videoPlayer && this.videoPlayer.nativeElement) {
-        this.videoCurrentTime = this.videoPlayer.nativeElement.currentTime;
-        localStorage.setItem('videoCurrentTime', this.videoCurrentTime.toString());
-      }
-    }
-
-
-    playVideo() {   //// test
-      if (this.videoPlayer && this.videoPlayer.nativeElement && this.videoUrl) {
-        this.videoPlayer.nativeElement.currentTime = this.videoCurrentTime;
-        this.videoPlayer.nativeElement.play();
-      }
+  
     }
 
 
@@ -137,8 +108,8 @@ export class MainpageComponent implements AfterViewInit {
         setTimeout(() => {
         this.disableEvents = false;
       }, 100);
-      this.scrollingLeft3();  // hier noch schauen , wie kann man es ersetzen!!
-      this.toVisibleModus3();  // hier noch schauen , wie kann man es ersetzen!!
+      this.scrollingLeft1();  // hier noch schauen , wie kann man es ersetzen!!
+      this.toVisibleModus1();  // hier noch schauen , wie kann man es ersetzen!!
       if(this.onHoverVideo) {
         if(id === this.leftmostId) {
          this.changeChildStylesLeft(id);     
@@ -224,17 +195,20 @@ export class MainpageComponent implements AfterViewInit {
     setTimeout(() => this.closeMenu = false, 10);
   }
 
+
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.currentPage = page;
     if(this.currentPage ==='dashboard') {
-     this.getVideoUrl( 'kino','360p') // Platzhalter, andere logik kommt
-   } else {
-    this.saveVideoState();
+      this.isPosterImg = true;
+      setTimeout(() => {
+        this.isPosterImg = false;
+        this.getRandomVideoData();
+      }, 3000);    
    }
   }
 
-  activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
-    
+
+  activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {   
     return this.currentPage === page;
   }
 
@@ -258,7 +232,8 @@ export class MainpageComponent implements AfterViewInit {
 
 
   toggleMode() {
-    const outerContainer = this.line3.nativeElement;
+    const outerContainer = this.line1.nativeElement;
+   // const outerContainer2 = this.line2.nativeElement;
     if (!this.isScrollable) {
       this.savedScrollLeft = outerContainer.scrollLeft;
       outerContainer.style.overflowX = 'visible';
@@ -291,23 +266,23 @@ export class MainpageComponent implements AfterViewInit {
   }
 
 
-  scrollingLeft3() {
+  scrollingLeft1() {
     this.isScrollable = true;
     this.toggleMode();
-    const outerContainer = this.line3.nativeElement;
+    const outerContainer = this.line1.nativeElement;
     outerContainer.scrollLeft -= 700;
   }
 
 
-  scrollingRight3() {
+  scrollingRight1() {
     this.isScrollable = true;
     this.toggleMode();
-    const outerContainer = this.line3.nativeElement;
+    const outerContainer = this.line1.nativeElement;
     outerContainer.scrollLeft += 700;
   }
 
 
-  toVisibleModus3() {
+  toVisibleModus1() {
     this.savePositions();
     this.isScrollable = false;
     this.toggleMode();
@@ -321,8 +296,7 @@ export class MainpageComponent implements AfterViewInit {
 
   savePositions() {
     if(window.innerWidth > 600) {
-
-      const outerContainer = this.line3.nativeElement;
+      const outerContainer = this.line1.nativeElement;
       this.savedScrollLeft = outerContainer.scrollLeft;
       const children = Array.from(outerContainer.children) as HTMLElement[];
     
@@ -346,7 +320,6 @@ export class MainpageComponent implements AfterViewInit {
             leftmostElement = item;
             this.leftmostId = item.id;
             this.positionLeftMostVideo( this.leftmostId);
-            //console.log(' this.positionLeftMostVideo( this.leftmostId)', this.positionLeftMostVideo( this.leftmostId));
    
           }
           if (position > rightmostPosition) {
@@ -354,7 +327,6 @@ export class MainpageComponent implements AfterViewInit {
             rightmostElement = item;
             this.rightmostId = item.id;
             this.positionRightMostVideo( this.rightmostId);
-            //console.log('  this.positionRightMostVideo()',  this.positionRightMostVideo(this.rightmostId));
           }
         }
     
@@ -365,14 +337,12 @@ export class MainpageComponent implements AfterViewInit {
         const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
         const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
       } else {
-        console.log('Ganz links:', leftmostPosition, 'No element found');
       }
     
       if (rightmostElement) {
         const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
         const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
       } else {
-        console.log('Ganz rechts:', rightmostPosition, 'No element found');
       }
     }    
   }
@@ -403,9 +373,6 @@ export class MainpageComponent implements AfterViewInit {
   }
   
 
-  
-
-  
   getRandomVideoData(): void{
     if (this.videoDataGcs.length === 0) {
       console.error('No video data available');
@@ -426,7 +393,6 @@ export class MainpageComponent implements AfterViewInit {
       next: (data) => {
         if (data && data.video_url) {
           this.videoUrl = data.video_url;
-          //console.log(' this.videoUrl', this.videoUrl);
           this.cdr.detectChanges();
           this.setupVideoPlayer();
         } else {
@@ -442,23 +408,24 @@ export class MainpageComponent implements AfterViewInit {
 
   setupVideoPlayer(): void {
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-
     if (Hls.isSupported()) {
       if (this.hls) {
         this.hls.destroy();
       }
       this.hls = new Hls();
-      //console.log(' this.videoUrl hls', this.videoUrl);
       this.hls.loadSource(this.videoUrl);
       this.hls.attachMedia(video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play();
-        this.videoPlayingNow = true;
+        setTimeout(() => {
+            this.isPosterImg = true;
+        }, 25000); 
         const maxDuration = 30;
         video.addEventListener('timeupdate', () => {
           if (video.currentTime >= maxDuration) {
             video.pause();
             video.currentTime = 0;
+            this.isPosterImg = true;
           }
         });
       });
