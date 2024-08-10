@@ -1,6 +1,6 @@
 <div class="mainpage-wrapper">
 
-
+<div id="layoverMainpage"></div>
 
   <navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
   <div @fadeInPage (click)="closeUserMenu()"
@@ -28,7 +28,7 @@
 
       <div class="line-wrapper" >
         <div id="line1" #line1 class="line">
-          <app-video #videoComponent class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
+          <app-video class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
             [id]="'videoLine1' + index"       
             [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
             [title]="video.title || ''"

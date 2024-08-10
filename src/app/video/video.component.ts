@@ -4,6 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import Hls from 'hls.js';
 import { VideoService } from '../services/video.service';
 import 'video.js/dist/video-js.css';
+import { Injectable } from '@angular/core';
+
+
+
+@Injectable({
+  providedIn: 'root',
+})
 
 
 @Component({
@@ -28,8 +35,6 @@ videoUrl: string = '';
 @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 hls: Hls | null = null;
 isFullscreen: boolean = false;
-//videoUrl360p: string;
-//hls360p: Hls;
 hoverClass: boolean = false;
 
 
@@ -122,14 +127,10 @@ onHover() {
 
 
 onLeave() {
-   this.hoverClass = false;
+  this.hoverClass = false;
   this.videoPlayer.nativeElement.pause();
   this.videoPlayer.nativeElement.currentTime = 0;
   this.hover.emit(false);
-  this.hoverClass = false;
-
-
-
   if(!this.isFullscreen){
     this.stopVideoPlayer();
   }

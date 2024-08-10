@@ -1,9 +1,24 @@
 
 .mainpage-wrapper {
   overflow-x: hidden;
-  //height: 100vh
-  height: auto;
+  //min-height: 100vh
+  //height: auto;
+  position: relative;
 }
+
+
+#layoverMainpage {
+  display: none;
+  position: absolute;
+  z-index: 102;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 
 
 .poster-container {
@@ -39,6 +54,10 @@ img {
   height: 190px;
   margin-top: 48px;
   transition: opacity 2s ease;
+}
+
+#line1 {
+  background-color: aqua;
 }
 
 
@@ -210,4 +229,6 @@ img {
     transition: transform 0.5s ease-in-out, z-index 0.5s ease-in-out;
   }
 
+
+  
 

@@ -77,8 +77,8 @@ export class MainpageComponent implements AfterViewInit {
     ngOnInit(): void {
       this.loadingApp = true;
       setTimeout(() => {
-         this.getRandomVideoData();
          this.savePositions();
+         this.getRandomVideoData();
          this.isPosterImg = false;
      },3000);
      this.videoService.fetchAndStoreVideoData();
@@ -87,6 +87,7 @@ export class MainpageComponent implements AfterViewInit {
          this.adjustChildClass(window.innerWidth); // ab 600px
       }, 2000);
      }
+
 
 
 
@@ -108,16 +109,11 @@ export class MainpageComponent implements AfterViewInit {
         setTimeout(() => {
         this.disableEvents = false;
       }, 100);
-      this.scrollingLeft1();  // hier noch schauen , wie kann man es ersetzen!!
-      this.toVisibleModus1();  // hier noch schauen , wie kann man es ersetzen!!
+      this.scrollingLeft1();  // !!
+      this.toVisibleModus1();  // !!
       if(this.onHoverVideo) {
-        if(id === this.leftmostId) {
-         this.changeChildStylesLeft(id);     
-      }
-      if( id === this.rightmostId)
-        {
-          this.changeChildStylesRight(id);
-       }
+        if(id === this.leftmostId) {this.changeChildStylesLeft(id);}
+        if( id === this.rightmostId) {this.changeChildStylesRight(id);}
       } 
     }
 
@@ -127,22 +123,22 @@ export class MainpageComponent implements AfterViewInit {
     }
 
 
-    onLeave(id:string) {
+    onLeave(id:string) {  
+      let layover = document.getElementById('layoverMainpage');
+      layover.style.display = "block" ; 
+      setTimeout(() => {
+        layover.style.display = "none" ; 
+      }, 800); 
       if (this.activeVideoId === id) {
         this.activeVideoId = null;
       }
       this.disableEvents = true;
-  
       setTimeout(() => {
         this.disableEvents = false;
       }, 100);
 
-      if(id === this.leftmostId) {
-        this.changeBackChildStylesLeft(id);
-     }
-     if(id ===  this.rightmostId) {
-      this.changeBackChildStylesRight(id);
-     }
+      if(id === this.leftmostId) {this.changeBackChildStylesLeft(id);}
+      if(id ===  this.rightmostId) {this.changeBackChildStylesRight(id);}
     this.onHoverVideo = false;
     setTimeout(() => {
       this.onHoverVideo = true;
@@ -299,13 +295,14 @@ export class MainpageComponent implements AfterViewInit {
       const outerContainer = this.line1.nativeElement;
       this.savedScrollLeft = outerContainer.scrollLeft;
       const children = Array.from(outerContainer.children) as HTMLElement[];
-    
+      console.log('const children',children);
       let leftmostPosition = Number.POSITIVE_INFINITY;
       let rightmostPosition = Number.NEGATIVE_INFINITY;
       let leftmostElement: HTMLElement | null = null;
       let rightmostElement: HTMLElement | null = null;
     
       const containerRect = outerContainer.getBoundingClientRect();
+      console.log('const containerRect = outerContainer.getBoundingClientRect();',containerRect);
       const containerLeft = containerRect.left;
       const containerRight = containerRect.right;
     
@@ -383,7 +380,7 @@ export class MainpageComponent implements AfterViewInit {
     this.title = randomVideoData.title;
     this.description = randomVideoData.description;
     this.posterUrlGcs = randomVideoData.posterUrlGcs;
-    this.getVideoUrl( randomVideoData.subfolder,this.getResolutionForVideoElement());
+    this.getVideoUrl(randomVideoData.subfolder,this.getResolutionForVideoElement());
   }
   
 
@@ -419,7 +416,7 @@ export class MainpageComponent implements AfterViewInit {
         video.play();
         setTimeout(() => {
             this.isPosterImg = true;
-        }, 25000); 
+        }, 28000); 
         const maxDuration = 30;
         video.addEventListener('timeupdate', () => {
           if (video.currentTime >= maxDuration) {
@@ -461,6 +458,8 @@ export class MainpageComponent implements AfterViewInit {
       return '360p';
     }
   }
+
+ 
 
 
   extractFilename(url: string): string {

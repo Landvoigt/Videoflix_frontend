@@ -6,7 +6,7 @@
   position: relative;
   //transition: transform 300ms ease-in-out;
 
-  transition: transform 500ms ease-in-out;
+ transition: transform 500ms ease-in-out;
   
 }
 
@@ -37,17 +37,19 @@
 }
 
 
+
 .main-video-container:hover{
+ 
   cursor: pointer;
-  transform: translateY(-25px) scale(1.3);
+  transform: translateY(-25px) scale(1.3); 
   transition: transform 500ms ease-in-out;
   border-radius: 22px;
   z-index: 101;
+  transition-delay: 500ms;
   filter: brightness(1.2);
   -webkit-box-shadow: 4px -3px 66px 21px rgba(0,0,0,0.77);
   -moz-box-shadow: 4px -3px 66px 21px rgba(0,0,0,0.77);
   box-shadow: 4px -3px 66px 21px rgba(0,0,0,0.77);
-  transition-delay: 300ms;
   .video-info {
     display: none;
   }
