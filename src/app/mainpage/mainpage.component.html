@@ -27,7 +27,7 @@
 
       <div class="line-wrapper" >
         <div id="line1" #line1 class="line">
-          <app-video class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
+          <app-video  class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
             [id]="'videoLine1' + index"       
             [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
             [title]="video.title || ''"
@@ -35,6 +35,7 @@
             [category]="video.category || ''"
             (mouseenter)="shouldHandleEvent('videoLine1' + index) ? onHover('videoLine1' + index) : null"
             (mouseleave)="shouldHandleEvent('videoLine1' + index) ? onLeave('videoLine1' + index) : null">
+           
           </app-video>
         </div>
 

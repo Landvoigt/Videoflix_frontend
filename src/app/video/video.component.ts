@@ -31,6 +31,7 @@ videoUrl: string = '';
 @Input() category: string;
 @Input() videoUrlGcs: string;
 @Input() posterUrlGcs: string;
+@Input() current_file_name!: string;
 @Output() hover = new EventEmitter<boolean>();
 @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 hls: Hls | null = null;

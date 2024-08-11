@@ -35,10 +35,8 @@ export class SeriesComponent {
     this.videoService.fetchAndStoreVideoData();
     this.videoService.getStoredVideoData().subscribe(data => {
       this.videoDataGcs = data;
-      console.log('Processed video data in FilmsComponent:', this.videoDataGcs);
      });
      this.series = this.videoDataGcs.filter(video => video.category === 'serie');
-     console.log('Series:', this.series);
   }
 
 

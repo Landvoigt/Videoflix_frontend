@@ -1,6 +1,15 @@
-<div class="video-box-wrapper p-8 gap-8">
+<!-- <div class="video-box-wrapper p-8 gap-8">
     <div *ngFor="let video of playlist; let i = index"
         class="h-36 w-52 bg-navColorHover rounded-lg flex items-center justify-center text-3xl text-textColorPrimary">
         Mein Video {{ i }}
     </div>
+</div> -->
+
+<div class="films-container">
+    <app-video #videoComponent class="videoInFilms" *ngFor="let video of myFilms; let index = index"
+    [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
+    [title]="video.title || ''"
+    [description]="video.description || ''"
+    [category]="video.category || ''">  
+  </app-video>
 </div>

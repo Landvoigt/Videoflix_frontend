@@ -36,10 +36,8 @@ export class FilmsComponent implements OnInit {
     this.videoService.fetchAndStoreVideoData();
     this.videoService.getStoredVideoData().subscribe(data => {
       this.videoDataGcs = data;
-      console.log('Processed video data in FilmsComponent:', this.videoDataGcs);
      });
      this.films = this.videoDataGcs.filter(video => video.category === 'film');
-     console.log('Films:', this.films);
   }
 
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit,ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild, inject } from '@angular/core';
+import { AfterViewInit,ChangeDetectorRef, Component, ElementRef, HostListener, Output, Renderer2, ViewChild, inject, output } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { AuthService } from '../auth/auth.service';
 import { fadeInPage } from '../utils/animations';
@@ -7,12 +7,14 @@ import { FooterComponent } from '../footer/footer.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { VideoService } from '../services/video.service';
 import { VideoComponent } from '../video/video.component';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FilmsComponent } from '../categories/films/films.component';
 import { SeriesComponent } from '../categories/series/series.component';
 import { PlaylistComponent } from '../categories/playlist/playlist.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import Hls from 'hls.js';
+import { Observable } from 'rxjs';
+import { EventEmitter } from 'stream';
 
 export interface VideoData {
   subfolder: string;
@@ -47,6 +49,7 @@ export class MainpageComponent implements AfterViewInit {
   isFullscreen: boolean = false;
   hls: Hls | null = null; 
   posterUrlGcs: string = '';
+  currentVideo:string;
 
   leftmostId: string;
   rightmostId: string;
@@ -73,7 +76,6 @@ export class MainpageComponent implements AfterViewInit {
     ) { }
 
 
-
     ngOnInit(): void {
       this.loadingApp = true;
       setTimeout(() => {
@@ -86,14 +88,14 @@ export class MainpageComponent implements AfterViewInit {
      setTimeout(() => {
          this.adjustChildClass(window.innerWidth); // ab 600px
       }, 2000);
+      document.addEventListener('fullscreenchange', this.onFullscreenChange.bind(this));
      }
-
+    
 
 
     ngAfterViewInit(): void {
      this.videoService.getStoredVideoData().subscribe(data => {
      this.videoDataGcs = data;
-     console.log('Processed video data in MainPageComponent:', this.videoDataGcs);
     });
   
     }
@@ -145,7 +147,7 @@ export class MainpageComponent implements AfterViewInit {
     layover.style.display = "block" ; 
     setTimeout(() => {
       layover.style.display = "none" ; 
-    }, 800); 
+    }, 500); 
    }
    
   
@@ -386,13 +388,14 @@ export class MainpageComponent implements AfterViewInit {
   
 
   getVideoUrl(videoKey: string, resolution: string): void {
+
     const apiUrl = `http://localhost:8000/preview-video/?video_key=${videoKey}&resolution=${resolution}`;
     this.http.get<{ video_url: string }>(apiUrl).subscribe({
       next: (data) => {
         if (data && data.video_url) {
           this.videoUrl = data.video_url;
           this.cdr.detectChanges();
-          this.setupVideoPlayer();
+          this.setupVideoPlayer(videoKey);
         } else {
           console.error('Invalid response format from server');
         }
@@ -403,8 +406,9 @@ export class MainpageComponent implements AfterViewInit {
     });
   }
   
-
-  setupVideoPlayer(): void {
+ 
+  setupVideoPlayer(videoKey:string): void {
+    this.currentVideo = videoKey;
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     if (Hls.isSupported()) {
       if (this.hls) {
@@ -462,12 +466,12 @@ export class MainpageComponent implements AfterViewInit {
 
  
 
-
   extractFilename(url: string): string {
     const segments = url.split('/');
     const filename = segments[segments.length - 2];
     return filename;
   }
+
 
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
@@ -490,8 +494,43 @@ export class MainpageComponent implements AfterViewInit {
       }
     });
   }
+
+
+  createMyFilms(fileName: string): Observable<any> {
+    const apiUrl = 'http://localhost:8000/my-films/';
+    const body = { file_name: fileName };
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    console.log('Request Headers:', headers);
+    console.log('Request Body:', body);
+
+    return this.http.post(apiUrl, body, { headers });
+  }
+
  
+onFullscreenChange(): void {
+  if (this.isFullscreenChanged()) {
+
+ this.createMyFilms(this.currentVideo).subscribe({
+      next: (response) => {
+        console.log('Antwort vom Backend:', response);
+      },
+      error: (error) => {
+        console.error('Fehler bei der Anfrage:', error);
+      }
+    });
+    console.log('Das Dokument ist im Fullscreen-Modus.');
+  } else {
+    console.log('Das Dokument ist nicht im Fullscreen-Modus.');
+  }
+}
+
+isFullscreenChanged(): boolean {
+  return !!document.fullscreenElement;
+
 
 }
 
-
+}

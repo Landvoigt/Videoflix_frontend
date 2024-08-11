@@ -1,6 +1,6 @@
 import Hls from 'hls.js';
 import { ElementRef, HostListener, inject, Injectable, NgZone, Renderer2, RendererFactory2, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { VideoResponse } from '../interfaces/video.interface';
@@ -115,5 +115,8 @@ export class VideoService {
   //   }
   //   return 0;
   // }
+
+
+  
   
 }
