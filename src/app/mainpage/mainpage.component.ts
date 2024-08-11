@@ -90,7 +90,6 @@ export class MainpageComponent implements AfterViewInit {
 
 
 
-
     ngAfterViewInit(): void {
      this.videoService.getStoredVideoData().subscribe(data => {
      this.videoDataGcs = data;
@@ -124,11 +123,7 @@ export class MainpageComponent implements AfterViewInit {
 
 
     onLeave(id:string) {  
-      let layover = document.getElementById('layoverMainpage');
-      layover.style.display = "block" ; 
-      setTimeout(() => {
-        layover.style.display = "none" ; 
-      }, 800); 
+     this.layover();
       if (this.activeVideoId === id) {
         this.activeVideoId = null;
       }
@@ -136,13 +131,21 @@ export class MainpageComponent implements AfterViewInit {
       setTimeout(() => {
         this.disableEvents = false;
       }, 100);
-
       if(id === this.leftmostId) {this.changeBackChildStylesLeft(id);}
       if(id ===  this.rightmostId) {this.changeBackChildStylesRight(id);}
     this.onHoverVideo = false;
     setTimeout(() => {
       this.onHoverVideo = true;
     }, 100);
+   }
+
+
+   layover() {
+    let layover = document.getElementById('layoverMainpage');
+    layover.style.display = "block" ; 
+    setTimeout(() => {
+      layover.style.display = "none" ; 
+    }, 800); 
    }
    
   
@@ -295,21 +298,18 @@ export class MainpageComponent implements AfterViewInit {
       const outerContainer = this.line1.nativeElement;
       this.savedScrollLeft = outerContainer.scrollLeft;
       const children = Array.from(outerContainer.children) as HTMLElement[];
-      console.log('const children',children);
       let leftmostPosition = Number.POSITIVE_INFINITY;
       let rightmostPosition = Number.NEGATIVE_INFINITY;
       let leftmostElement: HTMLElement | null = null;
       let rightmostElement: HTMLElement | null = null;
     
       const containerRect = outerContainer.getBoundingClientRect();
-      console.log('const containerRect = outerContainer.getBoundingClientRect();',containerRect);
       const containerLeft = containerRect.left;
       const containerRight = containerRect.right;
     
       this.savedRelativePositions = children.map((item) => {
         const itemRect = item.getBoundingClientRect();
         const position = itemRect.left - containerLeft + outerContainer.scrollLeft;
-    
         const isVisible = itemRect.left < containerRight && itemRect.right > containerLeft;
         if (isVisible) {
           if (position < leftmostPosition) {
@@ -319,11 +319,11 @@ export class MainpageComponent implements AfterViewInit {
             this.positionLeftMostVideo( this.leftmostId);
    
           }
-          if (position > rightmostPosition) {
+          if (position > rightmostPosition){
             rightmostPosition = position;
             rightmostElement = item;
             this.rightmostId = item.id;
-            this.positionRightMostVideo( this.rightmostId);
+            this.positionRightMostVideo(this.rightmostId);
           }
         }
     
@@ -358,8 +358,9 @@ export class MainpageComponent implements AfterViewInit {
 
   positionRightMostVideo(id: string): number {
     const childElement = this.elementRef.nativeElement.querySelector(`#${id}`);
-    if (childElement) {
-      const elementRect = childElement.getBoundingClientRect();
+     const elementRect = childElement.getBoundingClientRect();
+    if (childElement  && 
+      elementRect.right > window.innerWidth || (window.innerWidth - elementRect.right) < 30) {
       const elementXPosition = elementRect.x;
       const elementWidth = elementRect.width;
       const displayWidth = window.innerWidth;

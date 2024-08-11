@@ -1,8 +1,6 @@
 
 .mainpage-wrapper {
   overflow-x: hidden;
-  //min-height: 100vh
-  //height: auto;
   position: relative;
 }
 
@@ -18,7 +16,6 @@
   background-color: transparent;
   cursor: pointer;
 }
-
 
 
 .poster-container {
@@ -56,10 +53,6 @@ img {
   transition: opacity 2s ease;
 }
 
-#line1 {
-  background-color: aqua;
-}
-
 
 .video-size {  // bearbeiten!!!
   display: flex;
@@ -84,14 +77,9 @@ img {
   }
 }
 
-
-
-
-
 .videoInMainpage {
   padding-left: 48px;
 }
-
 
 .line-wrapper-left {
   z-index: 102;
@@ -128,7 +116,6 @@ img {
     }
   }
 }
-
 
 .line-wrapper::-webkit-scrollbar {
   display: none;
