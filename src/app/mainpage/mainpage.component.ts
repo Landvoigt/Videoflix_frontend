@@ -50,6 +50,8 @@ export class MainpageComponent implements AfterViewInit {
   hls: Hls | null = null; 
   posterUrlGcs: string = '';
   currentVideo:string;
+  pageChangedSetTime:any;
+  startRandomVideoSetTime:any;
 
   leftmostId: string;
   rightmostId: string;
@@ -78,7 +80,7 @@ export class MainpageComponent implements AfterViewInit {
 
     ngOnInit(): void {
       this.loadingApp = true;
-      setTimeout(() => {
+     this.startRandomVideoSetTime = setTimeout(() => {
          this.savePositions();
          this.getRandomVideoData();
          this.isPosterImg = false;
@@ -196,15 +198,19 @@ export class MainpageComponent implements AfterViewInit {
     setTimeout(() => this.closeMenu = false, 10);
   }
 
-
+  
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.currentPage = page;
     if(this.currentPage ==='dashboard') {
       this.isPosterImg = true;
-      setTimeout(() => {
-        this.isPosterImg = false;
+    this.pageChangedSetTime = setTimeout(() => {
+        this.savePositions();
         this.getRandomVideoData();
-      }, 3000);    
+        this.isPosterImg = false;
+      }, 1);    
+   }else {
+    clearTimeout(this.pageChangedSetTime);
+    clearTimeout(this.startRandomVideoSetTime);
    }
   }
 

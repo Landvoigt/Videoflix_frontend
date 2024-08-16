@@ -110,8 +110,6 @@ setupVideoPlayer(resolution: string): void {
 
 
 onHover() {
-  console.log('this.isFullscreen, onHover',this.isFullscreen);
-
   if (!this.posterUrlGcs) {
     console.error('posterUrlGcs is not set');
     return;
@@ -157,7 +155,6 @@ onFullscreenChange(event: Event) {
     (document as any).msFullscreenElement);
 
   if (this.isFullscreen) {
-    console.log('this.isFullscreen, onFullscreenChange',this.isFullscreen);
     this.stopHoverTimeout();
     this.hoverClass = false;
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
