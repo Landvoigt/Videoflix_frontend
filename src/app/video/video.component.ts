@@ -37,6 +37,7 @@ videoUrl: string = '';
 hls: Hls | null = null;
 isFullscreen: boolean = false;
 hoverClass: boolean = false;
+hoverTimeout: any;
 
 
 
@@ -109,6 +110,7 @@ setupVideoPlayer(resolution: string): void {
 
 
 onHover() {
+  console.log('this.isFullscreen, onHover',this.isFullscreen);
 
   if (!this.posterUrlGcs) {
     console.error('posterUrlGcs is not set');
@@ -123,7 +125,7 @@ onHover() {
   const resolution = this.getScreenSize();
   this.getVideoUrl(preViewName, resolution); 
   this.setupVideoPlayer(resolution); 
-  //this.startHoverTimeout();   Bearbeiten!!!
+  this.startHoverTimeout();  
  }
 
 
@@ -155,6 +157,8 @@ onFullscreenChange(event: Event) {
     (document as any).msFullscreenElement);
 
   if (this.isFullscreen) {
+    console.log('this.isFullscreen, onFullscreenChange',this.isFullscreen);
+    this.stopHoverTimeout();
     this.hoverClass = false;
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     video.currentTime = 0; 
@@ -201,16 +205,22 @@ stopVideoPlayer(): void {
 }
 
 
-hoverTimeout: any;
-startHoverTimeout(){
+startHoverTimeout() {
   this.hoverTimeout = setTimeout(() => {
     this.hoverClass = true;
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     video.currentTime = 0; 
     video.pause();
   }, 25000); 
- 
-} 
+}
+
+
+stopHoverTimeout() {
+  if (this.hoverTimeout) {
+    clearTimeout(this.hoverTimeout);
+  }
+}
+
 
 
 clearHoverTimeout() {
