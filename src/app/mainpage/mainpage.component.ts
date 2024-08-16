@@ -35,7 +35,7 @@ export interface VideoData {
 export class MainpageComponent implements AfterViewInit {
 
   elementRef = inject(ElementRef);
-  @ViewChild('videoPlayerMain', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
+  @ViewChild('videoPlayerMain', { static: false }) videoPlayerMain: ElementRef<HTMLVideoElement>;
   @ViewChild('line1', { static: false }) line1: ElementRef;
   @ViewChild('line2', { static: false }) line2: ElementRef;
   savedScrollLeft = 0;
@@ -409,7 +409,7 @@ export class MainpageComponent implements AfterViewInit {
  
   setupVideoPlayer(videoKey:string): void {
     this.currentVideo = videoKey;
-    const video: HTMLVideoElement = this.videoPlayer.nativeElement;
+    const video: HTMLVideoElement = this.videoPlayerMain.nativeElement;
     if (Hls.isSupported()) {
       if (this.hls) {
         this.hls.destroy();
@@ -450,7 +450,7 @@ export class MainpageComponent implements AfterViewInit {
 
 
   getResolutionForVideoElement(): string {
-    const video: HTMLVideoElement = this.videoPlayer.nativeElement;
+    const video: HTMLVideoElement = this.videoPlayerMain.nativeElement;
     const width = video.clientWidth;
 
     if (width >= 1920) {

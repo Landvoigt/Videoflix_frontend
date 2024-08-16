@@ -123,7 +123,7 @@ onHover() {
   const resolution = this.getScreenSize();
   this.getVideoUrl(preViewName, resolution); 
   this.setupVideoPlayer(resolution); 
-  this.startHoverTimeout();
+  //this.startHoverTimeout();   Bearbeiten!!!
  }
 
 
@@ -200,15 +200,17 @@ stopVideoPlayer(): void {
   }
 }
 
+
 hoverTimeout: any;
-startHoverTimeout() {
+startHoverTimeout(){
   this.hoverTimeout = setTimeout(() => {
     this.hoverClass = true;
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     video.currentTime = 0; 
     video.pause();
   }, 25000); 
-}
+ 
+} 
 
 
 clearHoverTimeout() {
