@@ -26,6 +26,8 @@
       </div>
 
       <div class="line-wrapper" >
+
+
         <div id="line1" #line1 class="line">
           <app-video  class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
             [id]="'videoLine1' + index"       
@@ -34,8 +36,7 @@
             [description]="video.description || ''"
             [category]="video.category || ''"
             (mouseenter)="shouldHandleEvent('videoLine1' + index) ? onHover('videoLine1' + index) : null"
-            (mouseleave)="shouldHandleEvent('videoLine1' + index) ? onLeave('videoLine1' + index) : null">
-           
+            (mouseleave)="shouldHandleEvent('videoLine1' + index) ? onLeave('videoLine1' + index) : null"> 
           </app-video>
         </div>
 
@@ -48,9 +49,12 @@
             src="/assets/img/videostore/arrow-right.png">
         </div>
 
+      </div>
 
-        <!-- <div id="line2" #line2 class="line">
-          <app-video #videoComponent class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
+
+      <div class="line-wrapper" >
+        <div id="line2" #line2 class="line">
+          <app-video class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
             [id]="'videoLine2' + index"       
             [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
             [title]="video.title || ''"
@@ -61,18 +65,18 @@
           </app-video>
         </div>
 
-        <div class="line-wrapper-left">
+        <div class="line-wrapper-left-2">
           <img id="left2" (click)="scrollingLeft2()" (mouseleave)="toVisibleModus2()"
             src="/assets/img/videostore/arrow-left.png">
         </div>
-        <div class="line-wrapper-right">
+        <div class="line-wrapper-right-2">
           <img id="right2" (click)="scrollingRight2()" (mouseleave)="toVisibleModus2()"
             src="/assets/img/videostore/arrow-right.png">
-        </div> -->
+        </div>
 
-      </div>
+    </div>
 
-    </ng-container>
+  </ng-container>
 
     
     

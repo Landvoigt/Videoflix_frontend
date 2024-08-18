@@ -39,12 +39,16 @@ export class MainpageComponent implements AfterViewInit {
   @ViewChild('line1', { static: false }) line1: ElementRef;
   @ViewChild('line2', { static: false }) line2: ElementRef;
   savedScrollLeft = 0;
+  savedScrollLeft2 = 0;
   savedRelativePositions: number[] = [];
+  savedRelativePositions2: number[] = [];
   isScrollable = false;
   title: string;
   description: string;
   category: string;
   videoDataGcs: VideoData[] = []; 
+  line1Videos: VideoData[] = [];    // für später, wenn wir  über 10 Videos haben
+  line2Videos: VideoData[] = [];    // für später, wenn wir  über 10 Videos haben
   videoUrl: string = '';
   isFullscreen: boolean = false;
   hls: Hls | null = null; 
@@ -54,7 +58,9 @@ export class MainpageComponent implements AfterViewInit {
   startRandomVideoSetTime:any;
 
   leftmostId: string;
+  leftmostId2: string;
   rightmostId: string;
+  rightmostId2: string;
   onHoverVideo:boolean = true;
   activeVideoId: string | null = null;
   disableEvents = false;
@@ -82,6 +88,7 @@ export class MainpageComponent implements AfterViewInit {
       this.loadingApp = true;
      this.startRandomVideoSetTime = setTimeout(() => {
          this.savePositions();
+         this.savePositions2();
          this.getRandomVideoData();
          this.isPosterImg = false;
      },3000);
@@ -98,6 +105,8 @@ export class MainpageComponent implements AfterViewInit {
     ngAfterViewInit(): void {
      this.videoService.getStoredVideoData().subscribe(data => {
      this.videoDataGcs = data;
+    // this.line1Videos = this.videoDataGcs.slice(0, 10);  // für später
+    // this.line2Videos = this.videoDataGcs.slice(10);     // für später
     });
   
     }
@@ -114,9 +123,11 @@ export class MainpageComponent implements AfterViewInit {
       }, 100);
       this.scrollingLeft1();  // !!
       this.toVisibleModus1();  // !!
+      this.scrollingLeft2();  // !!
+      this.toVisibleModus2();  // !!
       if(this.onHoverVideo) {
-        if(id === this.leftmostId) {this.changeChildStylesLeft(id);}
-        if( id === this.rightmostId) {this.changeChildStylesRight(id);}
+        if(id === this.leftmostId  || id === this.leftmostId2 ) {this.changeChildStylesLeft(id);}
+        if( id === this.rightmostId  || id === this.rightmostId2) {this.changeChildStylesRight(id);}
       } 
     }
 
@@ -135,8 +146,8 @@ export class MainpageComponent implements AfterViewInit {
       setTimeout(() => {
         this.disableEvents = false;
       }, 100);
-      if(id === this.leftmostId) {this.changeBackChildStylesLeft(id);}
-      if(id ===  this.rightmostId) {this.changeBackChildStylesRight(id);}
+      if(id === this.leftmostId || id === this.leftmostId2 ) {this.changeBackChildStylesLeft(id);}
+      if(id ===  this.rightmostId || id ===  this.rightmostId2) {this.changeBackChildStylesRight(id);}
     this.onHoverVideo = false;
     setTimeout(() => {
       this.onHoverVideo = true;
@@ -205,6 +216,7 @@ export class MainpageComponent implements AfterViewInit {
       this.isPosterImg = true;
     this.pageChangedSetTime = setTimeout(() => {
         this.savePositions();
+        this.savePositions2();
         this.getRandomVideoData();
         this.isPosterImg = false;
       }, 1);    
@@ -240,7 +252,6 @@ export class MainpageComponent implements AfterViewInit {
 
   toggleMode() {
     const outerContainer = this.line1.nativeElement;
-   // const outerContainer2 = this.line2.nativeElement;
     if (!this.isScrollable) {
       this.savedScrollLeft = outerContainer.scrollLeft;
       outerContainer.style.overflowX = 'visible';
@@ -293,6 +304,64 @@ export class MainpageComponent implements AfterViewInit {
     this.savePositions();
     this.isScrollable = false;
     this.toggleMode();
+  }
+
+
+  toggleMode2() {
+   const outerContainer = this.line2.nativeElement;
+    if (!this.isScrollable) {
+      this.savedScrollLeft = outerContainer.scrollLeft;
+      outerContainer.style.overflowX = 'visible';
+      const screenWidth = outerContainer.offsetWidth;
+      let previousPosition = 0;
+      Array.from(outerContainer.children).forEach((item: HTMLElement, index: number) => {
+        const originalRelativePosition = this.savedRelativePositions2[index];
+        let newLeft = originalRelativePosition - this.savedScrollLeft2;
+
+        if (index > 0 && !this.isContainerScrollable(outerContainer)) {
+          newLeft = Math.min(newLeft, previousPosition);
+        }
+
+        item.style.position = 'relative';
+        item.style.left = `${newLeft}px`;
+
+        previousPosition = newLeft;
+      });
+
+    } else {
+      outerContainer.style.overflowX = 'scroll';
+      outerContainer.scrollLeft = this.savedScrollLeft2;
+      Array.from(outerContainer.children).forEach((item: HTMLElement) => {
+        item.style.position = 'static';
+        item.style.left = '0px';
+      });
+
+    }
+    this.isScrollable = !this.isScrollable;
+  }
+
+
+
+  scrollingLeft2() {
+    this.isScrollable = true;
+    this.toggleMode2();
+    const outerContainer = this.line2.nativeElement;
+    outerContainer.scrollLeft -= 700;
+  }
+
+
+  scrollingRight2() {
+    this.isScrollable = true;
+    this.toggleMode2();
+    const outerContainer = this.line2.nativeElement;
+    outerContainer.scrollLeft += 700;
+  }
+
+
+  toVisibleModus2() {
+    this.savePositions2();
+    this.isScrollable = false;
+    this.toggleMode2();
   }
 
 
@@ -351,6 +420,59 @@ export class MainpageComponent implements AfterViewInit {
       }
     }    
   }
+  
+
+
+  savePositions2() {
+    if(window.innerWidth > 600) {
+      const outerContainer = this.line2.nativeElement;
+      this.savedScrollLeft2 = outerContainer.scrollLeft;
+      const children = Array.from(outerContainer.children) as HTMLElement[];
+      let leftmostPosition = Number.POSITIVE_INFINITY;
+      let rightmostPosition = Number.NEGATIVE_INFINITY;
+      let leftmostElement: HTMLElement | null = null;
+      let rightmostElement: HTMLElement | null = null;
+    
+      const containerRect = outerContainer.getBoundingClientRect();
+      const containerLeft = containerRect.left;
+      const containerRight = containerRect.right;
+    
+      this.savedRelativePositions2 = children.map((item) => {
+        const itemRect = item.getBoundingClientRect();
+        const position = itemRect.left - containerLeft + outerContainer.scrollLeft;
+        const isVisible = itemRect.left < containerRight && itemRect.right > containerLeft;
+        if (isVisible) {
+          if (position < leftmostPosition) {
+            leftmostPosition = position;
+            leftmostElement = item;
+            this.leftmostId2 = item.id;
+            this.positionLeftMostVideo( this.leftmostId2);
+   
+          }
+          if (position > rightmostPosition){
+            rightmostPosition = position;
+            rightmostElement = item;
+            this.rightmostId2 = item.id;
+            this.positionRightMostVideo(this.rightmostId2);
+          }
+        }
+    
+        return position;
+      });
+    
+      if (leftmostElement) {
+        const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
+        const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
+      } else {
+      }
+    
+      if (rightmostElement) {
+        const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
+        const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
+      } else {
+      }
+    }}   
+  
   
 
   positionLeftMostVideo(id: string): number {
@@ -458,7 +580,6 @@ export class MainpageComponent implements AfterViewInit {
   getResolutionForVideoElement(): string {
     const video: HTMLVideoElement = this.videoPlayerMain.nativeElement;
     const width = video.clientWidth;
-
     if (width >= 1920) {
       return '1080p';
     } else if (width >= 1280) {
@@ -471,7 +592,6 @@ export class MainpageComponent implements AfterViewInit {
   }
 
  
-
   extractFilename(url: string): string {
     const segments = url.split('/');
     const filename = segments[segments.length - 2];
@@ -508,10 +628,6 @@ export class MainpageComponent implements AfterViewInit {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-
-    console.log('Request Headers:', headers);
-    console.log('Request Body:', body);
-
     return this.http.post(apiUrl, body, { headers });
   }
 
@@ -527,16 +643,16 @@ onFullscreenChange(): void {
         console.error('Fehler bei der Anfrage:', error);
       }
     });
-    console.log('Das Dokument ist im Fullscreen-Modus.');
+   // console.log('Das Dokument ist im Fullscreen-Modus.');
   } else {
-    console.log('Das Dokument ist nicht im Fullscreen-Modus.');
+    //console.log('Das Dokument ist nicht im Fullscreen-Modus.');
   }
 }
 
+
 isFullscreenChanged(): boolean {
   return !!document.fullscreenElement;
-
-
 }
+
 
 }
