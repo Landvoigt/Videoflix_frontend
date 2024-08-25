@@ -1,87 +1,16 @@
-<div class="mainpage-wrapper">
-
-<div id="layoverMainpage"></div>
+<div class="mainpage-wrapper flex flex-col min-h-screen">
+  <div id="mainpageOverlay" class="mainpage-overlay"></div>
 
   <navbar (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
   <div @fadeInPage (click)="closeUserMenu()"
-    class="flex min-h-full flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
+    class="flex-1 flex flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
 
     <ng-container *ngIf="activePage('dashboard')">
+      <app-dashboard></app-dashboard>
+    </ng-container>
 
-      <div class="w-full h-96 flex video-wrapper">
-        <div class="video-container">
-          <img id="posterImgMain" *ngIf="isPosterImg" [src]="posterUrlGcs">
-          <h1 *ngIf="isPosterImg" class="title">{{title || ''}}</h1>
-          <p *ngIf="isPosterImg" class="description">{{description || ''}}</p>
-          <video 
-           autoplay
-           preload="auto"
-           #videoPlayerMain
-           class="video-content"
-           [src]="videoUrl"
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      </div>
-
-      <div class="line-wrapper" >
-
-
-        <div id="line1" #line1 class="line">
-          <app-video  class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
-            [id]="'videoLine1' + index"       
-            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
-            [title]="video.title || ''"
-            [description]="video.description || ''"
-            [category]="video.category || ''"
-            (mouseenter)="shouldHandleEvent('videoLine1' + index) ? onHover('videoLine1' + index) : null"
-            (mouseleave)="shouldHandleEvent('videoLine1' + index) ? onLeave('videoLine1' + index) : null"> 
-          </app-video>
-        </div>
-
-        <div class="line-wrapper-left">
-          <img id="left1" (click)="scrollingLeft1()" (mouseleave)="toVisibleModus1()"
-            src="/assets/img/videostore/arrow-left.png">
-        </div>
-        <div class="line-wrapper-right">
-          <img id="right1" (click)="scrollingRight1()" (mouseleave)="toVisibleModus1()"
-            src="/assets/img/videostore/arrow-right.png">
-        </div>
-
-      </div>
-
-
-      <div class="line-wrapper" >
-        <div id="line2" #line2 class="line">
-          <app-video class="videoInMainpage" *ngFor="let video of videoDataGcs; let index = index"
-            [id]="'videoLine2' + index"       
-            [posterUrlGcs]="video.posterUrlGcs  || '/assets/img/videostore/300.png'" 
-            [title]="video.title || ''"
-            [description]="video.description || ''"
-            [category]="video.category || ''"
-            (mouseenter)="shouldHandleEvent('videoLine2' + index) ? onHover('videoLine2' + index) : null"
-            (mouseleave)="shouldHandleEvent('videoLine2' + index) ? onLeave('videoLine2' + index) : null">
-          </app-video>
-        </div>
-
-        <div class="line-wrapper-left-2">
-          <img id="left2" (click)="scrollingLeft2()" (mouseleave)="toVisibleModus2()"
-            src="/assets/img/videostore/arrow-left.png">
-        </div>
-        <div class="line-wrapper-right-2">
-          <img id="right2" (click)="scrollingRight2()" (mouseleave)="toVisibleModus2()"
-            src="/assets/img/videostore/arrow-right.png">
-        </div>
-
-    </div>
-
-  </ng-container>
-
-    
-    
     <ng-container *ngIf="activePage('films')">
-      <app-films ></app-films>
+      <app-films></app-films>
     </ng-container>
 
     <ng-container *ngIf="activePage('series')">
@@ -92,20 +21,22 @@
       <app-playlist></app-playlist>
     </ng-container>
 
-
-    <!-- Notification Button -->
-
-    <!-- <button type="button"
-        class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-        <span class="absolute -inset-1.5"></span>
-        <span class="sr-only">View notifications</span>
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-        </svg>
-     </button> -->
   </div>
-  <footer></footer>
+  <footer class="mt-auto"></footer>
 </div>
 <app-loading-screen *ngIf="loadingApp"></app-loading-screen>
+
+
+
+
+<!-- Notification Button -->
+<!-- <button type="button"
+    class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+    <span class="absolute -inset-1.5"></span>
+    <span class="sr-only">View notifications</span>
+    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+      aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+    </svg>
+ </button> -->

@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
+import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Profile, ProfileImages } from '../../models/profile.model';
-import { RestService } from '../services/rest.service';
+import { RestService } from '@services/rest.service';
 
 @Component({
   selector: 'app-dialog-create-profile',

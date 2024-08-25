@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-frontpage',

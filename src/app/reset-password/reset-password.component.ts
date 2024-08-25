@@ -3,12 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ResetPasswordFormModel } from '../interfaces/auth.interface';
-import { PasswordRegex } from '../utils/regex';
-import { AlertService } from '../services/alert.service';
-import { ErrorService } from '../services/error.service';
-import { RestService } from '../services/rest.service';
-import { fadeInPage } from '../utils/animations';
-import { NavigationService } from '../services/navigation.service';
+import { PasswordRegex } from '@utils/regex';
+import { AlertService } from '@services/alert.service';
+import { ErrorService } from '@services/error.service';
+import { RestService } from '@services/rest.service';
+import { fadeInPage } from '@utils/animations';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-reset-password',

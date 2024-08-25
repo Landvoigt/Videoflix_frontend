@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
+import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { UpdateUsernameFormModel } from '../interfaces/auth.interface';
-import { AlertService } from '../services/alert.service';
-import { ErrorService } from '../services/error.service';
-import { NavigationService } from '../services/navigation.service';
-import { RestService } from '../services/rest.service';
+import { AlertService } from '@services/alert.service';
+import { ErrorService } from '@services/error.service';
+import { NavigationService } from '@services/navigation.service';
+import { RestService } from '@services/rest.service';
 
 @Component({
   selector: 'app-update-username',

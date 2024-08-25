@@ -1,5 +1,5 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '@services/navigation.service';
 import { Profile } from '../../models/profile.model';
 import { isPlatformBrowser } from '@angular/common';
 

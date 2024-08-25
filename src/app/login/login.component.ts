@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
-import { RestService } from '../services/rest.service';
-import { ErrorService } from '../services/error.service';
+import { RestService } from '@services/rest.service';
+import { ErrorService } from '@services/error.service';
 import { LoginFormModel } from '../interfaces/auth.interface';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
-import { fadeInPage } from '../utils/animations';
-import { AlertService } from '../services/alert.service';
-import { NavigationService } from '../services/navigation.service';
+import { fadeInPage } from '@utils/animations';
+import { AlertService } from '@services/alert.service';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-login',

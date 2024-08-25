@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from '@services/alert.service';
 import { CommonModule } from '@angular/common';
 import { Alert } from '../interfaces/alert.interface';
-import { fadeInAlert } from '../utils/animations';
+import { fadeInAlert } from '@utils/animations';
 
 @Component({
   selector: 'app-alert-box',

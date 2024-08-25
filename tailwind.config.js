@@ -29,6 +29,8 @@ module.exports = {
         inputColorFocus: '#2528eb',
 
         navColorHover: 'rgb(186 213 255 / 44%)',
+
+        greyTransparent: '#9f9f9fa3',
       },
     },
   },

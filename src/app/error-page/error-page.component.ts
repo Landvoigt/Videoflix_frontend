@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
+import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-error-page',

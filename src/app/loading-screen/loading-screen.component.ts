@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { VideoService } from '@services/video.service';
 
 @Component({
   selector: 'app-loading-screen',
@@ -10,6 +11,8 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 export class LoadingScreenComponent implements AfterViewInit {
   @ViewChild('loadingOverlay', { static: true }) loadingOverlay!: ElementRef;
 
+  constructor(private videoService: VideoService) { }
+
   showLoadingAnimation() {
     this.loadingOverlay.nativeElement.classList.add('active');
   }
@@ -20,6 +23,9 @@ export class LoadingScreenComponent implements AfterViewInit {
 
   simulateAppLoading() {
     this.showLoadingAnimation();
+
+    this.videoService.fetchVideoData();
+
     setTimeout(() => {
       this.hideLoadingAnimation();
     }, 2500);

@@ -50,7 +50,7 @@ export class RestService {
 
   getProfiles(): Observable<Profile[]> {
     return this.http.get<Profile[]>(`${this.apiBaseUrl}profiles/`, { headers: this.getHeaders() }).pipe(
-      tap(profiles => this.profilesSubject.next(profiles)),
+      tap((profiles: Profile[]) => this.profilesSubject.next(profiles)),
       catchError(this.handleError)
     );
   }

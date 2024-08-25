@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
+import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';

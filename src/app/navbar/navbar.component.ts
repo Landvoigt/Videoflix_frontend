@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProfileImages } from '../../models/profile.model';
 import { AuthService } from '../auth/auth.service';
-import { NavigationService } from '../services/navigation.service';
-import { fadeInPage } from '../utils/animations';
+import { NavigationService } from '@services/navigation.service';
+import { fadeInPage } from '@utils/animations';
 
 @Component({
   selector: 'navbar',

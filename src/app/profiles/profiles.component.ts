@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
+import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
-import { RestService } from '../services/rest.service';
+import { RestService } from '@services/rest.service';
 import { Observable, catchError, of, switchMap } from 'rxjs';
 import { Profile, ProfileImages } from '../../models/profile.model';
-import { NavigationService } from '../services/navigation.service';
-import { AlertService } from '../services/alert.service';
+import { NavigationService } from '@services/navigation.service';
+import { AlertService } from '@services/alert.service';
 import { AuthService } from '../auth/auth.service';
 
 @Component({

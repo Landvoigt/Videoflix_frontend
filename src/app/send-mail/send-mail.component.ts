@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SendMailFormModel } from '../interfaces/auth.interface';
-import { EmailRegex } from '../utils/regex';
-import { RestService } from '../services/rest.service';
-import { AlertService } from '../services/alert.service';
-import { ErrorService } from '../services/error.service';
-import { fadeInPage } from '../utils/animations';
-import { NavigationService } from '../services/navigation.service';
+import { EmailRegex } from '@utils/regex';
+import { RestService } from '@services/rest.service';
+import { AlertService } from '@services/alert.service';
+import { ErrorService } from '@services/error.service';
+import { fadeInPage } from '@utils/animations';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-send-mail',

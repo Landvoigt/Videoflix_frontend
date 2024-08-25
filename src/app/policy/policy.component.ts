@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
+import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-policy',

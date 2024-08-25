@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { fadeInPage } from '../utils/animations';
-import { NavigationService } from '../services/navigation.service';
+import { fadeInPage } from '@utils/animations';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-register-success',

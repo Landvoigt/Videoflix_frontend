@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '../utils/animations';
-import { NavigationService } from '../services/navigation.service';
+import { fadeInPage } from '@utils/animations';
+import { NavigationService } from '@services/navigation.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ContactFormModel } from '../interfaces/contact.interface';
-import { CompanyNameRegex, EmailRegex, NameRegex } from '../utils/regex';
-import { AlertService } from '../services/alert.service';
-import { RestService } from '../services/rest.service';
-import { ErrorService } from '../services/error.service';
+import { ContactFormModel } from '@interfaces/contact.interface';
+import { CompanyNameRegex, EmailRegex, NameRegex } from '@utils/regex';
+import { AlertService } from '@services/alert.service';
+import { RestService } from '@services/rest.service';
+import { ErrorService } from '@services/error.service';
 import { FooterComponent } from '../footer/footer.component';
 
 @Component({

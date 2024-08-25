@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, Validators, AbstractControl, ValidatorFn, FormControl } from '@angular/forms';
-import { RestService } from '../services/rest.service';
+import { RestService } from '@services/rest.service';
 import { CommonModule } from '@angular/common';
-import { EmailRegex, PasswordRegex } from '../utils/regex';
+import { EmailRegex, PasswordRegex } from '@utils/regex';
 import { RegisterFormModel } from '../interfaces/auth.interface';
-import { ErrorService } from '../services/error.service';
-import { fadeInPage } from '../utils/animations';
-import { NavigationService } from '../services/navigation.service';
+import { ErrorService } from '@services/error.service';
+import { fadeInPage } from '@utils/animations';
+import { NavigationService } from '@services/navigation.service';
 
 @Component({
   selector: 'app-register',
