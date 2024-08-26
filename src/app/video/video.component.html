@@ -1,25 +1,13 @@
 <div class="main-video-container" (mouseenter)="onHover()" (mouseleave)="onLeave()">
-
-  <div class="video-container-default">
-    <img [src]="posterUrlGcs" alt="{{ title }}">
-    <h2 class="video-logo-small logo-text text-textColorPrimary">V</h2>
-    <video [ngClass]="{'br-top-l-r': hoverClass}" #videoPlayer
-      class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button bg-gradient-to-r from-default-from to-default-to"
-      controls preload="auto" data-setup="{}" disablePictureInPicture type="application/x-mpegURL" [src]="videoUrl">
+  <h2 class="video-logo-small logo-text text-textColorPrimary">V</h2>
+  <img [src]="posterUrlGcs" alt="{{ title }}" class="video-thumbnail">
+  <div class="video-wrapper">
+    <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button" controls preload="auto"
+      data-setup="{}" disablePictureInPicture type="application/x-mpegURL" [src]="videoUrl">
       Your browser does not support the video tag.
     </video>
-  </div>
-  <div class="video-container-hover">
-    <h2 class="text-textColorPrimary">{{ title }}</h2>
+    <div class="video-info bg-gradient-to-r from-default-from to-default-to">
+      <h2 class="text-textColorPrimary">{{ title }}</h2>
+    </div>
   </div>
 </div>
-
-
-<!-- width="640" height="264" -->
-<!-- <div class="video-container">
-    <video id="my-videos" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264"
-      data-setup="{}">
-      <source src="https://storage.googleapis.com/videoflix-videos/hls/scooter/master.m3u8" type="application/x-mpegURL">
-      Your browser does not support the video tag.
-    </video>
-  </div> -->

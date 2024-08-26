@@ -28,7 +28,7 @@ export class MainpageComponent implements OnInit {
   closeMenu: boolean = false;
 
   ngOnInit(): void {
-    this.loadingApp = true;  
+    // this.loadingApp = true;  
   }
 
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {

@@ -14,7 +14,7 @@ export class VideoService {
   private videoDataSubject = new BehaviorSubject<VideoData[]>([]);
   videoData$: Observable<VideoData[]> = this.videoDataSubject.asObservable();
 
-  private apiVideoBaseUrl = "http://localhost:8000/video/";
+  private apiVideoBaseUrl = "http://localhost:8000/api/video/";
 
   elementRef: ElementRef;
   renderer: Renderer2;

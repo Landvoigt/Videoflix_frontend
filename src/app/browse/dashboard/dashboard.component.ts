@@ -196,7 +196,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public adjustChildClass(width: number) {
-    const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.videoInMainpage');
+    const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
 
     childElementsLine1.forEach((childElement: HTMLElement) => {
       if (width < 600) {
@@ -325,7 +325,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private changeChildStyles(id: string, transform: string, zIndex: string): void {
-    const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.videoInMainpage');
+    const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
 
     this.renderer.addClass(childElementsLine1, 'transition-slow');
     this.renderer.setStyle(childElementsLine1, 'transform', transform);
