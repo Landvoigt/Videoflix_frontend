@@ -6,6 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { VideoData } from '@interfaces/video.interface';
 import { AlertService } from './alert.service';
 import Hls from 'hls.js';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +26,7 @@ export class VideoService {
   private videoUrl: string = '';
   private audioEnabled: boolean = false;
   currentVideo: string;
+  maxDuration:number;
 
   constructor(
     public rendererFactory: RendererFactory2,
@@ -40,6 +42,7 @@ export class VideoService {
       tap((data: VideoData[]) => this.videoDataSubject.next(data)),
       catchError(this.handleError)
     ).subscribe();
+    //console.log('this.videoData$',this.videoData$);
   }
 
   getVideoData(category: string): Observable<VideoData[]> {
@@ -72,6 +75,8 @@ export class VideoService {
     );
   }
 
+
+
   getRandomVideoData(): Observable<VideoData | undefined> {
     return this.videoData$.pipe(
       map(videoData => {
@@ -84,6 +89,7 @@ export class VideoService {
       catchError(this.handleError)
     );
   }
+
 
   getVideoUrl(videoKey: string, resolution: string): Observable<string> {
     const apiUrl = `${this.apiVideoBaseUrl}preview/?video_key=${videoKey}&resolution=${resolution}`;
@@ -118,9 +124,10 @@ export class VideoService {
     this.videoUrl = videoUrl; // Store the current video URL
     const video: HTMLVideoElement = videoElement.nativeElement;
     // Ensure video is initially muted for autoplay policies
-    if (!this.audioEnabled) {
-      video.muted = true;
-    }
+
+    // if (!this.audioEnabled) {
+    //    video.muted = true;
+    // }
 
     if (Hls.isSupported()) {
       this.setupHls(video, videoUrl);
@@ -153,14 +160,14 @@ export class VideoService {
   private showPosterAndDelayPlay(video: HTMLVideoElement): void {
     video.pause(); // Ensure the video doesn't start immediately
     video.currentTime = 0; // Reset the video to the start
-    video.volume = 0; // Mute the audio initially for fade-in effect
+   // video.volume = 0; // Mute the audio initially for fade-in effect
 
     setTimeout(() => {
       video.play();
       if (!this.audioEnabled) {
         this.addTimeUpdateListener(video);
       } else {
-        this.fadeInAudio(video);
+       // this.fadeInAudio(video);
       }
       // this.addTimeUpdateListener(video);
     }, 1500); // Delay of 1500ms before starting playback
@@ -182,13 +189,21 @@ export class VideoService {
     }, fadeInterval);
   }
 
-  private addTimeUpdateListener(video: HTMLVideoElement): void {
-    const maxDuration = 30;
+
+  intervalId: any;
+  public addTimeUpdateListener(video: HTMLVideoElement): void {
+   // this.maxDuration = 15;
     video.addEventListener('timeupdate', () => {
-      if (video.currentTime >= maxDuration) {
+      if (video.currentTime >= this.maxDuration) {
+        clearInterval(this.intervalId);
         video.pause();
         video.currentTime = 0;
-        this.restartVideoAfterPause(video);
+       // this.restartVideoAfterPause(video);
+       this.intervalId = setInterval(() => {
+        video.play();
+        console.log('interval ist aktiv!!!');
+      }, 10000); 
+     
       }
     });
   }
@@ -205,17 +220,10 @@ export class VideoService {
     const video: HTMLVideoElement = videoElement.nativeElement;
 
     if (!this.audioEnabled) {
-      this.fadeInAudio(video);
-      this.audioEnabled = true; // Set to true to indicate audio has been enabled
+      //this.fadeInAudio(video);
+     // this.audioEnabled = true; // Set to true to indicate audio has been enabled
     }
   }
-
-
-
-
-
-
-
 
 
   logWindowSize() {
@@ -244,30 +252,3 @@ export class VideoService {
     return throwError(() => { });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-// positionRightMostVideo(id: string): number {
-//   console.log('id',id);
-//   const childElement = this.elementRef.nativeElement.querySelector(`#${id}`);
-//   console.log('childElement',childElement);
-//   if (childElement) {
-//     const elementRect = childElement.getBoundingClientRect();
-//     const elementXPosition = elementRect.x;
-//     const elementWidth = elementRect.width;
-//     const displayWidth = window.innerWidth;
-//     const rightmostXPosition = elementWidth - (displayWidth - elementXPosition) ;
-//     return (rightmostXPosition * -1) - 80;
-//   }
-//   return 0;
-// }

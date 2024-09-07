@@ -20,8 +20,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   loading: boolean = false;
   private userInteractionBound: boolean = false;
   videoUrl: string = '';
+  videoKeyRandomVideo:string;
+  muted : boolean;
   @ViewChild('videoPlayerMain', { static: true }) videoPlayerMain!: ElementRef<HTMLVideoElement>;
-
+ // @ViewChildren('targetElement') targetElements!: QueryList<ElementRef>;
   @ViewChild('line1', { static: false }) line1: ElementRef;
   savedScrollLeft: number = 0;
   savedRelativePositions: number[] = [];
@@ -32,6 +34,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onHoverVideo: boolean = true;
   activeVideoId: string | null = null;
   disableEvents: boolean = false;
+  currentVideo!: VideoData;
+
 
   constructor(
     public navService: NavigationService,
@@ -42,14 +46,80 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.bindUserInteraction();
+   // this.bindUserInteraction();
     this.getRandomVideo();
     this.getVideoData();
+    this.muted = true;
   }
+ 
 
   ngAfterViewInit(): void {
-    // this.savePositions(this.line1, this.savedScrollLeft, this.savedRelativePositions, 'leftmostId', 'rightmostId');
+  //  this.targetElements.forEach((elementRef, index) => {
+  //   console.log(`Element ${index} ID: ${elementRef.nativeElement.id}`);
+  // });
   }
+
+  scrollingLeft(line1:any) {
+    line1.nativeElement.scrollLeft -= 700;
+  }
+
+  scrollingRight(line1:any) {
+    line1.nativeElement.scrollLeft += 700;
+  }
+
+
+  onElementHover(event: MouseEvent): void {
+    const targetElement = event.currentTarget as HTMLElement;
+    const elementId = targetElement.id;
+  
+    if (!elementId || !this.line1) {
+      console.log('Element has no ID or #line1 is undefined');
+      return;
+    }
+  
+    const rect = targetElement.getBoundingClientRect();
+    const containerRect = this.line1.nativeElement.getBoundingClientRect();
+    const containerStartX = containerRect.left;
+    const containerEndX = containerRect.right;
+
+    let translateX = 0;
+    if (rect.x <= containerStartX+5) {
+      translateX = (containerStartX - rect.x) + 50;
+    } else if ((rect.x + rect.width) >= containerEndX-50) {
+      translateX = -((rect.x + rect.width) - containerEndX + 50);
+    }
+  
+    if (translateX !== 0) {
+      const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+      childElementsLine1.forEach((childElement: HTMLElement) => {
+        if (childElement.id === elementId) {
+          this.renderer.addClass(childElement, 'transition-slow');
+          this.renderer.setStyle(childElement, 'transform', `translateX(${translateX}px)`);
+          this.renderer.setStyle(childElement, 'z-index', '1000');
+        }
+      });
+    }
+  }
+  
+  
+  onElementLeave(event: MouseEvent): void {
+    const targetElement = event.currentTarget as HTMLElement;
+    const elementId = targetElement.id;
+  
+    if (elementId && this.line1) {
+          const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+        childElementsLine1.forEach((childElement: HTMLElement) => {
+          if (childElement.id === elementId) {
+            this.renderer.removeClass(childElement, 'transition-slow');
+            this.renderer.removeStyle(childElement, 'transform');
+            this.renderer.removeStyle(childElement, 'z-index');
+          }
+        });
+    }
+  }
+  
 
   getRandomVideo(): void {
     this.randomVideo$ = this.videoService.getRandomVideoData();
@@ -57,21 +127,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (video: VideoData | undefined) => {
         if (video) {
           this.getVideoUrl(video.subfolder, this.videoService.getVideoElementResolution(this.videoPlayerMain.nativeElement));
+         // console.log('video.subfolder:',video);
+          this.currentVideo = video;
+          //console.log('this.currentVideo:',this.currentVideo);
         } else {
-          console.log('No video data available');
+         // console.log('No video data available');
         }
       },
       error: (error) => {
         console.error('Error getting random video:', error);
       }
     });
+   // console.log('this.randomVideo$:',this.randomVideo$);
   }
+
 
   getVideoUrl(videoKey: string, resolution: string): void {
     this.videoService.getVideoUrl(videoKey, resolution).subscribe({
       next: (url: string) => {
         this.videoUrl = url;
         this.cdr.detectChanges();
+        this.videoKeyRandomVideo = videoKey;
         this.playRandomVideo(videoKey);
       },
       error: (err) => {
@@ -79,6 +155,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
+
 
   getVideoData(): void {
     this.loading = true;
@@ -94,287 +171,458 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+
   playRandomVideo(videoKey: string): void {
     this.videoService.currentVideo = videoKey;
+    this.videoService.maxDuration = 15;
     this.videoService.playRandomVideo(this.videoPlayerMain, this.videoUrl);
+    this.videoPlayerMain.nativeElement.muted = true;
   }
 
-  private savePositions(containerRef: ElementRef, savedScrollLeft: number, savedRelativePositions: number[], leftmostIdRef: string, rightmostIdRef: string): void {
-    if (!containerRef) return;
-
-    const container = containerRef.nativeElement as HTMLElement;
-    if (window.innerWidth > 600 && container) {
-      const children = Array.from(container.children) as HTMLElement[];
-      let leftmostPosition = Number.POSITIVE_INFINITY;
-      let rightmostPosition = Number.NEGATIVE_INFINITY;
-      let leftmostElement: HTMLElement | null = null;
-      let rightmostElement: HTMLElement | null = null;
-
-      const containerRect = container.getBoundingClientRect();
-      const containerLeft = containerRect.left;
-      const containerRight = containerRect.right;
-
-      savedRelativePositions.length = 0;
-
-      children.forEach((item, index) => {
-        const itemRect = item.getBoundingClientRect();
-        const position = itemRect.left - containerLeft + container.scrollLeft;
-        const isVisible = itemRect.left < containerRight && itemRect.right > containerLeft;
-
-        if (isVisible) {
-          if (position < leftmostPosition) {
-            leftmostPosition = position;
-            leftmostElement = item;
-            this[leftmostIdRef] = item.id;
-          }
-          if (position > rightmostPosition) {
-            rightmostPosition = position;
-            rightmostElement = item;
-            this[rightmostIdRef] = item.id;
-          }
-        }
-
-        savedRelativePositions.push(position);
-      });
-
-      this.handlePosterImages(leftmostElement, rightmostElement);
-    }
+  requestFullScreen(video: HTMLVideoElement): void {
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    } 
   }
 
-  private handlePosterImages(leftmostElement: HTMLElement | null, rightmostElement: HTMLElement | null): void {
-    if (leftmostElement) {
-      const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
-      const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-      console.log('Leftmost Poster URL:', leftmostPosterUrl);
-    }
-
-    if (rightmostElement) {
-      const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
-      const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
-      console.log('Rightmost Poster URL:', rightmostPosterUrl);
-    }
+  @HostListener('document:fullscreenchange', ['$event'])
+  @HostListener('document:webkitfullscreenchange', ['$event'])
+  @HostListener('document:mozfullscreenchange', ['$event'])
+  @HostListener('document:MSFullscreenChange', ['$event'])
+  handleFullscreenChange(event: Event) {
+    this.onFullscreenChange(event);
   }
 
-  private positionLeftMostVideo(id: string) {
-    // return this.calculatePosition(id, false);
+  onFullscreenChange(event: Event) {
+    this.isFullscreen = !!(document.fullscreenElement ||
+      (document as any).webkitFullscreenElement ||
+      (document as any).mozFullScreenElement ||
+      (document as any).msFullscreenElement);
+  if(this.isFullscreen) {
+    this.videoPlayerMain.nativeElement.muted = false;
+    console.log('Ton an');
+  } else {
+    console.log('Ton aus');
+    this.videoPlayerMain.nativeElement.muted = true;
+    this.muted = true;
+    this.videoPlayerMain.nativeElement.currentTime = 0;
+    this.videoService.maxDuration = 15;
+  }
+   
   }
 
-  private positionRightMostVideo(id: string) {
-    // return this.calculatePosition(id, true);
-  }
-
-  private calculatePosition(containerRef: ElementRef, isRightmost: boolean): number {
-    const childElement = containerRef.nativeElement as HTMLElement;
-    if (childElement) {
-      const elementRect = childElement.getBoundingClientRect();
-      const elementXPosition = elementRect.x;
-      const displayWidth = window.innerWidth;
-
-      if (isRightmost) {
-        if (elementRect.right > displayWidth || (displayWidth - elementRect.right) < 30) {
-          const elementWidth = elementRect.width;
-          const rightmostXPosition = elementWidth - (displayWidth - elementXPosition);
-          return (rightmostXPosition * -1) - 80;
-        }
-      } else {
-        return (elementXPosition * -1) + 30;
-      }
-    }
-    return 0;
-  }
-
-  extractFilename(url: string): string {
-    const segments = url.split('/');
-    const filename = segments[segments.length - 2];
-    return filename;
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.videoService.logWindowSize();
-    this.adjustChildClass(window.innerWidth);
-  }
-
-  public adjustChildClass(width: number) {
-    const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
-
-    childElementsLine1.forEach((childElement: HTMLElement) => {
-      if (width < 600) {
-        this.renderer.addClass(childElement, 'video-size');
-      } else {
-        this.renderer.removeClass(childElement, 'video-size');
-      }
-    });
-  }
-
-  isFullscreenChanged(): boolean {
-    return !!document.fullscreenElement;
-  }
-
-  private toggleMode(containerRef: ElementRef, savedScrollLeft: number, savedRelativePositions: number[]): void {
-    const outerContainer = containerRef.nativeElement as HTMLElement;
-    if (outerContainer) {
-      if (!this.isScrollable) {
-        this.savedScrollLeft = outerContainer.scrollLeft;
-        outerContainer.style.overflowX = 'visible';
-        let previousPosition = 0;
-
-        Array.from(outerContainer.children).forEach((item: HTMLElement, index: number) => {
-          const originalRelativePosition = savedRelativePositions[index];
-          let newLeft = originalRelativePosition - this.savedScrollLeft;
-
-          if (index > 0 && !this.isContainerScrollable(outerContainer)) {
-            newLeft = Math.min(newLeft, previousPosition);
-          }
-
-          item.style.position = 'relative';
-          item.style.left = `${newLeft}px`;
-
-          previousPosition = newLeft;
-        });
-      } else {
-        outerContainer.style.overflowX = 'scroll';
-        outerContainer.scrollLeft = this.savedScrollLeft;
-        Array.from(outerContainer.children).forEach((item: HTMLElement) => {
-          item.style.position = 'static';
-          item.style.left = '0px';
-        });
-      }
-      this.isScrollable = !this.isScrollable;
-    }
-  }
-
-  // Usage
-  scrollingLeft1() {
-    this.isScrollable = true;
-    this.toggleMode(this.line1, this.savedScrollLeft, this.savedRelativePositions);
-    const outerContainer = this.line1.nativeElement as HTMLElement;
-    if (outerContainer) {
-      outerContainer.scrollLeft -= 700;
-    }
-  }
-
-  scrollingRight1() {
-    this.isScrollable = true;
-    this.toggleMode(this.line1, this.savedScrollLeft, this.savedRelativePositions);
-    const outerContainer = this.line1.nativeElement as HTMLElement;
-    if (outerContainer) {
-      outerContainer.scrollLeft += 700;
-    }
-  }
-
-  toVisibleModus1() {
-    this.savePositions(this.line1, this.savedScrollLeft, this.savedRelativePositions, 'leftmostId', 'rightmostId');
-    this.isScrollable = false;
-    this.toggleMode(this.line1, this.savedScrollLeft, this.savedRelativePositions);
-  }
-
-  private isContainerScrollable(container: HTMLElement): boolean {
-    return container.scrollWidth > container.clientWidth;
-  }
-
-  onHover(id: string) {
-    if (this.disableEvents) {
-
-      return;
-    }
-    this.activeVideoId = id;
-    this.disableEvents = true;
-    setTimeout(() => {
-      this.disableEvents = false;
-    }, 100);
-    this.scrollingLeft1();  // !!
-    this.toVisibleModus1();  // !!
-
-    if (this.onHoverVideo) {
-      if (id === this.leftmostId) { this.changeChildStylesLeft(id); }
-      if (id === this.rightmostId) { this.changeChildStylesRight(id); }
-    }
-  }
-
-  shouldHandleEvent(id: string): boolean {
-    return !this.disableEvents || this.activeVideoId === id;
-  }
-
-  onLeave(id: string) {
-    this.layover();
-    if (this.activeVideoId === id) {
-      this.activeVideoId = null;
-    }
-
-    this.disableEvents = true;
-    setTimeout(() => {
-      this.disableEvents = false;
-    }, 100);
-
-    if (id === this.leftmostId) { this.changeBackChildStylesLeft(id) }
-    if (id === this.rightmostId) { this.changeBackChildStylesRight(id) }
-
-    this.onHoverVideo = false;
-    setTimeout(() => {
-      this.onHoverVideo = true;
-    }, 100);
-  }
-
-  layover() {
-    let layover = document.getElementById('mainpageOverlay');
-    layover.style.display = "block";
-    setTimeout(() => {
-      layover.style.display = "none";
-    }, 500);
-  }
-
-  private changeChildStyles(id: string, transform: string, zIndex: string): void {
-    const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
-
-    this.renderer.addClass(childElementsLine1, 'transition-slow');
-    this.renderer.setStyle(childElementsLine1, 'transform', transform);
-    this.renderer.setStyle(childElementsLine1, 'z-index', zIndex);
-  }
-
-  changeChildStylesLeft(id: string) {
-    this.changeChildStyles(id, `translateX(${this.positionLeftMostVideo(id)}px)`, '1000');
-  }
-
-  changeChildStylesRight(id: string) {
-    this.changeChildStyles(id, `translateX(${this.positionRightMostVideo(id)}px)`, '1000');
-  }
-
-  changeBackChildStylesLeft(id: string) {
-    this.changeChildStyles(id, 'translateX(0)', '100');
-  }
-
-  changeBackChildStylesRight(id: string) {
-    this.changeChildStyles(id, 'translateX(0)', '100');
+playVideoButton() {
+  this.videoService.currentVideo = this.videoKeyRandomVideo;
+    this.videoService.playRandomVideo(this.videoPlayerMain, this.videoUrl);
+    this.videoPlayerMain.nativeElement.muted = false;
+    this.videoService.maxDuration = 100000;
+    this.requestFullScreen(this.videoPlayerMain.nativeElement);
   }
 
 
-  private bindUserInteraction(): void {
-    if (!this.userInteractionBound) {
-      document.addEventListener('click', this.enableAudioOnInteraction.bind(this), { once: true });
-      document.addEventListener('keydown', this.enableAudioOnInteraction.bind(this), { once: true });
-      document.addEventListener('touchstart', this.enableAudioOnInteraction.bind(this), { once: true });
-      this.userInteractionBound = true;
-    }
-  }
-
-  private unbindUserInteraction(): void {
-    document.removeEventListener('click', this.enableAudioOnInteraction.bind(this));
-    document.removeEventListener('keydown', this.enableAudioOnInteraction.bind(this));
-    document.removeEventListener('touchstart', this.enableAudioOnInteraction.bind(this));
-  }
-
-  private enableAudioOnInteraction(): void {
-    if (this.videoPlayerMain) {
-      this.videoService.enableAudio(this.videoPlayerMain);
-    }
-    this.unbindUserInteraction();
-  }
+toggleMuted() {  
+  this.videoPlayerMain.nativeElement.muted = !this.videoPlayerMain.nativeElement.muted;
+  this.muted = this.videoPlayerMain.nativeElement.muted;
+  //console.log(`muted ${this.muted ? 'True' : 'False'}`);
+}
+  
 
   ngOnDestroy(): void {
-    this.unbindUserInteraction();
+    //this.unbindUserInteraction();
+    clearInterval(this.videoService.intervalId);
   }
 }
+
+
+
+
+
+  // onElementHover(event: MouseEvent, index: number): void {
+  //   const targetElement = event.currentTarget as HTMLElement;
+  //   const elementId = targetElement.id;
+  
+  //   if (elementId && this.line1) {
+  //     console.log(`Hovered over element with ID: ${elementId}`);
+  //     console.log('Index:', index);
+  
+  //     // Position des Elements relativ zu #line1
+  //     const rect = targetElement.getBoundingClientRect();
+  //     const containerRect = this.line1.nativeElement.getBoundingClientRect();
+  
+  //     const containerStartX = containerRect.left;
+  //     const containerEndX = containerRect.right;
+  
+  //     if (rect.x < containerStartX) {
+  //       console.log('Element ist am linken Rand:', elementId);
+  //       setTimeout(() => {
+  //         const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+  //         childElementsLine1.forEach((childElement: HTMLElement) => {
+  //           if (childElement.id === elementId) {
+  //             this.renderer.addClass(childElement, 'transition-slow');
+  //             this.renderer.setStyle(childElement, 'transform', `translateX(${(containerStartX - rect.x)+50}px)`);
+  //             this.renderer.setStyle(childElement, 'z-index', '1000');
+  //           }
+  //         });
+  //       }, 50);
+  //     }
+  
+  //     if ((rect.x + rect.width) > containerEndX) {
+  //       console.log('Element ist am rechten Rand:', elementId);
+  //       setTimeout(() => {
+  //         const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+  //         childElementsLine1.forEach((childElement: HTMLElement) => {
+  //           if (childElement.id === elementId) {
+  //             this.renderer.addClass(childElement, 'transition-slow');
+  //             this.renderer.setStyle(childElement, 'transform', `translateX(-${((rect.x + rect.width) - containerEndX)+50}px)`);
+  //             this.renderer.setStyle(childElement, 'z-index', '1000');
+  //           }
+  //         });
+  //       }, 50);
+  //     }
+  //   } else {
+  //     console.log('Element has no ID or #line1 is undefined');
+  //   }
+  // }
+  
+  // onElementLeave(event: MouseEvent, index: number): void {
+  //   const targetElement = event.currentTarget as HTMLElement;
+  //   const elementId = targetElement.id;
+  
+  //   if (elementId && this.line1) {
+  //     console.log(`Mouse left element with ID: ${elementId}`);
+  
+  //     setTimeout(() => {
+  //       const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+  //       childElementsLine1.forEach((childElement: HTMLElement) => {
+  //         if (childElement.id === elementId) {
+  //           // Entfernen der hinzugefügten Klassen und Stile
+  //           this.renderer.removeClass(childElement, 'transition-slow');
+  //           this.renderer.removeStyle(childElement, 'transform');
+  //           this.renderer.removeStyle(childElement, 'z-index');
+  //         }
+  //       });
+  //     }, 50);
+  //   }
+  // }
+  
+
+  // onElementHover(event: MouseEvent): void {
+  //   const targetElement = event.currentTarget as HTMLElement;
+  //   const elementId = targetElement.id;
+  
+  //   if (elementId && this.line1) {
+  //     const rect = targetElement.getBoundingClientRect();
+  //     const containerRect = this.line1.nativeElement.getBoundingClientRect();
+  
+  //     const containerStartX = containerRect.left;
+  //     const containerEndX = containerRect.right;
+  
+  //     if (rect.x < containerStartX) {
+  //         const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+  //         childElementsLine1.forEach((childElement: HTMLElement) => {
+  //           if (childElement.id === elementId) {
+  //             this.renderer.addClass(childElement, 'transition-slow');
+  //             this.renderer.setStyle(childElement, 'transform', `translateX(${(containerStartX - rect.x)+35}px)`);
+  //             this.renderer.setStyle(childElement, 'z-index', '1000');
+  //           }
+  //         });
+  //     }
+  
+  //     if ((rect.x + rect.width) > containerEndX) {
+  //         const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+  
+  //         childElementsLine1.forEach((childElement: HTMLElement) => {
+  //           if (childElement.id === elementId) {
+  //             this.renderer.addClass(childElement, 'transition-slow');
+  //             this.renderer.setStyle(childElement, 'transform', `translateX(-${((rect.x + rect.width) - containerEndX)+35}px)`);
+  //             this.renderer.setStyle(childElement, 'z-index', '1000');
+  //           }
+  //         });
+  //     }
+  //   } else {
+  //     console.log('Element has no ID or #line1 is undefined');
+  //   }
+  // }
+
+
+
+  // private savePositions(containerRef: ElementRef, savedScrollLeft: number, savedRelativePositions: number[], leftmostIdRef: string, rightmostIdRef: string): void {
+  //   if (!containerRef) return;
+
+  //   const container = containerRef.nativeElement as HTMLElement;
+  //   if (window.innerWidth > 600 && container) {
+  //     const children = Array.from(container.children) as HTMLElement[];
+  //     let leftmostPosition = Number.POSITIVE_INFINITY;
+  //     let rightmostPosition = Number.NEGATIVE_INFINITY;
+  //     let leftmostElement: HTMLElement | null = null;
+  //     let rightmostElement: HTMLElement | null = null;
+
+  //     const containerRect = container.getBoundingClientRect();
+  //     const containerLeft = containerRect.left;
+  //     const containerRight = containerRect.right;
+
+  //     savedRelativePositions.length = 0;
+
+  //     children.forEach((item, index) => {
+  //       const itemRect = item.getBoundingClientRect();
+  //       const position = itemRect.left - containerLeft + container.scrollLeft;
+  //       const isVisible = itemRect.left < containerRight && itemRect.right > containerLeft;
+
+  //       if (isVisible) {
+  //         if (position < leftmostPosition) {
+  //           leftmostPosition = position;
+  //           leftmostElement = item;
+  //           this[leftmostIdRef] = item.id;
+  //         }
+  //         if (position > rightmostPosition) {
+  //           rightmostPosition = position;
+  //           rightmostElement = item;
+  //           this[rightmostIdRef] = item.id;
+  //         }
+  //       }
+
+  //       savedRelativePositions.push(position);
+  //     });
+
+  //     this.handlePosterImages(leftmostElement, rightmostElement);
+  //   }
+  // }
+
+  // private handlePosterImages(leftmostElement: HTMLElement | null, rightmostElement: HTMLElement | null): void {
+  //   if (leftmostElement) {
+  //     const posterImg = leftmostElement.querySelector('#posterImg') as HTMLImageElement;
+  //     const leftmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
+  //     console.log('Leftmost Poster URL:', leftmostPosterUrl);
+  //   }
+
+  //   if (rightmostElement) {
+  //     const posterImg = rightmostElement.querySelector('#posterImg') as HTMLImageElement;
+  //     const rightmostPosterUrl = posterImg ? posterImg.src : 'No Poster URL';
+  //     console.log('Rightmost Poster URL:', rightmostPosterUrl);
+  //   }
+  // }
+
+  // private positionLeftMostVideo(id: string) {
+  //   // return this.calculatePosition(id, false);
+  // }
+
+  // private positionRightMostVideo(id: string) {
+  //   // return this.calculatePosition(id, true);
+  // }
+
+  // private calculatePosition(containerRef: ElementRef, isRightmost: boolean): number {
+  //   const childElement = containerRef.nativeElement as HTMLElement;
+  //   if (childElement) {
+  //     const elementRect = childElement.getBoundingClientRect();
+  //     const elementXPosition = elementRect.x;
+  //     const displayWidth = window.innerWidth;
+
+  //     if (isRightmost) {
+  //       if (elementRect.right > displayWidth || (displayWidth - elementRect.right) < 30) {
+  //         const elementWidth = elementRect.width;
+  //         const rightmostXPosition = elementWidth - (displayWidth - elementXPosition);
+  //         return (rightmostXPosition * -1) - 80;
+  //       }
+  //     } else {
+  //       return (elementXPosition * -1) + 30;
+  //     }
+  //   }
+  //   return 0;
+  // }
+
+  // extractFilename(url: string): string {
+  //   const segments = url.split('/');
+  //   const filename = segments[segments.length - 2];
+  //   return filename;
+  // }
+
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event: Event) {
+  //   this.videoService.logWindowSize();
+  //   this.adjustChildClass(window.innerWidth);
+  // }
+
+  // public adjustChildClass(width: number) {
+  //   const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+
+  //   childElementsLine1.forEach((childElement: HTMLElement) => {
+  //     if (width < 600) {
+  //       this.renderer.addClass(childElement, 'video-size');
+  //     } else {
+  //       this.renderer.removeClass(childElement, 'video-size');
+  //     }
+  //   });
+  // }
+
+  // isFullscreenChanged(): boolean {
+  //   return !!document.fullscreenElement;
+  // }
+
+  // private toggleMode(containerRef: ElementRef, savedScrollLeft: number, savedRelativePositions: number[]): void {
+  //   const outerContainer = containerRef.nativeElement as HTMLElement;
+  //   if (outerContainer) {
+  //     if (!this.isScrollable) {
+  //       this.savedScrollLeft = outerContainer.scrollLeft;
+  //       outerContainer.style.overflowX = 'visible';
+  //       let previousPosition = 0;
+
+  //       Array.from(outerContainer.children).forEach((item: HTMLElement, index: number) => {
+  //         const originalRelativePosition = savedRelativePositions[index];
+  //         let newLeft = originalRelativePosition - this.savedScrollLeft;
+
+  //         if (index > 0 && !this.isContainerScrollable(outerContainer)) {
+  //           newLeft = Math.min(newLeft, previousPosition);
+  //         }
+
+  //         item.style.position = 'relative';
+  //         item.style.left = `${newLeft}px`;
+
+  //         previousPosition = newLeft;
+  //       });
+  //     } else {
+  //       outerContainer.style.overflowX = 'scroll';
+  //       outerContainer.scrollLeft = this.savedScrollLeft;
+  //       Array.from(outerContainer.children).forEach((item: HTMLElement) => {
+  //         item.style.position = 'static';
+  //         item.style.left = '0px';
+  //       });
+  //     }
+  //     this.isScrollable = !this.isScrollable;
+  //   }
+  // }
+
+  // // Usage
+  // scrollingLeft1() {
+  //   this.isScrollable = true;
+  //   this.toggleMode(this.line1, this.savedScrollLeft, this.savedRelativePositions);
+  //   const outerContainer = this.line1.nativeElement as HTMLElement;
+  //   if (outerContainer) {
+  //     outerContainer.scrollLeft -= 700;
+  //   }
+  // }
+
+  // scrollingRight1() {
+  //   this.isScrollable = true;
+  //   this.toggleMode(this.line1, this.savedScrollLeft, this.savedRelativePositions);
+  //   const outerContainer = this.line1.nativeElement as HTMLElement;
+  //   if (outerContainer) {
+  //     outerContainer.scrollLeft += 700;
+  //   }
+  // }
+
+  // toVisibleModus1() {
+  //   this.savePositions(this.line1, this.savedScrollLeft, this.savedRelativePositions, 'leftmostId', 'rightmostId');
+  //   this.isScrollable = false;
+  //   this.toggleMode(this.line1, this.savedScrollLeft, this.savedRelativePositions);
+  // }
+
+  // private isContainerScrollable(container: HTMLElement): boolean {
+  //   return container.scrollWidth > container.clientWidth;
+  // }
+
+  // onHover(id: string) {
+  //   if (this.disableEvents) {
+
+  //     return;
+  //   }
+  //   this.activeVideoId = id;
+  //   this.disableEvents = true;
+  //   setTimeout(() => {
+  //     this.disableEvents = false;
+  //   }, 100);
+  //   this.scrollingLeft1();  // !!
+  //   this.toVisibleModus1();  // !!
+
+  //   // if (this.onHoverVideo) {
+  //   //   if (id === this.leftmostId) { this.changeChildStylesLeft(id); }
+  //   //   if (id === this.rightmostId) { this.changeChildStylesRight(id); }
+  //   // }
+  // }
+
+  // shouldHandleEvent(id: string): boolean {
+  //   return !this.disableEvents || this.activeVideoId === id;
+  // }
+
+  // onLeave(id: string) {
+  //   this.layover();
+  //   if (this.activeVideoId === id) {
+  //     this.activeVideoId = null;
+  //   }
+
+  //   this.disableEvents = true;
+  //   setTimeout(() => {
+  //     this.disableEvents = false;
+  //   }, 100);
+
+  //   // if (id === this.leftmostId) { this.changeBackChildStylesLeft(id) }
+  //   // if (id === this.rightmostId) { this.changeBackChildStylesRight(id) }
+
+  //   this.onHoverVideo = false;
+  //   setTimeout(() => {
+  //     this.onHoverVideo = true;
+  //   }, 100);
+  // }
+
+  // layover() {
+  //   let layover = document.getElementById('mainpageOverlay');
+  //   layover.style.display = "block";
+  //   setTimeout(() => {
+  //     layover.style.display = "none";
+  //   }, 500);
+  // }
+
+  // private changeChildStyles(id: string, transform: number, zIndex: number): void {
+  //   const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+
+  //   this.renderer.addClass(childElementsLine1, 'transition-slow');
+  //   this.renderer.setStyle(childElementsLine1, 'transform', transform);
+  //   this.renderer.setStyle(childElementsLine1, 'z-index', zIndex);
+  // }
+
+  // changeChildStylesLeft(id: string) {
+  //   this.changeChildStyles(id, `translateX(${this.positionLeftMostVideo(id)}px)`, '1000');
+  // }
+
+  // changeChildStylesRight(id: string) {
+  //   this.changeChildStyles(id, `translateX(${this.positionRightMostVideo(id)}px)`, '1000');
+  // }
+
+  // changeBackChildStylesLeft(id: string) {
+  //   this.changeChildStyles(id, 'translateX(0)', '100');
+  // }
+
+  // changeBackChildStylesRight(id: string) {
+  //   this.changeChildStyles(id, 'translateX(0)', '100');
+  // }
+
+
+  // private bindUserInteraction(): void {
+  //   if (!this.userInteractionBound) {
+  //     document.addEventListener('click', this.enableAudioOnInteraction.bind(this), { once: true });
+  //     document.addEventListener('keydown', this.enableAudioOnInteraction.bind(this), { once: true });
+  //     document.addEventListener('touchstart', this.enableAudioOnInteraction.bind(this), { once: true });
+  //     this.userInteractionBound = true;
+  //   }
+  // }
+
+  // private unbindUserInteraction(): void {
+  //   document.removeEventListener('click', this.enableAudioOnInteraction.bind(this));
+  //   document.removeEventListener('keydown', this.enableAudioOnInteraction.bind(this));
+  //   document.removeEventListener('touchstart', this.enableAudioOnInteraction.bind(this));
+  // }
+
+  // private enableAudioOnInteraction(): void {
+  //   if (this.videoPlayerMain) {
+  //     this.videoService.enableAudio(this.videoPlayerMain);
+  //   }
+  //   this.unbindUserInteraction();
+  // }
+
+ 
 
 
 

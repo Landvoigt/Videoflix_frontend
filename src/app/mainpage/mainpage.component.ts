@@ -8,6 +8,8 @@ import { PlaylistComponent } from '../browse/playlist/playlist.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
+import { VideoService } from '@services/video.service';
+import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-mainpage',
@@ -27,15 +29,22 @@ export class MainpageComponent implements OnInit {
   loadingApp: boolean = true;
   closeMenu: boolean = false;
 
+  constructor(private videoService: VideoService, private router: Router) {}
+
   ngOnInit(): void {
     // this.loadingApp = true;  
   }
 
+  
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.currentPage = page;
     switch (page) {
       case 'dashboard':
         // this.dashboardComponent?.initialize();
+        //this.dashboardComponent.getRandomVideo();
+        //this.dashboardComponent.getVideoData();
+       //this.router.navigate(['/mainpage']);
+       //this.router.navigate(['/dashboard']);
         break;
       case 'films':
         // this.filmsComponent?.someMethod();

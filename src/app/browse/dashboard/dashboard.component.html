@@ -1,25 +1,32 @@
 <div class="w-full flex random-video-wrapper">
     <div class="random-video-container w-full h-full relative">
-        <video preload="auto" #videoPlayerMain class="random-video-content w-full h-full object-cover" [src]="videoUrl">
+        <img class="muted" (click)="toggleMuted()" [src]="muted ? '/assets/img/videostore/mute.png' : '/assets/img/videostore/volume-up.png'">
+        <video preload="auto"
+         #videoPlayerMain class="random-video-content w-full h-full object-cover"
+          [src]="videoUrl">
             Your browser does not support the video tag.
         </video>
         <div class="random-video-overlay">
             <div class="random-video-info">
-                <h2 class="text-5xl text-textColorPrimary">Your description goes here</h2>
-                <span class="text-textColorPrimary">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt eum
-                    nobis
-                    voluptates voluptatibus ex, saepe voluptatem nostrum obcaecati consequatur suscipit quidem omnis
-                    commodi
-                    pariatur necessitatibus totam, nesciunt ipsam porro quos?</span>
+                <div *ngIf="currentVideo">
+                    <h2 class="title">{{ currentVideo.title }}</h2>
+                    <span  class="text-3xl text-textColorPrimary description">{{ currentVideo.description }}</span>
+                    <div class="fsk">{{ currentVideo.age }}</div>
+                    <div  class="text-2xl text-textColorPrimary crr">
+                        <span>{{ currentVideo.category === 'film' ? 'Film' : 'Serie' }}</span>
+                         <span>{{ currentVideo.release_date }}</span>
+                         <span>{{ currentVideo.resolution }}</span>
+                    </div>    
+                </div>
                 <div class="flex items-center justify-center gap-x-9">
-                    <a style="width: 185px; text-align: center; white-space: nowrap;" class="rounded-md bg-accentColor px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
+                    <a (click)="playVideoButton()"   style="width: 185px; text-align: center; white-space: nowrap;" class="rounded-md bg-accentColor px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
                         text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
                         hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                         focus-visible:outline-accentColor cursor-pointer">
                         Abspielen</a>
-                    <a style="width: 185px; text-align: center; white-space: nowrap;" class="rounded-md bg-greyTransparent px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
+                     <!-- <a style="width: 185px; text-align: center; white-space: nowrap;" class="rounded-md bg-greyTransparent px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
                         text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm cursor-pointer hover:text-accentColor">weitere
-                        Infos <span aria-hidden="true" class="btn-arrow">→</span></a>
+                        Infos <span aria-hidden="true" class="btn-arrow">→</span></a> -->
                 </div>
             </div>
         </div>
@@ -27,23 +34,23 @@
 </div>
 
 <div class="video-slideshow">
+    <div class="left-wrapper"></div>
+    <div class="right-wrapper"></div>
     <div id="line1" #line1 class="line" *ngIf="!loading">
-        <app-video *ngFor="let video of videos$ | async; let index = index" class="app-video"
+        <app-video  #targetElement  (mouseleave)="onElementLeave($event)"  (mouseenter)="onElementHover($event)" *ngFor="let video of videos$ | async; let index = index" class="app-video"
             [id]="'videoLine1' + index" [posterUrlGcs]="video.posterUrlGcs || '/assets/img/videostore/300.png'"
-            [title]="video.title" [description]="video.description" [category]="video.category">
+            [title]="video.title"  [age]="video.age" [resolution]="video.resolution" [release_date]="video.release_date" [description]="video.description" [category]="video.category">
         </app-video>
     </div>
-    <!-- (mouseenter)="shouldHandleEvent('videoLine1' + index) ? onHover('videoLine1' + index) : null" -->
-    <!-- (mouseleave)="shouldHandleEvent('videoLine1' + index) ? onLeave('videoLine1' + index) : null" -->
 
-    <!-- <div class="video-slideshow-left">
-        <img id="left1" (click)="scrollingLeft1()" (mouseleave)="toVisibleModus1()"
+    <div class="video-slideshow-left">
+        <img id="left1" (click)="scrollingLeft(line1)"
             src="/assets/img/videostore/arrow-left.png">
     </div>
     <div class="video-slideshow-right">
-        <img id="right1" (click)="scrollingRight1()" (mouseleave)="toVisibleModus1()"
+        <img id="right1" (click)="scrollingRight(line1)"
             src="/assets/img/videostore/arrow-right.png">
-    </div> -->
+    </div>
 </div>
 
 <!-- <div class="video-slideshow">
