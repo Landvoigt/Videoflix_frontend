@@ -34,20 +34,20 @@
 </div>
 
 <div class="video-slideshow">
-    <div class="left-wrapper"></div>
-    <div class="right-wrapper"></div>
-    <div id="line1" #line1 class="line" *ngIf="!loading">
+    <div *ngIf="showLeftArrow" class="left-wrapper"></div>
+    <div *ngIf="showRightArrow" class="right-wrapper"></div>
+    <div id="line1" #line1 class="line" (scroll)="checkScroll()" *ngIf="!loading">
         <app-video  #targetElement  (mouseleave)="onElementLeave($event)"  (mouseenter)="onElementHover($event)" *ngFor="let video of videos$ | async; let index = index" class="app-video"
             [id]="'videoLine1' + index" [posterUrlGcs]="video.posterUrlGcs || '/assets/img/videostore/300.png'"
             [title]="video.title"  [age]="video.age" [resolution]="video.resolution" [release_date]="video.release_date" [description]="video.description" [category]="video.category">
         </app-video>
     </div>
 
-    <div class="video-slideshow-left">
+    <div *ngIf="showLeftArrow" class="video-slideshow-left" (click)="scrollingLeft(line1)">
         <img id="left1" (click)="scrollingLeft(line1)"
             src="/assets/img/videostore/arrow-left.png">
     </div>
-    <div class="video-slideshow-right">
+    <div *ngIf="showRightArrow" class="video-slideshow-right" (click)="scrollingRight(line1)">
         <img id="right1" (click)="scrollingRight(line1)"
             src="/assets/img/videostore/arrow-right.png">
     </div>

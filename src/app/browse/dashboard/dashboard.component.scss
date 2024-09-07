@@ -66,6 +66,8 @@
     gap: 1.5rem;
     scroll-behavior: smooth;
     transition: opacity 2s ease;
+    margin-left: 80px;
+    margin-right: 80px;
   }
 }
 
@@ -77,11 +79,16 @@
   position: absolute;
   left: 0;
   top: 100px;
-  cursor: pointer; background-color: rgba(0,0,0,0.5);
+  cursor: pointer; 
+  background-color:  #7400c2;
+  transition: all 175ms ease-in-out;
   &:hover {
+    background-color: #aa42f0;
+    transition: all 175ms ease-in-out;
     #left1
     {
       display: flex;
+   
     }
   }
 }
@@ -112,8 +119,11 @@
   right: 0;
   top: 100px;
   cursor: pointer;
-  background-color: rgba(0,0,0,0.5);
+  background-color:  #7400c2;
+  transition: all 175ms ease-in-out;
   &:hover {
+    background-color: #aa42f0;
+    transition: all 175ms ease-in-out;
     #right1
      {
       display: block;
@@ -173,7 +183,7 @@
   width: 50px;
   height: 70px;
   position: absolute;
-  top: 45px;
+  top: 50px;
   left: 10px;
   z-index: 10;
   //display: none;
@@ -185,10 +195,10 @@
   width: 50px;
   height: 70px;
   position: absolute;
-  top: 45px;
+  top: 50px;
   right: 10px;
   z-index: 10;
-  //display: none;
+ 
 }
 
 .title {

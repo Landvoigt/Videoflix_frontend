@@ -29,6 +29,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   savedRelativePositions: number[] = [];
   isScrollable: boolean = false;
   isFullscreen: boolean = false;
+  showLeftArrow: boolean = false;
+  showRightArrow: boolean = true;
   leftmostId: string = '';
   rightmostId: string = '';
   onHoverVideo: boolean = true;
@@ -59,9 +61,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // });
   }
 
+  
+  checkScroll() {
+    const scrollcontainer = this.line1.nativeElement;
+    this.showLeftArrow = scrollcontainer.scrollLeft > 0;
+    this.showRightArrow = scrollcontainer.scrollWidth > scrollcontainer.scrollLeft + scrollcontainer.clientWidth;
+  }
+
+
   scrollingLeft(line1:any) {
     line1.nativeElement.scrollLeft -= 700;
   }
+
 
   scrollingRight(line1:any) {
     line1.nativeElement.scrollLeft += 700;
