@@ -25,19 +25,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('videoPlayerMain', { static: true }) videoPlayerMain!: ElementRef<HTMLVideoElement>;
  // @ViewChildren('targetElement') targetElements!: QueryList<ElementRef>;
   @ViewChild('line1', { static: false }) line1: ElementRef;
+  @ViewChild('line2', { static: false }) line2: ElementRef;
   savedScrollLeft: number = 0;
   savedRelativePositions: number[] = [];
   isScrollable: boolean = false;
   isFullscreen: boolean = false;
   showLeftArrow: boolean = false;
+  showLeftArrow2: boolean = false;
   showRightArrow: boolean = true;
+  showRightArrow2: boolean = true;
   leftmostId: string = '';
   rightmostId: string = '';
   onHoverVideo: boolean = true;
   activeVideoId: string | null = null;
   disableEvents: boolean = false;
   currentVideo!: VideoData;
-
+  posters: string[] = []; 
+  extendedPosters: string[] = []; 
 
   constructor(
     public navService: NavigationService,
@@ -54,83 +58,109 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.muted = true;
   }
  
-
   ngAfterViewInit(): void {
-  //  this.targetElements.forEach((elementRef, index) => {
-  //   console.log(`Element ${index} ID: ${elementRef.nativeElement.id}`);
-  // });
+  setTimeout(() => {              // Dafür gibt es bestimmt eine bessere Lösung.
+      this.posters = this.videoService.posterUrls;
+      this.extendedPosters = this.extendArray(this.posters, 100);
+  }, 1500);
+ 
   }
 
-  
+
+// Dafür gibt es bestimmt eine bessere Lösung.
+  extendArray(array: string[], times: number): string[] {
+    let extendedArray = [];
+    for (let i = 0; i < times; i++) {
+      extendedArray = extendedArray.concat(array);
+    }
+    return extendedArray;
+  }
+
+ 
   checkScroll() {
     const scrollcontainer = this.line1.nativeElement;
+    const scrollcontainer2 = this.line2.nativeElement;
     this.showLeftArrow = scrollcontainer.scrollLeft > 0;
     this.showRightArrow = scrollcontainer.scrollWidth > scrollcontainer.scrollLeft + scrollcontainer.clientWidth;
+    this.showLeftArrow2 = scrollcontainer2.scrollLeft > 0;
+    this.showRightArrow2 = scrollcontainer2.scrollWidth > scrollcontainer2.scrollLeft + scrollcontainer2.clientWidth;
   }
 
 
-  scrollingLeft(line1:any) {
-    line1.nativeElement.scrollLeft -= 700;
+  scrollingLeft(line:any) {
+    line.nativeElement.scrollLeft -= 650;
   }
 
 
-  scrollingRight(line1:any) {
-    line1.nativeElement.scrollLeft += 700;
+  scrollingRight(line:any) {
+    line.nativeElement.scrollLeft += 6500;
   }
+
 
 
   onElementHover(event: MouseEvent): void {
     const targetElement = event.currentTarget as HTMLElement;
     const elementId = targetElement.id;
-  
-    if (!elementId || !this.line1) {
-      console.log('Element has no ID or #line1 is undefined');
+    
+    if (!elementId || !this.line1 || !this.line2) {
+      console.log('Element has no ID or #line1/#line2 is undefined');
       return;
     }
   
     const rect = targetElement.getBoundingClientRect();
-    const containerRect = this.line1.nativeElement.getBoundingClientRect();
-    const containerStartX = containerRect.left;
-    const containerEndX = containerRect.right;
-
-    let translateX = 0;
-    if (rect.x <= containerStartX+5) {
-      translateX = (containerStartX - rect.x) + 50;
-    } else if ((rect.x + rect.width) >= containerEndX-50) {
-      translateX = -((rect.x + rect.width) - containerEndX + 50);
-    }
+    const lines = [this.line1.nativeElement, this.line2.nativeElement];
   
-    if (translateX !== 0) {
-      const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
+    lines.forEach((line) => {
+      const containerRect = line.getBoundingClientRect();
+      const containerStartX = containerRect.left;
+      const containerEndX = containerRect.right;
   
-      childElementsLine1.forEach((childElement: HTMLElement) => {
-        if (childElement.id === elementId) {
-          this.renderer.addClass(childElement, 'transition-slow');
-          this.renderer.setStyle(childElement, 'transform', `translateX(${translateX}px)`);
-          this.renderer.setStyle(childElement, 'z-index', '1000');
-        }
-      });
-    }
-  }
+      let translateX = 0;
+      if (rect.x <= containerStartX + 5) {
+        translateX = (containerStartX - rect.x) + 50;
+      } else if ((rect.x + rect.width) >= containerEndX - 50) {
+        translateX = -((rect.x + rect.width) - containerEndX + 50);
+      }
   
+      if (translateX !== 0) {
+        const childElements = line.querySelectorAll('.app-video');
   
-  onElementLeave(event: MouseEvent): void {
-    const targetElement = event.currentTarget as HTMLElement;
-    const elementId = targetElement.id;
-  
-    if (elementId && this.line1) {
-          const childElementsLine1 = this.line1.nativeElement.querySelectorAll('.app-video');
-  
-        childElementsLine1.forEach((childElement: HTMLElement) => {
+        childElements.forEach((childElement: HTMLElement) => {
           if (childElement.id === elementId) {
-            this.renderer.removeClass(childElement, 'transition-slow');
-            this.renderer.removeStyle(childElement, 'transform');
-            this.renderer.removeStyle(childElement, 'z-index');
+            this.renderer.addClass(childElement, 'transition-slow');
+            this.renderer.setStyle(childElement, 'transform', `translateX(${translateX}px)`);
+            this.renderer.setStyle(childElement, 'z-index', '1000');
           }
         });
-    }
+      }
+    });
   }
   
+
+
+onElementLeave(event: MouseEvent): void {
+  const targetElement = event.currentTarget as HTMLElement;
+  const elementId = targetElement.id;
+
+  if (!elementId) return;
+
+  const lines = [this.line1?.nativeElement, this.line2?.nativeElement];
+
+  lines.forEach((line) => {
+    if (!line) return;
+    
+    const childElements = line.querySelectorAll('.app-video');
+
+    childElements.forEach((childElement: HTMLElement) => {
+      if (childElement.id === elementId) {
+        this.renderer.removeClass(childElement, 'transition-slow');
+        this.renderer.removeStyle(childElement, 'transform');
+        this.renderer.removeStyle(childElement, 'z-index');
+      }
+    });
+  });
+}
+
 
   getRandomVideo(): void {
     this.randomVideo$ = this.videoService.getRandomVideoData();

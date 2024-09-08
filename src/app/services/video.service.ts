@@ -27,6 +27,7 @@ export class VideoService {
   private audioEnabled: boolean = false;
   currentVideo: string;
   maxDuration:number;
+  posterUrls:any;
 
   constructor(
     public rendererFactory: RendererFactory2,
@@ -37,13 +38,17 @@ export class VideoService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
+
   fetchVideoData(): void {
     this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`, { headers: this.getHeaders() }).pipe(
-      tap((data: VideoData[]) => this.videoDataSubject.next(data)),
+      tap((data: VideoData[]) => {
+        this.videoDataSubject.next(data);
+        this.posterUrls = data.map(video => video.posterUrlGcs);
+      }),
       catchError(this.handleError)
     ).subscribe();
-    //console.log('this.videoData$',this.videoData$);
   }
+  
 
   getVideoData(category: string): Observable<VideoData[]> {
     return this.videoData$.pipe(
