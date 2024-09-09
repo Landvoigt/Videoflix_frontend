@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from '../browse/dashboard/dashboard.component';
@@ -9,59 +9,30 @@ import { LoadingScreenComponent } from '../loading-screen/loading-screen.compone
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 import { VideoService } from '@services/video.service';
-import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-mainpage',
   standalone: true,
   imports: [CommonModule, LoadingScreenComponent, NavbarComponent, FooterComponent, DashboardComponent, FilmsComponent, SeriesComponent, PlaylistComponent],
   templateUrl: './mainpage.component.html',
-  styleUrl: './mainpage.component.scss',
+  styleUrls: ['./mainpage.component.scss'],
   animations: [fadeInPage],
 })
 export class MainpageComponent implements OnInit {
-  @ViewChild(DashboardComponent) dashboardComponent: DashboardComponent;
-  @ViewChild(FilmsComponent) filmsComponent: FilmsComponent;
-  @ViewChild(SeriesComponent) seriesComponent: SeriesComponent;
-  @ViewChild(PlaylistComponent) playlistComponent: PlaylistComponent;
-
   currentPage: 'dashboard' | 'films' | 'series' | 'playlist' = 'dashboard';
-  loadingApp: boolean = true;
   closeMenu: boolean = false;
 
-  constructor(private videoService: VideoService, private router: Router) {}
+  constructor(public videoService: VideoService) { }
 
-  ngOnInit(): void {
-    // this.loadingApp = true;  
+  ngOnInit() {
+    const storedPage = localStorage.getItem('currentPage') as 'dashboard' | 'films' | 'series' | 'playlist';
+    if (storedPage) {
+      this.currentPage = storedPage;
+    }
   }
 
-  
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.currentPage = page;
-    switch (page) {
-      case 'dashboard':
-        // this.dashboardComponent?.initialize();
-        //this.dashboardComponent.getRandomVideo();
-        //this.dashboardComponent.getVideoData();
-       //this.router.navigate(['/mainpage']);
-       //this.router.navigate(['/dashboard']);
-        break;
-      case 'films':
-        // this.filmsComponent?.someMethod();
-        // clearTimeout(this.pageChangedSetTime);
-        // clearTimeout(this.startRandomVideoSetTime);
-        break;
-      case 'series':
-        // this.seriesComponent?.someMethod();
-        // clearTimeout(this.pageChangedSetTime);
-        // clearTimeout(this.startRandomVideoSetTime);
-        break;
-      case 'playlist':
-        // this.playlistComponent?.someMethod();
-        // clearTimeout(this.pageChangedSetTime);
-        // clearTimeout(this.startRandomVideoSetTime);
-        break;
-    }
   }
 
   activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
@@ -72,6 +43,4 @@ export class MainpageComponent implements OnInit {
     this.closeMenu = true;
     setTimeout(() => this.closeMenu = false, 10);
   }
-  
-
 }

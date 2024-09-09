@@ -1,50 +1,38 @@
 <div class="main-video-container" (mouseenter)="onHover()" (mouseleave)="onLeave()">
-  <!-- <div class="info-layover-main bg-gradient-to-r from-default-from to-default-to"></div> -->
-  <h2 class="video-logo-small logo-text text-textColorPrimary">V</h2>
-  <img [src]="isPoster ? posterUrlGcs : ''"  class="video-thumbnail">
-  <div class="video-wrapper">
-    <video #videoPlayer 
-    class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button" 
-    controls 
-    preload="auto"
-    data-setup="{}" 
-    disablePictureInPicture 
-    type="application/x-mpegURL" 
-    [src]="videoUrl"
-    
-    
-    >
-    Your browser does not support the video tag.
-   </video>
-    <div class="video-info bg-gradient-to-r from-default-from to-default-to">
-       <div>
-          <div class="title-resolution">
-             <span class="text-textColorPrimary">{{ title }}</span>
-             <span class="text-textColorPrimary">{{ release_date }}</span>
-             <span class="resolution-container">{{ resolution }}</span>
-               
-          </div>
-          <div class="age-wrapper">
-             <span>FSK</span>  
-             <div class="age-container">{{ age }}</div>    
-          </div>
-          <div>
-            <span class="text-textColorPrimary duration">{{ duration }}</span>  
-          </div>
-          <!-- <img src="/assets/img/videostore/info-48.png">  -->
-           <div class="info-icon"> 
-              <span>i</span>
-           </div>
-             <div class="info-overlay  bg-gradient-to-r from-default-from to-default-to">
-                  <div class="description-container">
-                      {{ description }}   
-                  </div>
-           </div>
-    </div>
-
-    
-     
-      
-    </div>
-  </div>
+   <h2 class="video-logo-small logo-text text-textColorPrimary">V</h2>
+   <img [src]="isPoster ? posterUrlGcs : ''" class="video-thumbnail">
+   <div class="video-wrapper">
+      <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button" 
+         controls 
+         preload="auto"
+         data-setup="{}" 
+         disablePictureInPicture 
+         type="application/x-mpegURL" 
+         [src]="videoUrl">
+         Your browser does not support the video tag.
+      </video>
+      <div class="video-info bg-gradient-to-r from-default-from to-default-to">
+         <div>
+            <div class="title-resolution">
+               <span class="text-textColorPrimary">{{ title }}</span>
+               <span class="resolution-container">{{ resolution }}</span>
+               <span class="text-textColorPrimary duration italic">{{ duration }}</span>
+            </div>
+            <div class="age-wrapper">
+               <span class="text-textColorPrimary">{{ release_date }}</span>
+               <span>FSK</span>
+               <div class="age-container">{{ age }}</div>
+            </div>
+            <!-- <img src="/assets/img/videostore/info-48.png">  -->
+            <div class="info-icon">
+               <span>i</span>
+            </div>
+            <div class="info-overlay bg-gradient-to-r from-default-from to-default-to">
+               <div class="description-container">
+                  {{ description }}
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>

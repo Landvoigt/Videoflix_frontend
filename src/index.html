@@ -7,63 +7,11 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-   <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-  <!-- <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script> -->
-  
-  <style>
-    .overlay {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: rgb(29, 29, 29);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition:
-        opacity 225ms ease,
-        visibility 225ms ease;
-    }
-
-    .overlay.active {
-      opacity: 1;
-      visibility: visible;
-      color: #aa42f0;
-    }
-  </style>
+  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
 </head>
 
-<body> 
-  <!-- <div class="overlay" id="loadingOverlay">
-   <img src="assets/svg/rings.svg" alt="Loading Rings">
-  </div> -->
-
- 
+<body>
   <app-root></app-root>
- 
 </body>
-
-<script>
-  // function showLoadingAnimation() {
-  //   document.getElementById('loadingOverlay').classList.add('active');
-  // }
-
-  // function hideLoadingAnimation() {
-  //   document.getElementById('loadingOverlay').classList.remove('active');
-  // }
-
-  // function simulateAppLoading() {
-  //   showLoadingAnimation();
-  //   setTimeout(function () {
-  //     hideLoadingAnimation();
-  //   }, 2500);
-  // }
-
-  // simulateAppLoading();
-</script>
 
 </html>

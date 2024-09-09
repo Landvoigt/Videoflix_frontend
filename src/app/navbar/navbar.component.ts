@@ -17,7 +17,7 @@ export class NavbarComponent {
   @Input() closeMenu: boolean = false;
   @Output() pageChanged: EventEmitter<'dashboard' | 'films' | 'series' | 'playlist'> = new EventEmitter<'dashboard' | 'films' | 'series' | 'playlist'>();
 
-  currentPage: 'dashboard' | 'films' | 'series' | 'playlist' = 'dashboard';
+  @Input() currentPage: 'dashboard' | 'films' | 'series' | 'playlist';
   userMenuOpen: boolean = false;
   mobileMenuOpen: boolean = false;
 
@@ -59,9 +59,10 @@ export class NavbarComponent {
   }
 
   changePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
-    this.navService.main();   //////// later remove and add each component
+    this.navService.main();
     this.closeUserMenu();
     this.currentPage = page;
+    localStorage.setItem('currentPage', page);
     this.pageChanged.emit(page);
   }
 

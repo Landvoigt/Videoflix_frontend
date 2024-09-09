@@ -13,25 +13,23 @@ export class LoadingScreenComponent implements AfterViewInit {
 
   constructor(private videoService: VideoService) { }
 
+  ngAfterViewInit() {
+    this.videoService.loadingApp$.subscribe(isLoading => {
+      if (isLoading) {
+        this.showLoadingAnimation();
+      } else {
+        this.hideLoadingAnimation();
+      }
+    });
+
+    this.videoService.fetchVideoData();
+  }
+
   showLoadingAnimation() {
     this.loadingOverlay.nativeElement.classList.add('active');
   }
 
   hideLoadingAnimation() {
     this.loadingOverlay.nativeElement.classList.remove('active');
-  }
-
-  simulateAppLoading() {
-    this.showLoadingAnimation();
-
-    this.videoService.fetchVideoData();
-
-    setTimeout(() => {
-      this.hideLoadingAnimation();
-    }, 2500);
-  }
-
-  ngAfterViewInit() {
-    this.simulateAppLoading();
   }
 }

@@ -6,12 +6,14 @@ import { AuthService } from '../auth/auth.service';
 import { VideoData } from '@interfaces/video.interface';
 import { AlertService } from './alert.service';
 import Hls from 'hls.js';
-import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VideoService {
+  private loadingAppSubject = new BehaviorSubject<boolean>(true);
+  loadingApp$ = this.loadingAppSubject.asObservable();
+
   private videoDataSubject = new BehaviorSubject<VideoData[]>([]);
   videoData$: Observable<VideoData[]> = this.videoDataSubject.asObservable();
 
@@ -26,8 +28,10 @@ export class VideoService {
   private videoUrl: string = '';
   private audioEnabled: boolean = false;
   currentVideo: string;
-  maxDuration:number;
-  posterUrls:any;
+  maxDuration: number;
+  posterUrls: any;
+
+  videoDataLoaded: boolean = false;
 
   constructor(
     public rendererFactory: RendererFactory2,
@@ -38,17 +42,27 @@ export class VideoService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-
   fetchVideoData(): void {
     this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`, { headers: this.getHeaders() }).pipe(
       tap((data: VideoData[]) => {
         this.videoDataSubject.next(data);
         this.posterUrls = data.map(video => video.posterUrlGcs);
+        this.videoDataLoaded = true;
+        this.checkLoadingStatus();
       }),
       catchError(this.handleError)
     ).subscribe();
   }
-  
+
+  checkLoadingStatus() {
+    if (this.videoDataLoaded) {
+      this.loadingAppSubject.next(false);
+    }
+  }
+
+  setLoadingApp(isLoading: boolean): void {
+    this.loadingAppSubject.next(isLoading);
+  }
 
   getVideoData(category: string): Observable<VideoData[]> {
     return this.videoData$.pipe(
@@ -60,6 +74,7 @@ export class VideoService {
       })
     );
   }
+  
 
   fetchPlaylist(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiVideoBaseUrl}playlist/`, { headers: this.getHeaders() }).pipe(
@@ -80,8 +95,6 @@ export class VideoService {
     );
   }
 
-
-
   getRandomVideoData(): Observable<VideoData | undefined> {
     return this.videoData$.pipe(
       map(videoData => {
@@ -94,7 +107,6 @@ export class VideoService {
       catchError(this.handleError)
     );
   }
-
 
   getVideoUrl(videoKey: string, resolution: string): Observable<string> {
     const apiUrl = `${this.apiVideoBaseUrl}preview/?video_key=${videoKey}&resolution=${resolution}`;
@@ -123,7 +135,6 @@ export class VideoService {
       return '360p';
     }
   }
-
 
   playRandomVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
     this.videoUrl = videoUrl; // Store the current video URL
@@ -165,14 +176,14 @@ export class VideoService {
   private showPosterAndDelayPlay(video: HTMLVideoElement): void {
     video.pause(); // Ensure the video doesn't start immediately
     video.currentTime = 0; // Reset the video to the start
-   // video.volume = 0; // Mute the audio initially for fade-in effect
+    // video.volume = 0; // Mute the audio initially for fade-in effect
 
     setTimeout(() => {
       video.play();
       if (!this.audioEnabled) {
         this.addTimeUpdateListener(video);
       } else {
-       // this.fadeInAudio(video);
+        // this.fadeInAudio(video);
       }
       // this.addTimeUpdateListener(video);
     }, 1500); // Delay of 1500ms before starting playback
@@ -197,18 +208,18 @@ export class VideoService {
 
   intervalId: any;
   public addTimeUpdateListener(video: HTMLVideoElement): void {
-   // this.maxDuration = 15;
+    // this.maxDuration = 15;
     video.addEventListener('timeupdate', () => {
       if (video.currentTime >= this.maxDuration) {
         clearInterval(this.intervalId);
         video.pause();
         video.currentTime = 0;
-       // this.restartVideoAfterPause(video);
-       this.intervalId = setInterval(() => {
-        video.play();
-        console.log('interval ist aktiv!!!');
-      }, 10000); 
-     
+        // this.restartVideoAfterPause(video);
+        this.intervalId = setInterval(() => {
+          video.play();
+          console.log('interval ist aktiv!!!');
+        }, 10000);
+
       }
     });
   }
@@ -226,16 +237,14 @@ export class VideoService {
 
     if (!this.audioEnabled) {
       //this.fadeInAudio(video);
-     // this.audioEnabled = true; // Set to true to indicate audio has been enabled
+      // this.audioEnabled = true; // Set to true to indicate audio has been enabled
     }
   }
-
 
   logWindowSize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
   }
-
 
   private getHeaders(): HttpHeaders {
     const authToken = this.authService.getAuthenticationToken();

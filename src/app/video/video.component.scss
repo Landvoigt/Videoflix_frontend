@@ -34,7 +34,6 @@
     border-radius: 6px;
     border: 1px solid rgba(241, 248, 253, 0.25);
     transition: transform 225ms ease-in-out;
-   
   }
 
   .video-logo-small {
@@ -54,7 +53,6 @@
     opacity: 0;
     border-radius: 6px;
     transition: transform 225ms ease-in-out;
-   
 
     video {
       border-top-left-radius: 6px;
@@ -62,38 +60,37 @@
       border: 1px solid rgba(241, 248, 253, 0.25);
       border-bottom: none;
       height: 170px;
-      
     }
   }
 
   .video-info {
-    display: none;
+    // display: none;
     position: relative;
     justify-content: space-between;
     width: 100%;
-    height: 125px;
+    height: 80px;
     padding: 1rem;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
     border: 1px solid rgba(241, 248, 253, 0.25);
     border-top: none;
     //opacity: 100%;
-   // box-shadow: 4px -3px 50px 20px rgba(0, 0, 0, 0.7);
+    // box-shadow: 4px -3px 50px 20px rgba(0, 0, 0, 0.7);
   }
 
   &:hover {
-    transform: translateY(-20%) scale(1.25);
+    transform: translateY(-.75rem) scale(1.2);
     transition-delay: 325ms;
     transition-delay: 500ms;
     transform-origin: center;
     filter: brightness(1.2);
-   // box-shadow: 4px -3px 50px 20px rgba(0, 0, 0, 0.7);
+    // box-shadow: 4px -3px 50px 20px rgba(0, 0, 0, 0.7);
     z-index: 101;
     cursor: default;
 
     // .video-thumbnail {
     //  // display: none;
-     
+
     // }
 
     .video-wrapper {
@@ -101,7 +98,6 @@
     }
   }
 }
-
 
 .main-video-container:hover .video-info {
   display: flex;
@@ -125,9 +121,7 @@
     border-radius: 100%;
     font-size: 11px;
   }
-
 }
-
 
 .resolution-container {
   display: flex;
@@ -143,30 +137,27 @@
   letter-spacing: 2px;
 }
 
-
 .duration {
-  opacity: 0; 
-  animation: fadeInDuration 1s ease forwards; 
-  animation-delay: 1500ms; 
+  opacity: 0;
+  animation: fadeInDuration 1s ease forwards;
+  animation-delay: 1500ms;
 }
 
 @keyframes fadeInDuration {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
-
-
 
 .title-resolution {
   display: flex;
   gap: 8px;
   align-items: center;
 }
-
 
 .description-container {
   display: flex;
@@ -176,7 +167,6 @@
   border-radius: 5px;
   padding: 8px;
 }
-
 
 .info-overlay {
   display: none;
@@ -190,7 +180,6 @@
   border-bottom-right-radius: 5px;
   padding: 8px;
 }
-
 
 .info-icon {
   cursor: pointer;
@@ -207,6 +196,7 @@
   color: white;
   font-weight: 800;
   font-size: 20px;
+
   &:hover {
     opacity: 0.5;
     scale: 1.1;
@@ -214,8 +204,7 @@
   }
 }
 
-
-.info-icon:hover + .info-overlay {
+.info-icon:hover+.info-overlay {
   display: block;
   z-index: 0;
 }
