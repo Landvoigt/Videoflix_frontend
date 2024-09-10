@@ -30,6 +30,7 @@
       "@models/*": ["src/app/models/*"],
       "@utils/*": ["src/app/utils/*"],
       "@video/*": ["src/app/video/*"],
+      "@assets/*": ["src/assets/*"],
     }
   },
   "angularCompilerOptions": {
