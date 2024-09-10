@@ -46,22 +46,31 @@
     </div>
 </div>
 
-<div class="slideshow-wrapper flex justify-center items-center" style="z-index: 9999;">
-    <div class="w-20 px-4">
+<div class="slideshow-wrapper flex justify-center items-center">
+    <div class="w-20 px-4 -mt-5">
         <a *ngIf="showLeftArrow" (click)="scrollingLeft(line1)"
             class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
                 hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                 focus-visible:outline-accentColor cursor-pointer flex justify-center items-center border-2 border-textColorPrimary">
-            <img src="../../../assets/svg/chevron_left.svg" alt="Left Arrow" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
         </a>
     </div>
 
     <div class="video-slideshow">
-        <!-- <div class="line1-cover">
-            <div class="flex gap-4 show-posters show-posters-line1">
-                <img [src]="poster" *ngFor="let poster of extendedPosters">
+        <div class="line1-cover">
+            <div class="show-posters slide-left-animation">
+                <div class="posters-wrapper">
+                    <img [src]="poster" *ngFor="let poster of posters">
+                </div>
+                <div class="posters-wrapper">
+                    <img [src]="poster" *ngFor="let poster of posters">
+                </div>
             </div>
-        </div> -->
+        </div>
+
         <div id="line1" #line1 class="line" (scroll)="checkScroll()" *ngIf="!loading">
             <app-video #targetElement (mouseleave)="onElementLeave($event)" (mouseenter)="onElementHover($event)"
                 *ngFor="let video of videos$ | async; let index = index" class="app-video" [id]="'videoLine1' + index"
@@ -72,33 +81,45 @@
         </div>
     </div>
 
-    <div class="w-20 px-4">
+    <div class="w-20 px-4 -mt-5">
         <a *ngIf="showRightArrow" (click)="scrollingRight(line1)"
             class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
                 hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                 focus-visible:outline-accentColor cursor-pointer flex justify-center items-center border-2 border-textColorPrimary">
-            <img src="../../../assets/svg/chevron_right.svg" alt="Right Arrow" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
         </a>
     </div>
 </div>
 
-<div class="slideshow-wrapper flex justify-center items-center" style="z-index: 8888;">
-    <div class="w-20 px-4" style="z-index: 8888;">
+<div class="slideshow-wrapper flex justify-center items-center">
+    <div class="w-20 px-4 -mt-5">
         <a *ngIf="showLeftArrow2" (click)="scrollingLeft(line2)"
             class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
                 hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                 focus-visible:outline-accentColor cursor-pointer flex justify-center items-center border-2 border-textColorPrimary">
-            <img src="../../../assets/svg/chevron_left.svg" alt="Left Arrow" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
         </a>
     </div>
 
     <div class="video-slideshow">
-        <!-- <div class="line2-cover">
-            <div class="flex gap-4 show-posters show-posters-line2">
-                <img [src]="poster" *ngFor="let poster of extendedPosters">
+        <div class="line1-cover">
+            <div class="show-posters slide-right-animation">
+                <div class="posters-wrapper">
+                    <img [src]="poster" *ngFor="let poster of posters">
+                </div>
+                <div class="posters-wrapper">
+                    <img [src]="poster" *ngFor="let poster of posters">
+                </div>
             </div>
-        </div> -->
-        <div id="line2" #line2 class="line !p-0" (scroll)="checkScroll()" *ngIf="!loading">
+        </div>
+
+        <div id="line2" #line2 class="line" (scroll)="checkScroll()" *ngIf="!loading">
             <app-video #targetElement (mouseleave)="onElementLeave($event)" (mouseenter)="onElementHover($event)"
                 *ngFor="let video of videos$ | async; let index = index" class="app-video" [id]="'videoLine2' + index"
                 [posterUrlGcs]="video.posterUrlGcs || '/assets/img/videostore/300.png'" [title]="video.title"
@@ -108,12 +129,15 @@
         </div>
     </div>
 
-    <div class="w-20 px-4" style="z-index: 8888;">
+    <div class="w-20 px-4 -mt-5">
         <a *ngIf="showRightArrow2" (click)="scrollingRight(line2)"
             class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
                 hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                 focus-visible:outline-accentColor cursor-pointer flex justify-center items-center border-2 border-textColorPrimary">
-            <img src="../../../assets/svg/chevron_right.svg" alt="Right Arrow" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
         </a>
     </div>
 </div>

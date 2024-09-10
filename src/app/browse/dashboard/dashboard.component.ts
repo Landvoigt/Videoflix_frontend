@@ -43,7 +43,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   disableEvents: boolean = false;
   currentVideo!: VideoData;
   posters: string[] = [];
-  extendedPosters: string[] = [];
 
   constructor(
     public navService: NavigationService,
@@ -59,19 +58,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // setTimeout(() => {              // Dafür gibt es bestimmt eine bessere Lösung.
-      this.posters = this.videoService.posterUrls;
-      this.extendedPosters = this.extendArray(this.posters, 100);
-    // }, 1500);
-  }
-
-  // Dafür gibt es bestimmt eine bessere Lösung.
-  extendArray(array: string[], times: number): string[] {
-    let extendedArray = [];
-    for (let i = 0; i < times; i++) {
-      extendedArray = extendedArray.concat(array);
-    }
-    return extendedArray;
+    this.posters = this.videoService.posterUrls.concat(this.videoService.posterUrls);
   }
 
   checkScroll() {
