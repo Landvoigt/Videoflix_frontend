@@ -57,7 +57,7 @@
                         </button>
                     </div>
 
-                    <div *ngIf="userMenuOpen" @fadeInPage (click)="$event.stopPropagation()" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-defaultColor shadow-lg ring-1 ring-black 
+                    <div *ngIf="userMenuOpen" @fadeIn (click)="$event.stopPropagation()" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-defaultColor shadow-lg ring-1 ring-black 
               ring-opacity-5 focus:outline-none border border-borderColorPopup overflow-hidden" role="menu"
                         aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                         <a (click)="goToProfiles()"
@@ -73,7 +73,7 @@
     </div>
 
     <!-- Mobile menu -->
-    <div *ngIf="mobileMenuOpen" @fadeInPage class="sm:hidden" id="mobile-menu">
+    <div *ngIf="mobileMenuOpen" @fadeIn class="sm:hidden" id="mobile-menu">
         <div class="space-y-1 px-2 pb-3 pt-2">
             <a (click)="changePage('dashboard')"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"

@@ -6,7 +6,7 @@ import { ErrorService } from '@services/error.service';
 import { LoginFormModel } from '../interfaces/auth.interface';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { AlertService } from '@services/alert.service';
 import { NavigationService } from '@services/navigation.service';
 
@@ -16,7 +16,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class LoginComponent implements OnInit {
 

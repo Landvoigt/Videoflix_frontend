@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { EmailRegex, PasswordRegex } from '@utils/regex';
 import { RegisterFormModel } from '../interfaces/auth.interface';
 import { ErrorService } from '@services/error.service';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { NavigationService } from '@services/navigation.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class RegisterComponent {
 

@@ -29,12 +29,13 @@
             .thumbnail-loop {
                 display: flex;
                 width: max-content;
-                gap: 1rem;
 
                 .thumbnail-loop-img-box {
                     display: flex;
                     flex-shrink: 0;
                     gap: 1rem;
+                    margin-left: .5rem;
+                    margin-right: .5rem;
 
                     .thumbnail-loop-img {
                         filter: grayscale(100%);

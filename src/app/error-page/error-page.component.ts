@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { NavigationService } from '@services/navigation.service';
 
@@ -9,7 +9,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule],
   templateUrl: './error-page.component.html',
   styleUrl: './error-page.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 
 })
 export class ErrorPageComponent {

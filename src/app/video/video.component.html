@@ -1,37 +1,38 @@
-<div class="main-video-container" (mouseenter)="onHover()" (mouseleave)="onLeave()">
-   <h2 class="video-logo-small logo-text text-textColorPrimary">V</h2>
-   <img [src]="isPoster ? posterUrlGcs : ''" class="video-thumbnail">
-   <div class="video-wrapper">
-      <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button" 
-         controls 
-         preload="auto"
-         data-setup="{}" 
-         disablePictureInPicture 
-         type="application/x-mpegURL" 
-         [src]="videoUrl">
+<div
+   class="video-container relative flex flex-col h-44 text-textColorPrimary rounded-md overflow-visible cursor-default"
+   (mouseenter)="onHover()" (mouseleave)="onLeave()">
+   <h2 class="video-logo-small logo-text absolute text-xl">V</h2>
+   <img @fadeOutSlow *ngIf="thumbnailVisible" [src]="posterUrlGcs" class="video-thumbnail absolute w-full h-44 border 
+   border-borderColorVideoBox rounded-md">
+   <div class="video-wrapper w-full flex flex-col justify-center items-center rounded-md">
+      <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button w-full h-44 border 
+      border-borderColorVideoBox border-b-0 rounded-t-md" controls preload="auto" data-setup="{}"
+         disablePictureInPicture type="application/x-mpegURL" [src]="videoUrl">
          Your browser does not support the video tag.
       </video>
-      <div class="video-info bg-gradient-to-r from-default-from to-default-to">
-         <div>
-            <div class="title-resolution">
-               <span class="text-textColorPrimary">{{ title }}</span>
-               <span class="resolution-container">{{ resolution }}</span>
-               <span class="text-textColorPrimary duration italic">{{ duration }}</span>
-            </div>
-            <div class="age-wrapper">
-               <span class="text-textColorPrimary">{{ release_date }}</span>
-               <span>FSK</span>
-               <div class="age-container">{{ age }}</div>
-            </div>
-            <!-- <img src="/assets/img/videostore/info-48.png">  -->
-            <div class="info-icon">
-               <span>i</span>
-            </div>
-            <div class="info-overlay bg-gradient-to-r from-default-from to-default-to">
-               <div class="description-container">
-                  {{ description }}
-               </div>
-            </div>
+      <div class="relative flex flex-col justify-between w-full h-20 bg-gradient-to-r from-default-from to-default-to px-3 py-2 border 
+         border-borderColorVideoBox border-t-0 rounded-b-md">
+         <div @fadeInSlow *ngIf="!infoVisible" class="flex items-center gap-2">
+            <span>{{ title }}</span>
+            <span
+               class="resolution flex justify-center items-center px-0.5 border border-textColorPrimary rounded-sm">{{
+               resolution }}</span>
+            <span class="duration italic">{{ duration }}</span>
+         </div>
+         <div @fadeInSlow *ngIf="!infoVisible" class="flex justify-start items-center gap-4">
+            <span>{{ release_date }}</span>
+            <span>FSK</span>
+            <div class="age-container w-5 h-5 flex justify-center items-center text-xs border 
+            border-textColorPrimary rounded-full">{{ age }}</div>
+         </div>
+         <svg (mouseenter)="showInfo()" (mouseleave)="hideInfo()" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-8 info-icon absolute cursor-pointer">
+            <path stroke-linecap="round" stroke-linejoin="round"
+               d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+         </svg>
+         <div @fadeInSlow *ngIf="infoVisible" class="w-10/12 h-20 text-xs text-ellipsis rounded-md overflow-hidden">
+            {{ description }}
          </div>
       </div>
    </div>

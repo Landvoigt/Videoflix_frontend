@@ -24,9 +24,7 @@ export class SlideshowComponent implements OnInit {
   showLeftArrow: boolean = false;
   showRightArrow: boolean = true;
 
-  constructor(private renderer: Renderer2, private videoService: VideoService) {
-    console.log(this.videoData);
-  }
+  constructor(private renderer: Renderer2, private videoService: VideoService) { }
 
   ngOnInit(): void {
     this.thumbnails = this.videoService.posterUrls.concat(this.videoService.posterUrls);

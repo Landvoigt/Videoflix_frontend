@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
+import { ErrorService } from '@services/error.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   muted: boolean = true;
   isFullscreen: boolean = false;
 
-  constructor(public authService: AuthService, public videoService: VideoService, private cdr: ChangeDetectorRef) { }
+  constructor(public authService: AuthService, public videoService: VideoService, private errorService: ErrorService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getPreviewVideoData();
@@ -57,7 +58,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.videoService.getVideoData(null).subscribe({
       next: (data: VideoData[]) => {
         this.videoData = data;
-        console.log(this.videoData);
         this.loading = false;
       },
       error: (error) => {

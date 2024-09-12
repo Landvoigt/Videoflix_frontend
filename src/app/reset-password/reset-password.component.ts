@@ -7,7 +7,7 @@ import { PasswordRegex } from '@utils/regex';
 import { AlertService } from '@services/alert.service';
 import { ErrorService } from '@services/error.service';
 import { RestService } from '@services/rest.service';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { NavigationService } from '@services/navigation.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class ResetPasswordComponent implements OnInit {
 

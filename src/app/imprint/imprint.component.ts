@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -10,7 +10,7 @@ import { FooterComponent } from '../footer/footer.component';
   imports: [CommonModule, NavbarComponent, FooterComponent],
   templateUrl: './imprint.component.html',
   styleUrl: './imprint.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class ImprintComponent {
   closeMenu: boolean = false;

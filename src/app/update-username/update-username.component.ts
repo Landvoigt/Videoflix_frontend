@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { UpdateUsernameFormModel } from '../interfaces/auth.interface';
@@ -14,7 +14,7 @@ import { RestService } from '@services/rest.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './update-username.component.html',
   styleUrl: './update-username.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class UpdateUsernameComponent {
   public updateUsernameForm: FormGroup<UpdateUsernameFormModel> = new FormGroup<UpdateUsernameFormModel>(

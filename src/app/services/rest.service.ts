@@ -1,9 +1,9 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap } from 'rxjs';
 import { Profile } from '../../models/profile.model';
 import { AuthService } from '../auth/auth.service';
-import { AlertService } from './alert.service';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,10 @@ export class RestService {
   private profilesSubject = new BehaviorSubject<Profile[]>([]);
   profiles$: Observable<Profile[]> = this.profilesSubject.asObservable();
 
-  constructor(private http: HttpClient, private authService: AuthService, private alertService: AlertService) { }
+  constructor(
+    private http: HttpClient, 
+    private authService: AuthService, 
+    private errorService: ErrorService) { }
 
   register(email: string, password: string): Observable<any> {
     const payload = { email, password };
@@ -44,41 +47,41 @@ export class RestService {
   updateUsername(new_username: string) {
     const payload = { new_username };
     return this.http.post(`${this.apiBaseUrl}update_username/`, payload, { headers: this.getHeaders() }).pipe(
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
   getProfiles(): Observable<Profile[]> {
     return this.http.get<Profile[]>(`${this.apiBaseUrl}profiles/`, { headers: this.getHeaders() }).pipe(
       tap((profiles: Profile[]) => this.profilesSubject.next(profiles)),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
   getProfile(id: number): Observable<Profile> {
     return this.http.get<Profile>(`${this.apiBaseUrl}profiles/${id}`, { headers: this.getHeaders() }).pipe(
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
   addProfile(payload: any): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}profiles/`, payload, { headers: this.getHeaders() }).pipe(
       tap(() => this.getProfiles().subscribe()),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
   updateProfile(id: number, payload: any): Observable<any> {
     return this.http.patch(`${this.apiBaseUrl}profiles/${id}/`, payload, { headers: this.getHeaders() }).pipe(
       tap(() => this.getProfiles().subscribe()),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
   deleteProfile(id: number): Observable<any> {
     return this.http.delete(`${this.apiBaseUrl}profiles/${id}/`, { headers: this.getHeaders() }).pipe(
       tap(() => this.getProfiles().subscribe()),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
@@ -98,12 +101,5 @@ export class RestService {
     }
 
     return new HttpHeaders(headers);
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.status === 401) {
-      this.alertService.showAlert('Not authorized', 'error');
-    }
-    return throwError(() => { });
   }
 }

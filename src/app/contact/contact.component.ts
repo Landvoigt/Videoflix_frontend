@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { NavigationService } from '@services/navigation.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { CommonModule } from '@angular/common';
@@ -17,7 +17,7 @@ import { FooterComponent } from '../footer/footer.component';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, NavbarComponent, FooterComponent],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class ContactComponent {
 

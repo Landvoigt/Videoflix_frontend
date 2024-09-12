@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
 import { RestService } from '@services/rest.service';
@@ -15,7 +15,7 @@ import { AuthService } from '../auth/auth.service';
   imports: [CommonModule, DialogCreateProfileComponent],
   templateUrl: './profiles.component.html',
   styleUrl: './profiles.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class ProfilesComponent implements OnInit {
 

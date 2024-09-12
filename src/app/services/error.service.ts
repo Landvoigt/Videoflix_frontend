@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AlertService } from './alert.service';
+import { Observable, throwError } from 'rxjs';
 
 /**
  * ErrorService handles HTTP error responses and displays appropriate error messages.
@@ -11,6 +12,13 @@ import { AlertService } from './alert.service';
 export class ErrorService {
 
   constructor(private alertService: AlertService) { }
+
+  handleApiError(error: HttpErrorResponse): Observable<never> {
+    if (error.status === 401) {
+      this.alertService.showAlert('You are not authorized!', 'error');
+    }
+    return throwError(() => { });
+  }
 
   /**
    * Handles HTTP errors based on status code and calls appropriate error handlers.

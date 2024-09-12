@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { NavigationService } from '@services/navigation.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule],
   templateUrl: './register-success.component.html',
   styleUrl: './register-success.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class RegisterSuccessComponent {
 

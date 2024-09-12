@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -11,7 +11,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule, NavbarComponent, FooterComponent],
   templateUrl: './policy.component.html',
   styleUrl: './policy.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class PolicyComponent {
   closeMenu: boolean = false;

@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProfileImages } from '../../models/profile.model';
 import { AuthService } from '../auth/auth.service';
 import { NavigationService } from '@services/navigation.service';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 
 @Component({
   selector: 'navbar',
@@ -11,7 +11,7 @@ import { fadeInPage } from '@utils/animations';
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class NavbarComponent {
   @Input() closeMenu: boolean = false;

@@ -74,7 +74,7 @@ export class VideoService {
       })
     );
   }
-  
+
 
   fetchPlaylist(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiVideoBaseUrl}playlist/`, { headers: this.getHeaders() }).pipe(
@@ -217,9 +217,7 @@ export class VideoService {
         // this.restartVideoAfterPause(video);
         this.intervalId = setInterval(() => {
           video.play();
-          console.log('interval ist aktiv!!!');
         }, 10000);
-
       }
     });
   }

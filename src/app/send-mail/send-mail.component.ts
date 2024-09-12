@@ -6,7 +6,7 @@ import { EmailRegex } from '@utils/regex';
 import { RestService } from '@services/rest.service';
 import { AlertService } from '@services/alert.service';
 import { ErrorService } from '@services/error.service';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { NavigationService } from '@services/navigation.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { NavigationService } from '@services/navigation.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './send-mail.component.html',
   styleUrl: './send-mail.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class SendMailComponent {
 

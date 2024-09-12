@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { fadeInPage } from '@utils/animations';
+import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Profile, ProfileImages } from '../../models/profile.model';
@@ -11,7 +11,7 @@ import { RestService } from '@services/rest.service';
   imports: [CommonModule, FormsModule],
   templateUrl: './dialog-create-profile.component.html',
   styleUrl: './dialog-create-profile.component.scss',
-  animations: [fadeInPage]
+  animations: [fadeIn]
 })
 export class DialogCreateProfileComponent implements OnInit {
   @Input() isEdit: boolean = false;

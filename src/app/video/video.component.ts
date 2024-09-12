@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import Hls from 'hls.js';
 import 'video.js/dist/video-js.css';
 import { VideoService } from '@services/video.service';
+import { fadeInSlow, fadeOutSlow } from '@utils/animations';
 
 @Component({
   selector: 'app-video',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './video.component.html',
-  styleUrl: './video.component.scss'
+  styleUrl: './video.component.scss',
+  animations: [fadeInSlow, fadeOutSlow]
 })
 
 export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -24,23 +26,20 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() release_date: string;
 
   hls: Hls | null = null;
-  isFullscreen: boolean = false;
-  hoverClass: boolean = false;
-  isPoster: boolean = true;
-  duration: string = '00:00';
+
   videoUrl: string = '';
+  duration: string = '00:00';
+
   hoverTimeout: any;
   hoverTimeoutVideo: any;
-  posterTimeout: any;
+  thumbnailTimeout: any;
   playTimeout: any;
 
-  @HostListener('document:fullscreenchange', ['$event'])
-  @HostListener('document:webkitfullscreenchange', ['$event'])
-  @HostListener('document:mozfullscreenchange', ['$event'])
-  @HostListener('document:MSFullscreenChange', ['$event'])
-  handleFullscreenChange(event: Event) {
-    this.onFullscreenChange(event);
-  }
+  thumbnailVisible: boolean = true;
+  infoVisible: boolean = false;
+
+  hovering: boolean = false;
+  isFullscreen: boolean = false;
 
   constructor(private videoService: VideoService) { }
 
@@ -71,19 +70,16 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     this.videoService.getVideoUrl(fileName, resolution).subscribe({
       next: (videoUrl: string) => {
-        if (!videoUrl) {
-          console.error(`${resolution} video URL is not set`);
-          return;
-        }
+        if (videoUrl) {
+          if (Hls.isSupported()) {
+            this.setupHlsPlayer(videoUrl, video);
+            return;
+          }
 
-        if (Hls.isSupported()) {
-          this.setupHlsPlayer(videoUrl, video);
-          return;
-        }
-
-        if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          this.setupDefaultPlayer(videoUrl, video);
-          return;
+          if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            this.setupDefaultPlayer(videoUrl, video);
+            return;
+          }
         }
       },
       error: (error) => {
@@ -93,11 +89,6 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setupHlsPlayer(videoUrl: string, video: HTMLVideoElement) {
-    if (!videoUrl) {
-      console.error('Keine Video-URL angegeben');
-      return;
-    }
-
     if (this.hls) {
       this.hls.destroy();
     }
@@ -110,15 +101,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hls.loadSource(videoUrl);
       this.hls.attachMedia(video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        this.playTimeout = setTimeout(() => {
-          video.play().catch(error => {
-            console.error('Video konnte nicht abgespielt werden:', error);
-          });
-        }, 500);
-      });
-
-      this.hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('HLS error:', data);
+        setTimeout(() => video.play().catch(err => console.error('Playback error:', err)), 500);
       });
     }
   }
@@ -127,17 +110,10 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     video.src = videoUrl;
 
     video.addEventListener('loadedmetadata', () => {
-      //video.play();
-      video.oncanplay = () => {
-        video.play().catch((error) => {
-          console.log('Error attempting to play the video:', error);
-        });
-      };
-
-    });
-
-    video.removeEventListener('loadedmetadata', onloadedmetadata);
-    video.addEventListener('loadedmetadata', onloadedmetadata);
+      video.play().catch(error => {
+        console.error('Error attempting to play the video:', error);
+      });
+    }, { once: true });
   }
 
   onFullscreenChange(event: Event) {
@@ -148,14 +124,14 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.isFullscreen) {
       this.stopHoverTimeout();
-      this.hoverClass = false;
+      this.hovering = false;
       const video: HTMLVideoElement = this.videoPlayer.nativeElement;
       video.currentTime = 0;
       video.muted = false;
       clearTimeout(this.hoverTimeout);
     } else {
       this.stopVideoPlayer();
-      this.hoverClass = true;
+      this.hovering = true;
     }
   }
 
@@ -176,23 +152,22 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     const preViewName = this.getUrl(this.posterUrlGcs);
     this.videoPlayer.nativeElement.muted = true;
     this.hoverTimeoutVideo = setTimeout(() => {
-      this.hoverClass = true;
+      this.hovering = true;
       const resolution = this.getScreenSize();
       this.setupPlayer(preViewName, resolution);
       this.startHoverTimeout();
     }, 900);
-    this.posterTimeout = setTimeout(() => {
-      this.isPoster = false;
+    this.thumbnailTimeout = setTimeout(() => {
+      this.thumbnailVisible = false;
     }, 1500);
   }
 
   onLeave() {
     clearTimeout(this.hoverTimeoutVideo);
-    clearTimeout(this.posterTimeout);
-    clearTimeout(this.playTimeout);
+    clearTimeout(this.thumbnailTimeout);
     this.stopVideoPlayer();
-    this.hoverClass = false;
-    this.isPoster = true;
+    this.hovering = false;
+    this.thumbnailVisible = true;
     this.videoPlayer.nativeElement.currentTime = 0;
     if (!this.isFullscreen) {
       this.stopVideoPlayer();
@@ -202,11 +177,10 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   startHoverTimeout() {
     this.hoverTimeout = setTimeout(() => {
-      this.hoverClass = true;
+      this.hovering = true;
       const video: HTMLVideoElement = this.videoPlayer.nativeElement;
       video.currentTime = 0;
       video.pause()
-
     }, 25000);
   }
 
@@ -224,9 +198,9 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getScreenSize(): string {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
     let resolution: string;
+    const width: number = window.innerWidth;
+    const height: number = window.innerHeight;
 
     if (width >= 1920 && height >= 1080) {
       resolution = '1080p';
@@ -240,8 +214,24 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     return resolution;
   }
 
+  showInfo() {
+    this.infoVisible = true;
+  }
+
+  hideInfo() {
+    this.infoVisible = false;
+  }
+
   getUrl(url: string): string {
     return url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
+  }
+
+  @HostListener('document:fullscreenchange', ['$event'])
+  @HostListener('document:webkitfullscreenchange', ['$event'])
+  @HostListener('document:mozfullscreenchange', ['$event'])
+  @HostListener('document:MSFullscreenChange', ['$event'])
+  handleFullscreenChange(event: Event) {
+    this.onFullscreenChange(event);
   }
 
   ngOnDestroy(): void {
