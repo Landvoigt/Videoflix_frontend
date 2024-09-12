@@ -1,5 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { MainpageComponent } from './browse/mainpage.component';
+import { MainpageComponent } from './mainpage/mainpage.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
@@ -15,7 +15,7 @@ import { ContactComponent } from './contact/contact.component';
 import { ImprintComponent } from './imprint/imprint.component';
 import { PolicyComponent } from './policy/policy.component';
 import { UpdateUsernameComponent } from './update-username/update-username.component';
-import { DashboardComponent } from './browse/dashboard/dashboard.component';
+import { DashboardComponent } from './mainpage/dashboard/dashboard.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/welcome', pathMatch: 'full' },

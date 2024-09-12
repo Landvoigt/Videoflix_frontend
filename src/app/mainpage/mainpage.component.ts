@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { fadeInPage } from '@utils/animations';
 import { CommonModule } from '@angular/common';
-import { DashboardComponent } from '../browse/dashboard/dashboard.component';
-import { FilmsComponent } from '../browse/films/films.component';
-import { SeriesComponent } from '../browse/series/series.component';
-import { PlaylistComponent } from '../browse/playlist/playlist.component';
+import { DashboardComponent } from '../mainpage/dashboard/dashboard.component';
+import { FilmsComponent } from '../mainpage/films/films.component';
+import { SeriesComponent } from '../mainpage/series/series.component';
+import { PlaylistComponent } from '../mainpage/playlist/playlist.component';
 import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';

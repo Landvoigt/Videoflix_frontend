@@ -95,7 +95,7 @@ export class VideoService {
     );
   }
 
-  getRandomVideoData(): Observable<VideoData | undefined> {
+  getPreviewVideoData(): Observable<VideoData | undefined> {
     return this.videoData$.pipe(
       map(videoData => {
         if (videoData.length === 0) {
@@ -136,7 +136,7 @@ export class VideoService {
     }
   }
 
-  playRandomVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
+  playPreviewVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
     this.videoUrl = videoUrl; // Store the current video URL
     const video: HTMLVideoElement = videoElement.nativeElement;
     // Ensure video is initially muted for autoplay policies
