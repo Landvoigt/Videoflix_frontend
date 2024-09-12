@@ -1,4 +1,4 @@
-<!-- <div class="w-full flex random-video-wrapper">
+<div class="w-full flex random-video-wrapper">
     <div class="random-video-container w-full h-full relative">
         <video preload="auto" #previewVideo class="random-video-content w-full h-full object-cover" [src]="videoUrl">
             Your browser does not support the video tag.
@@ -42,14 +42,13 @@
             </a>
         </div>
     </div>
-</div> -->
+</div>
 
 <app-slideshow *ngIf="videoData.length" [videoData]="videoData"
     [animationClass]="'slide-left-animation'"></app-slideshow>
 
 <app-slideshow *ngIf="videoData.length" [videoData]="videoData"
     [animationClass]="'slide-right-animation'"></app-slideshow>
-
 
 
 <!-- <a style="width: 185px; text-align: center; white-space: nowrap;" class="rounded-md bg-greyTransparent px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
