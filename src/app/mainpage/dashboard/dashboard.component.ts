@@ -112,7 +112,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   playPreviewVideo() {
     this.videoService.currentVideo = this.previewVideoKey;
     this.videoService.playPreviewVideo(this.previewVideo, this.videoUrl);
-    this.previewVideo.nativeElement.muted = false;
+    this.previewVideo.nativeElement.muted = true;
     this.videoService.maxDuration = 100000;
     this.requestFullScreen(this.previewVideo.nativeElement);
   }

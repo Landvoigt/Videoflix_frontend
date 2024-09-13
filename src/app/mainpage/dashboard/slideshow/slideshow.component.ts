@@ -34,14 +34,14 @@ export class SlideshowComponent implements OnInit {
     if (this.line && this.line.nativeElement) {
       this.line.nativeElement.scrollLeft -= 700;
     }
-    this.checkScroll();
+   // this.checkScroll();
   }
 
   scrollRight(): void {
     if (this.line && this.line.nativeElement) {
       this.line.nativeElement.scrollLeft += 700;
     }
-    this.checkScroll();
+   // this.checkScroll();
   }
 
   checkScroll() {
@@ -56,10 +56,11 @@ export class SlideshowComponent implements OnInit {
     const containerRect = this.line.nativeElement.getBoundingClientRect();
     let translateX = 0;
 
-    if (rect.x <= containerRect.left + 5) {
-      translateX = (containerRect.left - rect.x) + 50;
-    } else if ((rect.x + rect.width) >= containerRect.right - 50) {
-      translateX = -((rect.x + rect.width) - containerRect.right + 50);
+   
+    if (rect.x <= containerRect.left + 30 && this.showLeftArrow) {
+      translateX = (containerRect.left - rect.x) + 30;
+    } else if ((rect.x + rect.width ) >= containerRect.right - 50 && this.showRightArrow) {
+      translateX = -((rect.x + rect.width) - containerRect.right + 30);
     }
 
     if (translateX !== 0) {

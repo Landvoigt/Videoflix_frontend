@@ -31,7 +31,7 @@
   }
 
   .video-wrapper {
-    opacity: 0;
+    //opacity: 0;
     transition: transform 225ms ease-in-out;
 
     .resolution {
@@ -61,4 +61,12 @@
       }
     }
   }
+}
+
+.video-container:hover .video-wrapper {
+  display: flex;
+}
+
+.video-wrapper {
+  display: none;
 }

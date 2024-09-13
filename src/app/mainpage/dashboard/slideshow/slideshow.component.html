@@ -1,5 +1,6 @@
 <div class="slideshow-wrapper flex justify-center items-center">
-    <div class="w-20 px-4 -mt-5">
+   <div class="left-arrow-wrapper">
+      <div class="w-20 px-4 -mt-5">
         <a *ngIf="showLeftArrow" (click)="scrollLeft()"
             class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
           hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
@@ -9,6 +10,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
         </a>
+      </div>
     </div>
 
     <div class="video-slideshow">
@@ -37,8 +39,8 @@
             </div>
         </div>
     </div>
-
-    <div class="w-20 px-4 -mt-5">
+    <div class="right-arrow-wrapper">
+      <div class="w-20 px-4 -mt-5">
         <a *ngIf="showRightArrow" (click)="scrollRight()"
             class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
           hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
@@ -48,5 +50,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
             </svg>
         </a>
+       </div>
     </div>
 </div>

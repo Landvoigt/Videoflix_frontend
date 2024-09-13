@@ -1,5 +1,6 @@
 .slideshow-wrapper {
     overflow: visible;
+    position: relative;
 
     .video-slideshow {
         display: flex;
@@ -10,6 +11,8 @@
         .line {
             overflow-x: hidden;
             padding-top: 3rem;
+            padding-left: 30px;
+            padding-right: 30px;
             height: 350px;
             display: flex;
             align-items: start;
@@ -66,9 +69,6 @@
     display: none;
 }
 
-.transition-slow {
-    transition: transform 255ms ease-in-out, z-index 255ms ease-in-out;
-}
 
 // Responsive Styles
 @media (max-width: 600px) {
@@ -86,4 +86,20 @@
     .video-slideshow-right {
         display: none;
     }
+}
+
+.transition-slow {
+    transition: transform 0.5s ease-in-out;
+  }
+
+.right-arrow-wrapper {
+    position: absolute;
+    top: 115px;
+    right: -8px;
+}
+
+.left-arrow-wrapper {
+    position: absolute;
+    top: 115px;
+    left: -8px;
 }

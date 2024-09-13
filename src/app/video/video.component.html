@@ -2,7 +2,7 @@
    class="video-container relative flex flex-col h-44 text-textColorPrimary rounded-md overflow-visible cursor-default"
    (mouseenter)="onHover()" (mouseleave)="onLeave()">
    <h2 class="video-logo-small logo-text absolute text-xl">V</h2>
-   <img @fadeOutSlow *ngIf="thumbnailVisible" [src]="posterUrlGcs" class="video-thumbnail absolute w-full h-44 border 
+   <img @fadeOutSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? posterUrlGcs : ''" class="video-thumbnail absolute w-full h-44 border 
    border-borderColorVideoBox rounded-md">
    <div class="video-wrapper w-full flex flex-col justify-center items-center rounded-md">
       <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button w-full h-44 border 
