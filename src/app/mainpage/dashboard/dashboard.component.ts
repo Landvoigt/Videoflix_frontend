@@ -26,7 +26,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   previewVideoKey: string;
 
   loading: boolean = false;
-  muted: boolean = true;
   isFullscreen: boolean = false;
 
   constructor(
@@ -38,7 +37,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPreviewVideoData();
     this.getVideoData();
-    this.muted = true;
   }
 
   getPreviewVideoData(): void {
@@ -98,6 +96,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('document:fullscreenchange', ['$event'])
+  @HostListener('document:webkitfullscreenchange', ['$event'])
+  @HostListener('document:mozfullscreenchange', ['$event'])
+  @HostListener('document:MSFullscreenChange', ['$event'])
+  handleFullscreenChange(event: Event) {
+    this.onFullscreenChange(event);
+  }
+
   onFullscreenChange(event: Event) {
     this.isFullscreen = !!(document.fullscreenElement ||
       (document as any).webkitFullscreenElement ||
@@ -107,7 +113,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.previewVideo.nativeElement.muted = false;
     } else {
       this.previewVideo.nativeElement.muted = true;
-      this.muted = true;
       this.previewVideo.nativeElement.currentTime = 0;
       this.videoService.maxDuration = 15;
     }
@@ -122,20 +127,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   toggleMute() {
-    this.previewVideo.nativeElement.muted = !this.previewVideo.nativeElement.muted;
-    this.muted = this.previewVideo.nativeElement.muted;
+    const videoElement = this.previewVideo.nativeElement;
+
+    if (videoElement.muted) {
+      this.videoService.fadeAudio(videoElement, true);
+    } else {
+      this.videoService.fadeAudio(videoElement, false);
+    }
   }
 
-  @HostListener('document:fullscreenchange', ['$event'])
-  @HostListener('document:webkitfullscreenchange', ['$event'])
-  @HostListener('document:mozfullscreenchange', ['$event'])
-  @HostListener('document:MSFullscreenChange', ['$event'])
-  handleFullscreenChange(event: Event) {
-    this.onFullscreenChange(event);
+  toggleVideoInViewList() {
+    if (!this.videoService.updatingViewList) {
+      this.videoService.toggleVideoInViewList(this.videoUrl);
+    }
   }
 
-  liked() {
-    return this.profileService.currentProfileSubject.value.liked_list.includes(this.videoUrl);
+  liked(): boolean {
+    const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
+    return likedList.includes(this.videoUrl);
   }
 
   ngOnDestroy(): void {

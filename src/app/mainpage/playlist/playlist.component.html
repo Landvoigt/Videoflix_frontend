@@ -1,11 +1,4 @@
-<!-- <div class="video-box-wrapper p-8 gap-8">
-    <div *ngFor="let video of playlist; let i = index"
-        class="h-36 w-52 bg-navColorHover rounded-lg flex items-center justify-center text-3xl text-textColorPrimary">
-        Mein Video {{ i }}
-    </div>
-</div> -->
-
-<div *ngIf="!loading" class="films-container">
+<div *ngIf="!loading" class="flex flex-wrap p-10 gap-6">
     <app-video *ngFor="let video of videos$ | async; let index = index" class="videoInFilms"
         [posterUrlGcs]="video.posterUrlGcs || '/assets/img/videostore/300.png'" 
         [title]="video.title"

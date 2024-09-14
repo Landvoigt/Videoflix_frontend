@@ -27,7 +27,7 @@ export class SlideshowComponent implements OnInit {
   constructor(private renderer: Renderer2, private videoService: VideoService) { }
 
   ngOnInit(): void {
-    this.thumbnails = this.videoService.posterUrls.concat(this.videoService.posterUrls);
+    this.thumbnails = this.videoService.thumbnailUrls.concat(this.videoService.thumbnailUrls);
   }
 
   scrollLeft(): void {

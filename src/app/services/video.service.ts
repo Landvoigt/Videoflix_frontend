@@ -27,19 +27,18 @@ export class VideoService {
 
   @ViewChild('videoPlayerMain', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
 
-  private hls: Hls | null = null;
-  private videoUrl: string = '';
-  private audioEnabled: boolean = false;
+  hls: Hls | null = null;
+  audioEnabled: boolean = false;
   currentVideo: string;
   maxDuration: number;
-  posterUrls: any;
+  thumbnailUrls: any;
 
   videoDataLoaded: boolean = false;
   updatingViewList: boolean = false;
 
   constructor(
-    public rendererFactory: RendererFactory2,
     private http: HttpClient,
+    public rendererFactory: RendererFactory2,
     private errorService: ErrorService,
     private alertService: AlertService,
     private restService: RestService,
@@ -52,22 +51,12 @@ export class VideoService {
     this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`, { headers: this.restService.getHeaders() }).pipe(
       tap((data: VideoData[]) => {
         this.videoDataSubject.next(data);
-        this.posterUrls = data.map(video => video.posterUrlGcs);
+        this.thumbnailUrls = data.map(video => video.posterUrlGcs);
         this.videoDataLoaded = true;
-        this.checkLoadingStatus();
+        this.loadingAppSubject.next(false);
       }),
       catchError(this.errorService.handleApiError)
     ).subscribe();
-  }
-
-  checkLoadingStatus() {
-    if (this.videoDataLoaded) {
-      this.loadingAppSubject.next(false);
-    }
-  }
-
-  setLoadingApp(isLoading: boolean): void {
-    this.loadingAppSubject.next(isLoading);
   }
 
   getVideoData(category: string): Observable<VideoData[]> {
@@ -127,28 +116,8 @@ export class VideoService {
     );
   }
 
-  getVideoElementResolution(video: HTMLVideoElement): string {
-    const width = video.clientWidth;
-
-    if (width >= 1920) {
-      return '1080p';
-    } else if (width >= 1280) {
-      return '720p';
-    } else if (width >= 854) {
-      return '480p';
-    } else {
-      return '360p';
-    }
-  }
-
   playPreviewVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
-    this.videoUrl = videoUrl; // Store the current video URL
     const video: HTMLVideoElement = videoElement.nativeElement;
-    // Ensure video is initially muted for autoplay policies
-
-    // if (!this.audioEnabled) {
-    //    video.muted = true;
-    // }
 
     if (Hls.isSupported()) {
       this.setupHls(video, videoUrl);
@@ -179,68 +148,29 @@ export class VideoService {
   }
 
   private showPosterAndDelayPlay(video: HTMLVideoElement): void {
-    video.pause(); // Ensure the video doesn't start immediately
-    video.currentTime = 0; // Reset the video to the start
-    // video.volume = 0; // Mute the audio initially for fade-in effect
+    video.pause();
+    video.currentTime = 0;
 
     setTimeout(() => {
       video.play();
       if (!this.audioEnabled) {
         this.addTimeUpdateListener(video);
-      } else {
-        // this.fadeInAudio(video);
-      }
-      // this.addTimeUpdateListener(video);
-    }, 1500); // Delay of 1500ms before starting playback
+      } 
+    }, 1500);
   }
-
-  private fadeInAudio(video: HTMLVideoElement): void {
-    const fadeDuration = 3000; // 3 seconds for fade-in
-    const fadeInterval = 50; // Interval for increasing volume
-    const volumeStep = fadeInterval / fadeDuration; // Increment for each interval
-
-    video.muted = false;
-
-    const fadeIn = setInterval(() => {
-      if (video.volume < 1.0) {
-        video.volume = Math.min(video.volume + volumeStep, 1.0); // Increment volume
-      } else {
-        clearInterval(fadeIn); // Stop the interval once volume is at maximum
-      }
-    }, fadeInterval);
-  }
-
 
   intervalId: any;
   public addTimeUpdateListener(video: HTMLVideoElement): void {
-    // this.maxDuration = 15;
     video.addEventListener('timeupdate', () => {
       if (video.currentTime >= this.maxDuration) {
         clearInterval(this.intervalId);
         video.pause();
         video.currentTime = 0;
-        // this.restartVideoAfterPause(video);
         this.intervalId = setInterval(() => {
           video.play();
         }, 10000);
       }
     });
-  }
-
-  private restartVideoAfterPause(video: HTMLVideoElement): void {
-    // Pause for 10 seconds before restarting the video
-    setTimeout(() => {
-      this.showPosterAndDelayPlay(video); // Restart video
-    }, 10000); // 10 seconds pause
-  }
-
-  public enableAudio(videoElement: ElementRef<HTMLVideoElement>): void {
-    const video: HTMLVideoElement = videoElement.nativeElement;
-
-    if (!this.audioEnabled) {
-      //this.fadeInAudio(video);
-      // this.audioEnabled = true; // Set to true to indicate audio has been enabled
-    }
   }
 
   logWindowSize() {
@@ -274,5 +204,74 @@ export class VideoService {
           this.updatingViewList = false;
         }
       });
+  }
+
+  fadeAudio(videoElement: HTMLVideoElement, fadeIn: boolean) {
+    const fadeInDuration = 1000;
+    const fadeOutDuration = 50;
+    const fadeSteps = 50;
+
+    const fadeInterval = fadeIn ? fadeInDuration / fadeSteps : fadeOutDuration / fadeSteps;
+    const volumeStep = 1 / fadeSteps;
+
+    if (fadeIn) {
+      videoElement.muted = false;
+      let currentVolume = 0;
+      videoElement.volume = currentVolume;
+
+      const fadeInInterval = setInterval(() => {
+        if (currentVolume < 1) {
+          currentVolume += volumeStep;
+          videoElement.volume = Math.min(currentVolume, 1);
+        } else {
+          clearInterval(fadeInInterval);
+        }
+      }, fadeInterval);
+    } else {
+      let currentVolume = videoElement.volume;
+
+      const fadeOutInterval = setInterval(() => {
+        if (currentVolume > 0) {
+          currentVolume -= volumeStep;
+          videoElement.volume = Math.max(currentVolume, 0);
+        } else {
+          clearInterval(fadeOutInterval);
+          videoElement.muted = true;
+        }
+      }, fadeInterval);
+    }
+  }
+
+  setLoadingApp(isLoading: boolean): void {
+    this.loadingAppSubject.next(isLoading);
+  }
+
+  getScreenSize(): string {
+    const width: number = window.innerWidth;
+    const height: number = window.innerHeight;
+
+    if (width >= 1920 && height >= 1080) {
+      return '1080p';
+    } else if (width >= 1280 && height >= 720) {
+      return '720p';
+    } else if (width >= 854 && height >= 480) {
+      return '480p';
+    } else {
+      return '360p';
+    }
+  }
+
+  getVideoElementResolution(video: HTMLVideoElement): string {
+    const width = video.clientWidth;
+
+    if (width >= 1920) {
+      return '1080p';
+    } else if (width >= 1280) {
+      return '720p';
+    } else if (width >= 854) {
+      return '480p';
+    } else {
+      return '360p';
+    }
   }
 }
