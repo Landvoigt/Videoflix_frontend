@@ -1,8 +1,7 @@
 import { ElementRef, Injectable, Renderer2, RendererFactory2, ViewChild } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
 import { VideoData } from '@interfaces/video.interface';
 import { AlertService } from './alert.service';
 import Hls from 'hls.js';
@@ -234,7 +233,6 @@ export class VideoService {
       this.showPosterAndDelayPlay(video); // Restart video
     }, 10000); // 10 seconds pause
   }
-
 
   public enableAudio(videoElement: ElementRef<HTMLVideoElement>): void {
     const video: HTMLVideoElement = videoElement.nativeElement;
