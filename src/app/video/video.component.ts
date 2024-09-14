@@ -4,6 +4,7 @@ import Hls from 'hls.js';
 import 'video.js/dist/video-js.css';
 import { VideoService } from '@services/video.service';
 import { fadeInSlow, fadeOutSlow } from '@utils/animations';
+import { ProfileService } from '@services/profile.service';
 
 @Component({
   selector: 'app-video',
@@ -27,7 +28,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hls: Hls | null = null;
 
-  videoUrl: string = '';
+  videoUrl: string;
   duration: string = '00:00';
 
   hoverTimeout: any;
@@ -41,7 +42,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   hovering: boolean = false;
   isFullscreen: boolean = false;
 
-  constructor(private videoService: VideoService) { }
+  constructor(public videoService: VideoService, private profileService: ProfileService) { }
 
   ngOnInit(): void {
     this.getScreenSize();
@@ -71,6 +72,8 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.videoService.getVideoUrl(fileName, resolution).subscribe({
       next: (videoUrl: string) => {
         if (videoUrl) {
+          this.videoUrl = videoUrl;
+
           if (Hls.isSupported()) {
             this.setupHlsPlayer(videoUrl, video);
             return;
@@ -220,6 +223,11 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hideInfo() {
     this.infoVisible = false;
+  }
+
+  liked(): boolean {
+    const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
+    return likedList.includes(this.videoUrl);
   }
 
   getUrl(url: string): string {

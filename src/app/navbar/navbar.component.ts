@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProfileImages } from '../../models/profile.model';
-import { AuthService } from '../auth/auth.service';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Profile, ProfileImages } from '../../models/profile.model';
 import { NavigationService } from '@services/navigation.service';
 import { fadeIn } from '@utils/animations';
+import { Subscription } from 'rxjs';
+import { ProfileService } from '@services/profile.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'navbar',
@@ -13,18 +15,22 @@ import { fadeIn } from '@utils/animations';
   styleUrl: './navbar.component.scss',
   animations: [fadeIn]
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   @Input() closeMenu: boolean = false;
+  @Input() currentPage: 'dashboard' | 'films' | 'series' | 'playlist';
   @Output() pageChanged: EventEmitter<'dashboard' | 'films' | 'series' | 'playlist'> = new EventEmitter<'dashboard' | 'films' | 'series' | 'playlist'>();
 
-  @Input() currentPage: 'dashboard' | 'films' | 'series' | 'playlist';
   userMenuOpen: boolean = false;
   mobileMenuOpen: boolean = false;
 
-  constructor(
-    public navService: NavigationService,
-    public authService: AuthService
-  ) { }
+  currentProfile: Profile | null = null;
+  private profileSubscription: Subscription = new Subscription();
+
+  constructor(public authService: AuthService, public navService: NavigationService, public profileService: ProfileService) { }
+
+  ngOnInit(): void {
+    this.setupProfileListener();
+  }
 
   ngOnChanges() {
     if (this.closeMenu) {
@@ -33,13 +39,12 @@ export class NavbarComponent {
     }
   }
 
-  getProfileImage() {
-    const profile = this.authService.getProfile();
-    if (profile && profile.avatar_id) {
-      return ProfileImages[profile.avatar_id] || "/assets/svg/default_avatar.svg";
-    } else {
-      return "/assets/svg/default_avatar.svg";
-    }
+  setupProfileListener() {
+    this.profileSubscription.add(
+      this.profileService.currentProfile$.subscribe((profile: Profile) => {
+        this.currentProfile = profile;
+      })
+    );
   }
 
   toggleUserMenu() {
@@ -70,12 +75,17 @@ export class NavbarComponent {
     return this.currentPage === page;
   }
 
-  //// ToDo fix boolean active for profile
   goToProfiles() {
-    let profileId = this.authService.getProfile().id;
-    if (profileId) {
-      // this.restService.updateProfile(profileId, { active: false })
-      this.navService.profiles();
-    }
+    this.navService.profiles();
+  }
+
+  getProfileImage(): string {
+    return this.currentProfile && this.currentProfile.avatar_id
+      ? ProfileImages[this.currentProfile.avatar_id] || "/assets/svg/default_avatar.svg"
+      : "/assets/svg/default_avatar.svg";
+  }
+
+  ngOnDestroy(): void {
+    this.profileSubscription.unsubscribe();
   }
 }

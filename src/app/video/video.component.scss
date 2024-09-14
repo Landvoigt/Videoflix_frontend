@@ -31,7 +31,7 @@
   }
 
   .video-wrapper {
-    opacity: 0;
+    // opacity: 0;
     transition: transform 225ms ease-in-out;
 
     .resolution {
@@ -61,4 +61,14 @@
       }
     }
   }
+}
+
+.heart-icon {
+  z-index: 121;
+  top: .25rem;
+  right: .5rem;
+}
+
+.animate {
+  transition: all 225ms ease-in-out;
 }

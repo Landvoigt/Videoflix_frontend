@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, tap } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
 import { Profile } from '../../models/profile.model';
 import { AuthService } from '../auth/auth.service';
 import { ErrorService } from './error.service';
@@ -10,9 +10,6 @@ import { ErrorService } from './error.service';
 })
 export class RestService {
   apiBaseUrl: string = 'http://127.0.0.1:8000/api/';
-
-  private profilesSubject = new BehaviorSubject<Profile[]>([]);
-  profiles$: Observable<Profile[]> = this.profilesSubject.asObservable();
 
   constructor(
     private http: HttpClient, 
@@ -53,7 +50,6 @@ export class RestService {
 
   getProfiles(): Observable<Profile[]> {
     return this.http.get<Profile[]>(`${this.apiBaseUrl}profiles/`, { headers: this.getHeaders() }).pipe(
-      tap((profiles: Profile[]) => this.profilesSubject.next(profiles)),
       catchError(this.errorService.handleApiError)
     );
   }
@@ -66,21 +62,18 @@ export class RestService {
 
   addProfile(payload: any): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}profiles/`, payload, { headers: this.getHeaders() }).pipe(
-      tap(() => this.getProfiles().subscribe()),
       catchError(this.errorService.handleApiError)
     );
   }
 
-  updateProfile(id: number, payload: any): Observable<any> {
-    return this.http.patch(`${this.apiBaseUrl}profiles/${id}/`, payload, { headers: this.getHeaders() }).pipe(
-      tap(() => this.getProfiles().subscribe()),
+  updateProfile(id: number, payload: any): Observable<Profile> {
+    return this.http.patch<Profile>(`${this.apiBaseUrl}profiles/${id}/`, payload, { headers: this.getHeaders() }).pipe(
       catchError(this.errorService.handleApiError)
     );
   }
 
   deleteProfile(id: number): Observable<any> {
     return this.http.delete(`${this.apiBaseUrl}profiles/${id}/`, { headers: this.getHeaders() }).pipe(
-      tap(() => this.getProfiles().subscribe()),
       catchError(this.errorService.handleApiError)
     );
   }
@@ -90,7 +83,7 @@ export class RestService {
     return this.http.post(`${this.apiBaseUrl}/contact/`, payload);
   }
 
-  private getHeaders(): HttpHeaders {
+  getHeaders(): HttpHeaders {
     const authToken = this.authService.getAuthenticationToken();
     let headers: { [key: string]: string } = {
       'Content-Type': 'application/json'

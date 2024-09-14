@@ -19,11 +19,22 @@
                resolution }}</span>
             <span class="duration italic">{{ duration }}</span>
          </div>
-         <div @fadeInSlow *ngIf="!infoVisible" class="flex justify-start items-center gap-4">
-            <span>{{ release_date }}</span>
-            <span>FSK</span>
-            <div class="age-container w-5 h-5 flex justify-center items-center text-xs border 
-            border-textColorPrimary rounded-full">{{ age }}</div>
+         <div @fadeInSlow *ngIf="!infoVisible" class="flex justify-between items-center gap-4">
+            <div class="flex justify-start items-center gap-4">
+               <span>{{ release_date }}</span>
+               <span>FSK</span>
+               <div class="age-container w-5 h-5 flex justify-center items-center text-xs border 
+               border-textColorPrimary rounded-full">{{ age }}</div>
+            </div>
+            <div *ngIf="!videoService.updatingViewList && !liked()"
+               (click)="videoService.toggleVideoInViewList(videoUrl)" class="animate flex justify-end items-center gap-0.5 border border-borderColorVideoBox 
+               rounded-md px-2 py-0.5 pr-1 cursor-pointer hover:text-accentColorHover hover:border-accentColorHover">
+               <span class="text-xs">add to my list</span>
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                  <path
+                     d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+               </svg>
+            </div>
          </div>
          <svg (mouseenter)="showInfo()" (mouseleave)="hideInfo()" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -35,5 +46,13 @@
             {{ description }}
          </div>
       </div>
+   </div>
+   <div *ngIf="liked()" (click)="videoService.toggleVideoInViewList(videoUrl)" class="heart-icon absolute cursor-pointer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+         class="size-5 fill-videoflixRed stroke-textColorPrimary" stroke-width="1.2"
+         style="filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.75));">
+         <path
+            d="m9.653 16.915-.005-.003-.019-.01a20.759 20.759 0 0 1-1.162-.682 22.045 22.045 0 0 1-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 0 1 8-2.828A4.5 4.5 0 0 1 18 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 0 1-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 0 1-.69.001l-.002-.001Z" />
+      </svg>
    </div>
 </div>

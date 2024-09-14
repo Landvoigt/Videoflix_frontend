@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
-import { ErrorService } from '@services/error.service';
+import { ProfileService } from '@services/profile.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,12 +25,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentVideo!: VideoData;
   previewVideoKey: string;
 
-
   loading: boolean = false;
   muted: boolean = true;
   isFullscreen: boolean = false;
 
-  constructor(public authService: AuthService, public videoService: VideoService, private errorService: ErrorService, private cdr: ChangeDetectorRef) { }
+  constructor(
+    public authService: AuthService,
+    private profileService: ProfileService,
+    public videoService: VideoService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getPreviewVideoData();
@@ -58,6 +61,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.videoService.getVideoData(null).subscribe({
       next: (data: VideoData[]) => {
         this.videoData = data;
+        console.log(this.videoData);
         this.loading = false;
       },
       error: (error) => {
@@ -122,13 +126,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.muted = this.previewVideo.nativeElement.muted;
   }
 
-  /// brauchen wir das?
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
   @HostListener('document:mozfullscreenchange', ['$event'])
   @HostListener('document:MSFullscreenChange', ['$event'])
   handleFullscreenChange(event: Event) {
     this.onFullscreenChange(event);
+  }
+
+  liked() {
+    return this.profileService.currentProfileSubject.value.liked_list.includes(this.videoUrl);
   }
 
   ngOnDestroy(): void {

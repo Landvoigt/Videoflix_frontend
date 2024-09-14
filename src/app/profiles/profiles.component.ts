@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
 import { RestService } from '@services/rest.service';
-import { Observable, catchError, of, switchMap } from 'rxjs';
+import { catchError, of, Subscription, switchMap } from 'rxjs';
 import { Profile, ProfileImages } from '../../models/profile.model';
 import { NavigationService } from '@services/navigation.service';
 import { AlertService } from '@services/alert.service';
-import { AuthService } from '../auth/auth.service';
+import { ProfileService } from '@services/profile.service';
 
 @Component({
   selector: 'app-profiles',
@@ -17,9 +17,8 @@ import { AuthService } from '../auth/auth.service';
   styleUrl: './profiles.component.scss',
   animations: [fadeIn]
 })
-export class ProfilesComponent implements OnInit {
-
-  profiles$: Observable<Profile[]>;
+export class ProfilesComponent implements OnInit, OnDestroy {
+  profiles: Profile[];
   profileImages: any[] = ProfileImages;
 
   isDialogOpen: boolean = false;
@@ -29,29 +28,31 @@ export class ProfilesComponent implements OnInit {
   loading: boolean = false;
   hoveredIndex: number | null = null;
 
+  private subscriptions: Subscription = new Subscription();
+
   constructor(
     public navService: NavigationService,
     private restService: RestService,
-    private authService: AuthService,
-    private alertService: AlertService) {
-
-    this.profiles$ = this.restService.profiles$;
-  }
+    private profileService: ProfileService,
+    private alertService: AlertService) { }
 
   ngOnInit(): void {
-    this.getProfiles();
+    this.addProfileListeners();
+    this.profileService.loadProfilesAndSetCurrent(this.currentProfileId!);
   }
 
-  getProfiles(): void {
-    this.loading = true;
-    this.restService.getProfiles().subscribe({
-      error: (error) => {
-        console.error('Error loading profiles:', error);
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
+  addProfileListeners() {
+    this.subscriptions.add(
+      this.profileService.profiles$.subscribe(profiles => {
+        this.profiles = profiles;
+      })
+    );
+
+    this.subscriptions.add(
+      this.profileService.currentProfile$.subscribe(profile => {
+        this.currentProfileId = profile ? profile.id : null;
+      })
+    );
   }
 
   toggleEditBtn(index: number | null) {
@@ -76,23 +77,22 @@ export class ProfilesComponent implements OnInit {
   }
 
   startApp(profileId: number) {
-    this.restService.updateProfile(profileId, { active: true }).pipe(
-      switchMap(() => this.restService.getProfile(profileId)),
-      catchError((error) => {
-        this.alertService.showAlert('An unexpected error occured. Please try again!', 'error');
-        return of(null);
-      })
-    ).subscribe(profile => {
-      if (profile) {
-        this.authService.setProfile(profile);
-        this.navService.main();
-      } else {
-        this.alertService.showAlert('Profile could not be loaded', 'error');
-      }
-    });
+    this.profileService.updateProfile(profileId, { active: true })
+      .subscribe(profile => {
+        if (profile) {
+          this.profileService.setProfile(profile);
+          this.navService.main();
+        } else {
+          this.alertService.showAlert('Profile could not be loaded', 'error');
+        }
+      });
   }
 
   getProfileImage(avatarId: number) {
     return this.profileImages[avatarId];
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

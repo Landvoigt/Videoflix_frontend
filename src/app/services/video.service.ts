@@ -6,6 +6,10 @@ import { AuthService } from '../auth/auth.service';
 import { VideoData } from '@interfaces/video.interface';
 import { AlertService } from './alert.service';
 import Hls from 'hls.js';
+import { RestService } from './rest.service';
+import { Profile } from 'src/models/profile.model';
+import { ErrorService } from './error.service';
+import { ProfileService } from './profile.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,25 +36,28 @@ export class VideoService {
   posterUrls: any;
 
   videoDataLoaded: boolean = false;
+  updatingViewList: boolean = false;
 
   constructor(
     public rendererFactory: RendererFactory2,
     private http: HttpClient,
-    private authService: AuthService,
-    private alertService: AlertService) {
+    private errorService: ErrorService,
+    private alertService: AlertService,
+    private restService: RestService,
+    private profileService: ProfileService) {
 
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
   fetchVideoData(): void {
-    this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`, { headers: this.getHeaders() }).pipe(
+    this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`, { headers: this.restService.getHeaders() }).pipe(
       tap((data: VideoData[]) => {
         this.videoDataSubject.next(data);
         this.posterUrls = data.map(video => video.posterUrlGcs);
         this.videoDataLoaded = true;
         this.checkLoadingStatus();
       }),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     ).subscribe();
   }
 
@@ -75,10 +82,9 @@ export class VideoService {
     );
   }
 
-
   fetchPlaylist(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiVideoBaseUrl}playlist/`, { headers: this.getHeaders() }).pipe(
-      catchError(this.handleError)
+    return this.http.get<string[]>(`${this.apiVideoBaseUrl}playlist/`, { headers: this.restService.getHeaders() }).pipe(
+      catchError(this.errorService.handleApiError)
     );
   }
 
@@ -91,7 +97,7 @@ export class VideoService {
           )
         )
       ),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
@@ -104,7 +110,7 @@ export class VideoService {
         const randomIndex = Math.floor(Math.random() * videoData.length);
         return videoData[randomIndex];
       }),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
@@ -118,7 +124,7 @@ export class VideoService {
           throw new Error('Invalid response format from server');
         }
       }),
-      catchError(this.handleError)
+      catchError(this.errorService.handleApiError)
     );
   }
 
@@ -244,23 +250,31 @@ export class VideoService {
     const height = window.innerHeight;
   }
 
-  private getHeaders(): HttpHeaders {
-    const authToken = this.authService.getAuthenticationToken();
-    let headers: { [key: string]: string } = {
-      'Content-Type': 'application/json'
-    };
+  toggleVideoInViewList(url: string) {
+    if (!url) return;
 
-    if (authToken) {
-      headers['Authorization'] = authToken;
+    const currentProfile = this.profileService.currentProfileSubject.value;
+
+    if (currentProfile.liked_list && !currentProfile.liked_list.includes(url)) {
+      this.updatingViewList = true;
+      currentProfile.liked_list.push(url);
+      this.updateViewList(currentProfile);
+    } else if (currentProfile.liked_list.includes(url)) {
+      currentProfile.liked_list = currentProfile.liked_list.filter(listUrl => listUrl !== url);
+      this.updatingViewList = true;
+      this.updateViewList(currentProfile);
     }
-
-    return new HttpHeaders(headers);
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.status === 401) {
-      this.alertService.showAlert('Not authorized', 'error');
-    }
-    return throwError(() => { });
+  updateViewList(profile: Profile) {
+    this.restService.updateProfile(profile.id, { liked_list: profile.liked_list })
+      .subscribe((profile: Profile) => {
+        if (profile) {
+          this.updatingViewList = false;
+        } else {
+          this.alertService.showAlert('View List could not be updated', 'error');
+          this.updatingViewList = false;
+        }
+      });
   }
 }

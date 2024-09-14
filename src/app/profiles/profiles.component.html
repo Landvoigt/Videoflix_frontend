@@ -31,11 +31,11 @@
     <div class="lg:mx-auto lg:w-full lg:max-w-lg mb-8 z-10">
         <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-textColorPrimary
             lg:text-3xl">
-            {{ (profiles$ | async)?.length === 0 ? 'Create up to 3 profiles' : 'Select a profile or create a new one' }}
+            {{ profiles?.length === 0 ? 'Create up to 3 profiles' : 'Select a profile or create a new one' }}
         </h2>
     </div>
     <div class="tile-wrapper flex justify-center content-center gap-8 mb-60 z-10">
-        <div *ngFor="let profile of (profiles$ | async); let i = index" (click)="startApp(profile.id)"
+        <div *ngFor="let profile of profiles; let i = index" (click)="startApp(profile.id)"
             (mouseover)="toggleEditBtn(i)" (mouseleave)="toggleEditBtn(null)" class="selection-tile"
             id="profile{{ i }}">
             <div class="selection-tile-img-box">
@@ -57,7 +57,7 @@
             <span class="selection-tile-text text-textColorPrimary text-sm lg:text-lg">{{ profile.name }}</span>
         </div>
 
-        <div *ngIf="((profiles$ | async) ?? []).length < 3" class="selection-tile selection-add">
+        <div *ngIf="(profiles ?? []).length < 3" class="selection-tile selection-add">
             <div class="selection-tile-edit-icon edit-icon-add-margin">&nbsp;</div>
             <svg (click)="openCreateProfile()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke-width="1.5" stroke="currentColor" class="h-20 w-20 lg:h-28 lg:w-28">
