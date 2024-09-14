@@ -31,7 +31,11 @@
   }
 
   .video-wrapper {
+<<<<<<< HEAD
     // opacity: 0;
+=======
+    //opacity: 0;
+>>>>>>> 0aca49664ebc95d66db470f71aff9c41760ff8d0
     transition: transform 225ms ease-in-out;
 
     .resolution {
@@ -63,6 +67,7 @@
   }
 }
 
+<<<<<<< HEAD
 .heart-icon {
   z-index: 121;
   top: .25rem;
@@ -71,4 +76,12 @@
 
 .animate {
   transition: all 225ms ease-in-out;
+=======
+.video-container:hover .video-wrapper {
+  display: flex;
+}
+
+.video-wrapper {
+  display: none;
+>>>>>>> 0aca49664ebc95d66db470f71aff9c41760ff8d0
 }

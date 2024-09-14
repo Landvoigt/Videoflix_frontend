@@ -91,23 +91,55 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  setupHlsPlayer(videoUrl: string, video: HTMLVideoElement) {
-    if (this.hls) {
-      this.hls.destroy();
-    }
 
+  setupHlsPlayer(videoUrl: string, video: HTMLVideoElement) {
+    if (!videoUrl) {
+        console.error('Keine Video-URL angegeben');
+        return;
+    }
+  
+    if (this.hls) {
+        this.hls.destroy();
+    }
+  
     if (video.canPlayType('application/vnd.apple.mpegURL')) {
-      video.src = videoUrl;
-      video.play();
+        video.src = videoUrl;
+        video.addEventListener('loadedmetadata', () => {
+            this.playVideoWithPromiseHandling(video);
+        });
     } else {
-      this.hls = new Hls();
-      this.hls.loadSource(videoUrl);
-      this.hls.attachMedia(video);
-      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        setTimeout(() => video.play().catch(err => console.error('Playback error:', err)), 500);
-      });
+        this.hls = new Hls();
+        this.hls.loadSource(videoUrl);
+        this.hls.attachMedia(video);
+        this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            this.playTimeout = setTimeout(() => {
+                this.playVideoWithPromiseHandling(video);
+            }, 1000);
+        });
+  
+        this.hls.on(Hls.Events.ERROR, (event, data) => {
+            console.error('HLS Fehler:', data);
+        });
     }
   }
+  
+
+  playVideoWithPromiseHandling(video: HTMLVideoElement) {
+    const playPromise = video.play();
+  
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                video.play();
+            })
+            .catch((error) => {
+               console.error('Video konnte nicht automatisch abgespielt werden:', error);
+            });
+    } else {
+        console.warn('Play-Promise wird nicht unterstützt.');
+    }
+  }
+  
 
   setupDefaultPlayer(videoUrl: string, video: HTMLVideoElement) {
     video.src = videoUrl;
@@ -168,6 +200,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   onLeave() {
     clearTimeout(this.hoverTimeoutVideo);
     clearTimeout(this.thumbnailTimeout);
+    clearTimeout(this.playTimeout);
     this.stopVideoPlayer();
     this.hovering = false;
     this.thumbnailVisible = true;
