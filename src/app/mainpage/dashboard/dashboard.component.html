@@ -17,13 +17,13 @@
                 <div class="flex items-center justify-center gap-x-9">
                     <a (click)="playPreviewVideo()" style="width: 185px; text-align: center; white-space: nowrap;"
                         class="rounded-md bg-accentColor px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
-                    text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
-                    hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
+                    text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white 
+                    hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 shadow-md
                     focus-visible:outline-accentColor cursor-pointer">
                         Abspielen</a>
                     <a (click)="toggleVideoInViewList()" style="text-align: center; white-space: nowrap;"
                         class="rounded-md bg-greyTransparent px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
-                        text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm cursor-pointer hover:text-accentColor" [class.disabled]="videoService.updatingViewList"
+                        text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-md cursor-pointer hover:text-accentColor" [class.disabled]="videoService.updatingViewList"
                         [style.pointer-events]="videoService.updatingViewList ? 'none' : 'auto'"
                         [style.opacity]="videoService.updatingViewList ? 0.7 : 1">
                         {{ liked() ? 'Remove from' : 'Add to' }} my list <span aria-hidden="true"

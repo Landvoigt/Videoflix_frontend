@@ -1,4 +1,4 @@
-<div *ngIf="(videoService.loadingApp$ | async) === false" class="mainpage-wrapper flex flex-col min-h-screen">
+<div @fadeIn *ngIf="(videoService.loadingApp$ | async) === false" class="mainpage-wrapper flex flex-col min-h-screen">
   <div id="mainpageOverlay" class="mainpage-overlay"></div>
 
   <!-- Navbar -->

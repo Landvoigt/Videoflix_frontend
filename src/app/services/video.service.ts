@@ -107,6 +107,7 @@ export class VideoService {
     return this.http.get<{ video_url: string }>(apiUrl).pipe(
       map(response => {
         if (response && response.video_url) {
+          console.log(response)
           return response.video_url;
         } else {
           throw new Error('Invalid response format from server');
