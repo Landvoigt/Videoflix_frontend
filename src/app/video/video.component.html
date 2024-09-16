@@ -7,7 +7,7 @@
    <div class="video-wrapper w-full flex flex-col justify-center items-center rounded-md">
       <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button w-full h-44 border 
       border-borderColorVideoBox border-b-0 rounded-t-md" controls preload="auto" data-setup="{}"
-         disablePictureInPicture type="application/x-mpegURL" [src]="videoUrl">
+         disablePictureInPicture type="application/x-mpegURL" [src]="hlsPlaylistUrl">
          Your browser does not support the video tag.
       </video>
       <div class="relative flex flex-col justify-between w-full h-20 bg-gradient-to-r from-default-from to-default-to px-3 py-2 border 
@@ -27,7 +27,7 @@
                border-textColorPrimary rounded-full">{{ age }}</div>
             </div>
             <div *ngIf="!videoService.updatingViewList && !liked()"
-               (click)="videoService.toggleVideoInViewList(videoUrl)" class="animate flex justify-end items-center gap-0.5 border border-borderColorVideoBox 
+               (click)="videoService.toggleVideoInViewList(hlsPlaylistUrl)" class="animate flex justify-end items-center gap-0.5 border border-borderColorVideoBox 
                rounded-md px-2 py-0.5 pr-1 cursor-pointer hover:text-accentColorHover hover:border-accentColorHover">
                <span class="text-xs">add to my list</span>
                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -47,7 +47,7 @@
          </div>
       </div>
    </div>
-   <div *ngIf="liked()" (click)="videoService.toggleVideoInViewList(videoUrl)" class="heart-icon absolute cursor-pointer">
+   <div *ngIf="liked()" (click)="videoService.toggleVideoInViewList(hlsPlaylistUrl)" class="heart-icon absolute cursor-pointer">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
          class="size-5 fill-videoflixRed stroke-textColorPrimary" stroke-width="1.2"
          style="filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.75));">

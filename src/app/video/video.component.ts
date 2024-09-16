@@ -18,6 +18,7 @@ import { ProfileService } from '@services/profile.service';
 export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 
+  @Input() hlsPlaylistUrl: string;
   @Input() title: string;
   @Input() description: string;
   @Input() category: string;
@@ -28,7 +29,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hls: Hls | null = null;
 
-  videoUrl: string;
+  // videoUrl: string;
   duration: string = '00:00';
 
   hoverTimeout: any;
@@ -68,26 +69,27 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setupPlayer(fileName: any, resolution: string): void {
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-    this.videoService.getVideoUrl(fileName, resolution).subscribe({
-      next: (videoUrl: string) => {
-        if (videoUrl) {
-          this.videoUrl = videoUrl;
+    // this.videoService.getVideoUrl(fileName, resolution).subscribe({
+    //   next: (videoUrl: string) => {
+    //     if (videoUrl) {
+    //       this.videoUrl = videoUrl;
+    if (!this.hlsPlaylistUrl) return;
 
-          if (Hls.isSupported()) {
-            this.setupHlsPlayer(videoUrl, video);
-            return;
-          }
+    if (Hls.isSupported()) {
+      this.setupHlsPlayer(this.hlsPlaylistUrl, video);
+      return;
+    }
 
-          if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            this.setupDefaultPlayer(videoUrl, video);
-            return;
-          }
-        }
-      },
-      error: (error) => {
-        console.error('Error setting up video player:', error);
-      }
-    });
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      this.setupDefaultPlayer(this.hlsPlaylistUrl, video);
+      return;
+    }
+    //   }
+    // },
+    // error: (error) => {
+    //   console.error('Error setting up video player:', error);
+    // }
+    // });
   }
 
   setupHlsPlayer(videoUrl: string, video: HTMLVideoElement) {
@@ -141,7 +143,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }, { once: true });
   }
-  
+
   stopVideoPlayer(): void {
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     if (this.hls) {
@@ -189,7 +191,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   handleFullscreenChange(event: Event) {
     this.onFullscreenChange(event);
   }
-  
+
   onFullscreenChange(event: Event) {
     this.isFullscreen = !!(document.fullscreenElement ||
       (document as any).webkitFullscreenElement ||
@@ -241,7 +243,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   liked(): boolean {
     const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
-    return likedList.includes(this.videoUrl);
+    return likedList.includes(this.hlsPlaylistUrl);
   }
 
   getUrl(url: string): string {
@@ -254,7 +256,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.hls) {
       this.hls.destroy();
     }
-    
+
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     video.removeEventListener('loadedmetadata', () => video.play());
   }

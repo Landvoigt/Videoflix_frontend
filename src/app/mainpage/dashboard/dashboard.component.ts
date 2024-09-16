@@ -42,10 +42,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getPreviewVideoData(): void {
     this.previewVideoData$ = this.videoService.getPreviewVideoData();
     this.previewVideoData$.subscribe({
-      next: (video: VideoData | undefined) => {
-        if (video) {
-          this.getVideoUrl(video.subfolder, this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
-          this.currentVideo = video;
+      next: (videoData: VideoData | undefined) => {
+        if (videoData) {
+          this.currentVideo = videoData;
+          this.videoUrl = videoData.hlsPlaylistUrl.replace("master", this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
+          this.previewVideoKey = videoData.subfolder;
+          this.cdr.detectChanges();
+          this.setupPreviewVideo(videoData.subfolder);
         }
       },
       error: (error) => {
@@ -53,6 +56,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  // getPreviewVideoData(): void {
+  //   this.previewVideoData$ = this.videoService.getPreviewVideoData();
+  //   this.previewVideoData$.subscribe({
+  //     next: (video: VideoData | undefined) => {
+  //       if (video) {
+  //         this.getVideoUrl(video.subfolder, this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
+  //         this.currentVideo = video;
+  //       }
+  //     },
+  //     error: (error) => {
+  //       console.error('Error getting random video:', error);
+  //     }
+  //   });
+  // }
+
+  // getVideoUrl(videoKey: string, resolution: string): void {
+  //   this.videoService.getVideoUrl(videoKey, resolution).subscribe({
+  //     next: (url: string) => {
+  //       this.videoUrl = url;
+  //       this.cdr.detectChanges();
+  //       this.previewVideoKey = videoKey;
+  //       this.setupPreviewVideo(videoKey);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error:', err);
+  //     }
+  //   });
+  // }
+
 
   getVideoData(): void {
     this.loading = true;
@@ -65,20 +98,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error loading films:', error);
         this.loading = false;
-      }
-    });
-  }
-
-  getVideoUrl(videoKey: string, resolution: string): void {
-    this.videoService.getVideoUrl(videoKey, resolution).subscribe({
-      next: (url: string) => {
-        this.videoUrl = url;
-        this.cdr.detectChanges();
-        this.previewVideoKey = videoKey;
-        this.setupPreviewVideo(videoKey);
-      },
-      error: (err) => {
-        console.error('Error:', err);
       }
     });
   }

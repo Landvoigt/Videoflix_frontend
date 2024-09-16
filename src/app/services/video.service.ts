@@ -102,20 +102,20 @@ export class VideoService {
     );
   }
 
-  getVideoUrl(videoKey: string, resolution: string): Observable<string> {
-    const apiUrl = `${this.apiVideoBaseUrl}preview/?video_key=${videoKey}&resolution=${resolution}`;
-    return this.http.get<{ video_url: string }>(apiUrl).pipe(
-      map(response => {
-        if (response && response.video_url) {
-          console.log(response)
-          return response.video_url;
-        } else {
-          throw new Error('Invalid response format from server');
-        }
-      }),
-      catchError(this.errorService.handleApiError)
-    );
-  }
+  // getVideoUrl(videoKey: string, resolution: string): Observable<string> {
+  //   const apiUrl = `${this.apiVideoBaseUrl}preview/?video_key=${videoKey}&resolution=${resolution}`;
+  //   return this.http.get<{ video_url: string }>(apiUrl).pipe(
+  //     map(response => {
+  //       if (response && response.video_url) {
+  //         console.log(response)
+  //         return response.video_url;
+  //       } else {
+  //         throw new Error('Invalid response format from server');
+  //       }
+  //     }),
+  //     catchError(this.errorService.handleApiError)
+  //   );
+  // }
 
   playPreviewVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
     const video: HTMLVideoElement = videoElement.nativeElement;
