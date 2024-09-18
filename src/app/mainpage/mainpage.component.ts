@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { fadeIn } from '@utils/animations';
+import { fadeInSuperSlow } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from '../mainpage/dashboard/dashboard.component';
 import { FilmsComponent } from '../mainpage/films/films.component';
@@ -16,7 +16,7 @@ import { VideoService } from '@services/video.service';
   imports: [CommonModule, LoadingScreenComponent, NavbarComponent, FooterComponent, DashboardComponent, FilmsComponent, SeriesComponent, PlaylistComponent],
   templateUrl: './mainpage.component.html',
   styleUrls: ['./mainpage.component.scss'],
-  animations: [fadeIn],
+  animations: [fadeInSuperSlow],
 })
 export class MainpageComponent implements OnInit {
   currentPage: 'dashboard' | 'films' | 'series' | 'playlist' = 'dashboard';

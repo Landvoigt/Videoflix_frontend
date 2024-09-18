@@ -1,10 +1,10 @@
 <div class="w-full flex random-video-wrapper">
-    <div class="random-video-container w-full h-full relative">
-        <video preload="auto" #previewVideo class="random-video-content w-full h-full object-cover" [src]="videoUrl">
+    <div [@fadeInSuperSlow] class="random-video-container relative w-full h-full">
+        <video preload="auto" id="previewVideo" #previewVideo class="random-video-content absolute w-full h-full object-cover" [src]="videoUrl">
             Your browser does not support the video tag.
         </video>
-        <div class="random-video-overlay">
-            <div class="random-video-info" *ngIf="currentVideo">
+        <div class="random-video-overlay absolute w-full h-full flex justify-start items-center">
+            <div class="w-2/5 flex flex-col justify-center items-start gap-8" *ngIf="currentVideo">
                 <h2 class="text-5xl text-textColorPrimary text-shadow-xl">{{ currentVideo.title }}</h2>
                 <span class="text-2xl text-textColorPrimary text-shadow-xl">{{ currentVideo.description }}</span>
                 <div class="text-xl text-textColorPrimary text-shadow-lg flex gap-6">
@@ -22,18 +22,18 @@
                     focus-visible:outline-accentColor cursor-pointer">
                         Abspielen</a>
                     <a (click)="toggleVideoInViewList()" style="text-align: center; white-space: nowrap;"
-                        class="rounded-md bg-greyTransparent px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
+                        class="rounded-md bg-greyTransparent hover:bg-greyTransparentHover px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
                         text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-md cursor-pointer hover:text-accentColor" [class.disabled]="videoService.updatingViewList"
                         [style.pointer-events]="videoService.updatingViewList ? 'none' : 'auto'"
                         [style.opacity]="videoService.updatingViewList ? 0.7 : 1">
                         {{ liked() ? 'Remove from' : 'Add to' }} my list <span aria-hidden="true"
                             class="btn-arrow"></span></a>
                 </div>
-                <div class="flex justify-center items-center text-textColorPrimary text-2xl fsk-logo">{{
-                    currentVideo.age }}</div>
+                <div class="fsk-logo absolute h-12 w-28 flex justify-start items-center text-textColorPrimary text-2xl pl-8 border-l-2 border-textColorPrimary">{{
+                    currentVideo.age }}+</div>
             </div>
         </div>
-        <div class="mute-btn-container" (click)="toggleMute()">
+        <div class="mute-btn-container absolute rounded-md" (click)="toggleMute()">
             <a
                 class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
             hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 

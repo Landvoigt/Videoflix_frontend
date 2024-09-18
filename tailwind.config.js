@@ -32,6 +32,7 @@ module.exports = {
         navColorHover: 'rgb(186 213 255 / 44%)',
 
         greyTransparent: '#9f9f9fa3',
+        greyTransparentHover: '#dbdbdbe0',
 
         videoflixRed: '#d90505',
       },

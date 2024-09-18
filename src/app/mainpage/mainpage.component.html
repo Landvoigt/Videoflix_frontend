@@ -1,11 +1,11 @@
-<div @fadeIn *ngIf="(videoService.loadingApp$ | async) === false" class="mainpage-wrapper flex flex-col min-h-screen">
-  <div id="mainpageOverlay" class="mainpage-overlay"></div>
+<div @fadeInSuperSlow *ngIf="(videoService.loadingApp$ | async) === false" class="mainpage-wrapper relative flex flex-col min-h-screen">
+  <div id="mainpageOverlay" class="mainpage-overlay absolute cursor-pointer"></div>
 
   <!-- Navbar -->
   <navbar [currentPage]="currentPage" (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
 
   <!-- Main Content -->
-  <div @fadeIn (click)="closeUserMenu()"
+  <div (click)="closeUserMenu()"
     class="flex-1 flex flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
 
     <ng-container *ngIf="activePage('dashboard')">

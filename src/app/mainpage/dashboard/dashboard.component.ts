@@ -7,13 +7,15 @@ import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
 import { ProfileService } from '@services/profile.service';
+import { fadeInSuperSlow } from '@utils/animations';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, VideoComponent, SlideshowComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
+  animations: [fadeInSuperSlow]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('previewVideo', { static: true }) previewVideo!: ElementRef<HTMLVideoElement>;
@@ -36,7 +38,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getPreviewVideoData();
-    this.getVideoData();
+    this.getVideoDataByCategory();
   }
 
   getPreviewVideoData(): void {
@@ -57,42 +59,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // getPreviewVideoData(): void {
-  //   this.previewVideoData$ = this.videoService.getPreviewVideoData();
-  //   this.previewVideoData$.subscribe({
-  //     next: (video: VideoData | undefined) => {
-  //       if (video) {
-  //         this.getVideoUrl(video.subfolder, this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
-  //         this.currentVideo = video;
-  //       }
-  //     },
-  //     error: (error) => {
-  //       console.error('Error getting random video:', error);
-  //     }
-  //   });
-  // }
-
-  // getVideoUrl(videoKey: string, resolution: string): void {
-  //   this.videoService.getVideoUrl(videoKey, resolution).subscribe({
-  //     next: (url: string) => {
-  //       this.videoUrl = url;
-  //       this.cdr.detectChanges();
-  //       this.previewVideoKey = videoKey;
-  //       this.setupPreviewVideo(videoKey);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error:', err);
-  //     }
-  //   });
-  // }
-
-
-  getVideoData(): void {
+  getVideoDataByCategory(): void {
     this.loading = true;
-    this.videoService.getVideoData(null).subscribe({
+    this.videoService.getVideoDataByCategory(null).subscribe({
       next: (data: VideoData[]) => {
         this.videoData = data;
-        console.log(this.videoData);
         this.loading = false;
       },
       error: (error) => {

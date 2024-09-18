@@ -14,8 +14,10 @@ import { NavigationService } from '@services/navigation.service';
 })
 export class FrontpageComponent {
   loggedIn: boolean = false;
+  loading: boolean = true;
 
   constructor(private router: Router, private authService: AuthService, public navService: NavigationService) {
     this.loggedIn = this.authService.isLoggedIn();
+    this.loading = false;
   }
 }

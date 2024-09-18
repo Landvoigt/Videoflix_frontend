@@ -5,6 +5,7 @@ import 'video.js/dist/video-js.css';
 import { VideoService } from '@services/video.service';
 import { fadeInSlow, fadeOutSlow } from '@utils/animations';
 import { ProfileService } from '@services/profile.service';
+import { VideoData } from '@interfaces/video.interface';
 
 @Component({
   selector: 'app-video',
@@ -18,18 +19,9 @@ import { ProfileService } from '@services/profile.service';
 export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('videoPlayer', { static: true }) videoPlayer: ElementRef<HTMLVideoElement>
 
-  @Input() hlsPlaylistUrl: string;
-  @Input() title: string;
-  @Input() description: string;
-  @Input() category: string;
-  @Input() posterUrlGcs: string;
-  @Input() age: string;
-  @Input() resolution: string;
-  @Input() release_date: string;
+  @Input() video: VideoData;
 
-  hls: Hls | null = null;
-
-  // videoUrl: string;
+  hls: Hls | null = new Hls({ maxLoadingDelay: 1000 });
   duration: string = '00:00';
 
   hoverTimeout: any;
@@ -41,96 +33,51 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   infoVisible: boolean = false;
 
   hovering: boolean = false;
+  hoveringInProgress: boolean = false;
   isFullscreen: boolean = false;
 
   constructor(public videoService: VideoService, private profileService: ProfileService) { }
 
   ngOnInit(): void {
-    window.addEventListener('resize', this.videoService.getScreenSize.bind(this));
+    this.addResizeListener();
   }
 
   ngAfterViewInit() {
-    const videoElement: HTMLVideoElement = this.videoPlayer.nativeElement;
-    videoElement.addEventListener('loadedmetadata', () => {
-      const seconds = videoElement.duration;
-      this.duration = this.formatDuration(seconds);
-    });
+    this.addMetadataListener();
   }
 
-  formatDuration(seconds: number): string {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${this.pad(minutes)}:${this.pad(secs)}`;
-  }
-
-  pad(value: number): string {
-    return value.toString().padStart(2, '0');
-  }
-
-  setupPlayer(fileName: any, resolution: string): void {
+  setupPlayer(): void {
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-    // this.videoService.getVideoUrl(fileName, resolution).subscribe({
-    //   next: (videoUrl: string) => {
-    //     if (videoUrl) {
-    //       this.videoUrl = videoUrl;
-    if (!this.hlsPlaylistUrl) return;
+    if (!this.video.hlsPlaylistUrl) return;
 
     if (Hls.isSupported()) {
-      this.setupHlsPlayer(this.hlsPlaylistUrl, video);
-      return;
+      this.setupHlsPlayer(this.video.hlsPlaylistUrl, video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      this.setupDefaultPlayer(this.video.hlsPlaylistUrl, video);
     }
-
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      this.setupDefaultPlayer(this.hlsPlaylistUrl, video);
-      return;
-    }
-    //   }
-    // },
-    // error: (error) => {
-    //   console.error('Error setting up video player:', error);
-    // }
-    // });
   }
 
   setupHlsPlayer(videoUrl: string, video: HTMLVideoElement) {
-    if (this.hls) {
-      this.hls.destroy();
-    }
+    this.destroyHls();
 
     if (video.canPlayType('application/vnd.apple.mpegURL')) {
-      video.src = videoUrl;
-      video.addEventListener('loadedmetadata', () => {
-        this.playVideoWithPromiseHandling(video);
-      });
+      this.setupDefaultPlayer(videoUrl, video);
     } else {
       this.hls = new Hls();
       this.hls.loadSource(videoUrl);
       this.hls.attachMedia(video);
+
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        this.playTimeout = setTimeout(() => {
-          this.playVideoWithPromiseHandling(video);
-        }, 1000);
+        this.playVideoWithDelay(video, 1000);
       });
 
       this.hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('HLS Fehler:', data);
+        this.handleHlsError(event, data);
       });
-    }
-  }
 
-  playVideoWithPromiseHandling(video: HTMLVideoElement) {
-    const playPromise = video.play();
-
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          video.play();
-        })
-        .catch((error) => {
-          console.error('Video konnte nicht automatisch abgespielt werden:', error);
-        });
-    } else {
-      console.warn('Play-Promise wird nicht unterstützt.');
+      this.hls.on(Hls.Events.LEVEL_LOADED, () => {
+        this.hideThumbnail();
+      });
     }
   }
 
@@ -138,10 +85,26 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     video.src = videoUrl;
 
     video.addEventListener('loadedmetadata', () => {
-      video.play().catch(error => {
-        console.error('Error attempting to play the video:', error);
-      });
+      this.playVideoWithPromiseHandling(video);
     }, { once: true });
+
+    video.addEventListener('playing', () => {
+      this.hideThumbnail();
+    }, { once: true });
+  }
+
+  playVideoWithDelay(video: HTMLVideoElement, delay: number = 0) {
+    this.playTimeout = setTimeout(() => {
+      this.playVideoWithPromiseHandling(video);
+    }, delay);
+  }
+
+  playVideoWithPromiseHandling(video: HTMLVideoElement) {
+    video.play().then(() => {
+      this.hideThumbnail();
+    }).catch((error) => {
+      console.error('Unable to auto-play video:', error);
+    });
   }
 
   stopVideoPlayer(): void {
@@ -158,30 +121,27 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHover() {
-    const preViewName = this.getUrl(this.posterUrlGcs);
-    this.videoPlayer.nativeElement.muted = true;
-    this.hoverTimeoutVideo = setTimeout(() => {
-      this.hovering = true;
-      this.setupPlayer(preViewName, this.videoService.getScreenSize());
-      this.startHoverTimeout();
-    }, 900);
-    this.thumbnailTimeout = setTimeout(() => {
-      this.thumbnailVisible = false;
-    }, 1500);
+    if (!this.isFullscreen && !this.hoveringInProgress) {
+      this.hoveringInProgress = true;
+      this.videoPlayer.nativeElement.muted = true;
+
+      this.hoverTimeoutVideo = setTimeout(() => {
+        this.hovering = true;
+        this.setupPlayer();
+        this.startHoverTimeout();
+      }, 750);
+    }
   }
 
   onLeave() {
-    clearTimeout(this.hoverTimeoutVideo);
-    clearTimeout(this.thumbnailTimeout);
-    clearTimeout(this.playTimeout);
-    this.stopVideoPlayer();
-    this.hovering = false;
-    this.thumbnailVisible = true;
-    this.videoPlayer.nativeElement.currentTime = 0;
     if (!this.isFullscreen) {
+      this.clearAllTimeouts();
       this.stopVideoPlayer();
+      this.hovering = false;
+      this.thumbnailVisible = true;
+      this.videoPlayer.nativeElement.currentTime = 0;
+      this.hoveringInProgress = false;
     }
-    this.clearHoverTimeout();
   }
 
   @HostListener('document:fullscreenchange', ['$event'])
@@ -193,43 +153,46 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onFullscreenChange(event: Event) {
-    this.isFullscreen = !!(document.fullscreenElement ||
-      (document as any).webkitFullscreenElement ||
-      (document as any).mozFullScreenElement ||
-      (document as any).msFullscreenElement);
-
+    this.isFullscreen = !!document.fullscreenElement;
     if (this.isFullscreen) {
-      this.stopHoverTimeout();
-      this.hovering = false;
-      const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-      video.currentTime = 0;
-      video.muted = false;
       clearTimeout(this.hoverTimeout);
+      this.hovering = false;
+      this.mutePreviewVideo();
+      this.videoPlayer.nativeElement.muted = false;
+      this.videoPlayer.nativeElement.currentTime = 0;
     } else {
       this.stopVideoPlayer();
-      this.hovering = true;
+      this.unmutePreviewVideo();
+      this.thumbnailVisible = true;
+      this.hovering = false;
+      this.hoveringInProgress = false;
     }
   }
 
   startHoverTimeout() {
     this.hoverTimeout = setTimeout(() => {
-      this.hovering = true;
-      const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-      video.currentTime = 0;
-      video.pause()
+      this.videoPlayer.nativeElement.pause();
     }, 25000);
   }
 
-  stopHoverTimeout() {
-    if (this.hoverTimeout) {
-      clearTimeout(this.hoverTimeout);
-    }
-  }
-
-  clearHoverTimeout() {
-    if (this.hoverTimeout) {
-      clearTimeout(this.hoverTimeout);
-      this.hoverTimeout = null;
+  handleHlsError(event: any, data: any) {
+    if (data.fatal) {
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          console.error('Network error occurred. Details:', data);
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          console.error('Media error occurred. Details:', data);
+          this.hls.recoverMediaError();
+          break;
+        default:
+          console.error('Fatal error occurred. Details:', data);
+          break;
+      }
+    } else if (data.details === Hls.ErrorDetails.LEVEL_LOAD_ERROR) {
+      console.log('Non-fatal level load error occurred, continuing...');
+    } else {
+      console.error('Unhandled non-fatal error occurred. Details:', data);
     }
   }
 
@@ -241,23 +204,96 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.infoVisible = false;
   }
 
-  liked(): boolean {
-    const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
-    return likedList.includes(this.hlsPlaylistUrl);
+  mutePreviewVideo() {
+    const previewVideo: HTMLVideoElement = document.getElementById('previewVideo') as HTMLVideoElement;
+    if (previewVideo) {
+      previewVideo.muted = true;
+    }
+  }
+
+  unmutePreviewVideo() {
+    const previewVideo: HTMLVideoElement = document.getElementById('previewVideo') as HTMLVideoElement;
+    if (previewVideo) {
+      previewVideo.muted = false;
+      previewVideo.currentTime = 0;
+    }
+  }
+
+  formatDuration(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${this.pad(minutes)}:${this.pad(secs)}`;
+  }
+
+  pad(value: number): string {
+    return value.toString().padStart(2, '0');
   }
 
   getUrl(url: string): string {
     return url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
   }
 
-  ngOnDestroy(): void {
-    window.removeEventListener('resize', this.videoService.getScreenSize.bind(this));
+  liked(): boolean {
+    const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
+    return likedList.includes(this.video.hlsPlaylistUrl);
+  }
 
+  clearAllTimeouts() {
+    if (this.hoverTimeoutVideo) {
+      clearTimeout(this.hoverTimeoutVideo);
+      this.hoverTimeoutVideo = null;
+    }
+    if (this.thumbnailTimeout) {
+      clearTimeout(this.thumbnailTimeout);
+      this.thumbnailTimeout = null;
+    }
+    if (this.playTimeout) {
+      clearTimeout(this.playTimeout);
+      this.playTimeout = null;
+    }
+  }
+
+  addResizeListener() {
+    window.addEventListener('resize', this.videoService.getScreenSize.bind(this));
+  }
+
+  removeResizeListener() {
+    window.removeEventListener('resize', this.videoService.getScreenSize.bind(this));
+  }
+
+  addMetadataListener() {
+    const videoElement: HTMLVideoElement = this.videoPlayer.nativeElement;
+    videoElement.addEventListener('loadedmetadata', this.loadedMetadataHandler);
+  }
+
+  removeMetadataListener() {
+    const videoElement: HTMLVideoElement = this.videoPlayer.nativeElement;
+    videoElement.removeEventListener('loadedmetadata', this.loadedMetadataHandler);
+  }
+
+  hideThumbnail() {
+    setTimeout(() => {
+      this.thumbnailVisible = false;
+    }, 700);
+  }
+
+  destroyHls() {
     if (this.hls) {
       this.hls.destroy();
+      this.hls = null;
     }
+  }
 
-    const video: HTMLVideoElement = this.videoPlayer.nativeElement;
-    video.removeEventListener('loadedmetadata', () => video.play());
+  private loadedMetadataHandler = () => {
+    const videoElement: HTMLVideoElement = this.videoPlayer.nativeElement;
+    const seconds = videoElement.duration;
+    this.duration = this.formatDuration(seconds);
+  }
+
+  ngOnDestroy(): void {
+    this.destroyHls();
+    this.clearAllTimeouts();
+    this.removeResizeListener();
+    this.removeMetadataListener();
   }
 }

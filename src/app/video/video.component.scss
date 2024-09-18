@@ -72,3 +72,13 @@
 .video-container:hover .video-wrapper {
   display: flex;
 }
+
+video.fullscreen {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+.video-container.fullscreen {
+  z-index: 99999;
+}

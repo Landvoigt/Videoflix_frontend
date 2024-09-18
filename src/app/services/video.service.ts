@@ -59,7 +59,7 @@ export class VideoService {
     ).subscribe();
   }
 
-  getVideoData(category: string): Observable<VideoData[]> {
+  getVideoDataByCategory(category: string): Observable<VideoData[]> {
     return this.videoData$.pipe(
       map((data: VideoData[]) => {
         if (!category) {
@@ -70,22 +70,15 @@ export class VideoService {
     );
   }
 
-  fetchPlaylist(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiVideoBaseUrl}playlist/`, { headers: this.restService.getHeaders() }).pipe(
-      catchError(this.errorService.handleApiError)
-    );
-  }
+  getVideoDataByUrls(urls: string[]): Observable<VideoData[]> {
+    return this.videoData$.pipe(
+      map((data: VideoData[]) => {
+        if (!urls || urls.length === 0) {
+          return [];
+        }
 
-  getPlaylist(): Observable<VideoData[]> {
-    return this.fetchPlaylist().pipe(
-      switchMap((playlistTitles: string[]) =>
-        this.videoData$.pipe(
-          map((videoData: VideoData[]) =>
-            videoData.filter((data: VideoData) => playlistTitles.includes(data.subfolder))
-          )
-        )
-      ),
-      catchError(this.errorService.handleApiError)
+        return data.filter(video => urls.includes(video.hlsPlaylistUrl));
+      })
     );
   }
 
@@ -101,21 +94,6 @@ export class VideoService {
       catchError(this.errorService.handleApiError)
     );
   }
-
-  // getVideoUrl(videoKey: string, resolution: string): Observable<string> {
-  //   const apiUrl = `${this.apiVideoBaseUrl}preview/?video_key=${videoKey}&resolution=${resolution}`;
-  //   return this.http.get<{ video_url: string }>(apiUrl).pipe(
-  //     map(response => {
-  //       if (response && response.video_url) {
-  //         console.log(response)
-  //         return response.video_url;
-  //       } else {
-  //         throw new Error('Invalid response format from server');
-  //       }
-  //     }),
-  //     catchError(this.errorService.handleApiError)
-  //   );
-  // }
 
   playPreviewVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
     const video: HTMLVideoElement = videoElement.nativeElement;
@@ -156,7 +134,7 @@ export class VideoService {
       video.play();
       if (!this.audioEnabled) {
         this.addTimeUpdateListener(video);
-      } 
+      }
     }, 1500);
   }
 
