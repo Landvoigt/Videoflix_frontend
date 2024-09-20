@@ -1,6 +1,6 @@
 <div class="w-full flex random-video-wrapper">
     <div [@fadeInSuperSlow] class="random-video-container relative w-full h-full">
-        <video preload="auto" id="previewVideo" #previewVideo class="random-video-content absolute w-full h-full object-cover" [src]="videoUrl">
+        <video preload="auto" id="previewVideo" #previewVideo  class="random-video-content absolute w-full h-full object-cover" [src]="videoUrl">
             Your browser does not support the video tag.
         </video>
         <div class="random-video-overlay absolute w-full h-full flex justify-start items-center">
@@ -53,10 +53,16 @@
     </div>
 </div>
 
-<app-slideshow *ngIf="videoData.length" [videoData]="videoData"
+<!-- <app-slideshow *ngIf="videoData.length" [videoData]="videoData"
     [animationClass]="'slide-left-animation'"></app-slideshow>
 
 <app-slideshow *ngIf="videoData.length" [videoData]="videoData"
+    [animationClass]="'slide-right-animation'"></app-slideshow> -->
+
+<app-slideshow *ngIf="oddVideos.length" [videoData]="oddVideos"
+    [animationClass]="'slide-left-animation'"></app-slideshow>
+
+<app-slideshow *ngIf="evenVideos.length" [videoData]="evenVideos"
     [animationClass]="'slide-right-animation'"></app-slideshow>
 
 

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoData } from '@interfaces/video.interface';
 import { VideoComponent } from '@video/video.component';
@@ -19,9 +19,13 @@ import { fadeInSuperSlow } from '@utils/animations';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('previewVideo', { static: true }) previewVideo!: ElementRef<HTMLVideoElement>;
+  @ViewChildren(SlideshowComponent) slideshows: QueryList<SlideshowComponent>;
 
   previewVideoData$: Observable<VideoData | undefined>;
   videoData: VideoData[] = [];
+  oddVideos: any[] = [];
+  evenVideos: any[] = [];
+  slideshowCount: number;
 
   videoUrl: string = '';
   currentVideo!: VideoData;
@@ -39,7 +43,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPreviewVideoData();
     this.getVideoDataByCategory();
+    //this.slideshowCount = this.slideshows.length;
+    this.splitVideoData();
   }
+
+  splitVideoData() {
+    this.videoData.forEach((video, index) => {
+      if (index % 2 === 0) {
+        this.evenVideos.push(video);
+      } else {
+        this.oddVideos.push(video);
+      }
+    });
+    console.log('Ungerade Indizes:', this.oddVideos);
+    console.log('Gerade Indizes:', this.evenVideos);
+  }
+  
 
   getPreviewVideoData(): void {
     this.previewVideoData$ = this.videoService.getPreviewVideoData();

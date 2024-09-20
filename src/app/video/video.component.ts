@@ -21,7 +21,13 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() video: VideoData;
 
-  hls: Hls | null = new Hls({ maxLoadingDelay: 1000 });
+  hls: Hls | null = new Hls({ 
+    maxLoadingDelay: 1000,
+    maxBufferLength: 60, 
+    maxBufferSize: 60 * 1000 * 1000, 
+    maxBufferHole: 0.5 
+  });
+  
   duration: string = '00:00';
 
   hoverTimeout: any;
@@ -42,10 +48,16 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.addResizeListener();
   }
 
+  // ngAfterViewInit() {
+  //   this.addMetadataListener();
+  // }
+
+
   ngAfterViewInit() {
     this.addMetadataListener();
   }
 
+  
   setupPlayer(): void {
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     if (!this.video.hlsPlaylistUrl) return;
@@ -137,10 +149,12 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isFullscreen) {
       this.clearAllTimeouts();
       this.stopVideoPlayer();
+      clearTimeout(this.thumbnailTimeout);
       this.hovering = false;
       this.thumbnailVisible = true;
       this.videoPlayer.nativeElement.currentTime = 0;
       this.hoveringInProgress = false;
+      console.log(' this.thumbnailVisible', this.thumbnailVisible);
     }
   }
 
@@ -153,7 +167,10 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onFullscreenChange(event: Event) {
-    this.isFullscreen = !!document.fullscreenElement;
+    this.isFullscreen = !!(document.fullscreenElement ||
+    (document as any).webkitFullscreenElement ||
+    (document as any).mozFullScreenElement ||
+    (document as any).msFullscreenElement);
     if (this.isFullscreen) {
       clearTimeout(this.hoverTimeout);
       this.hovering = false;
@@ -168,6 +185,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hoveringInProgress = false;
     }
   }
+
 
   startHoverTimeout() {
     this.hoverTimeout = setTimeout(() => {
@@ -195,6 +213,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
       console.error('Unhandled non-fatal error occurred. Details:', data);
     }
   }
+  
 
   showInfo() {
     this.infoVisible = true;
@@ -220,14 +239,21 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatDuration(seconds: number): string {
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
-    return `${this.pad(minutes)}:${this.pad(secs)}`;
+    
+    if (hours > 0) {
+      return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(secs)}`;
+    } else {
+      return `${this.pad(minutes)}:${this.pad(secs)}`;
+    }
   }
-
+  
   pad(value: number): string {
     return value.toString().padStart(2, '0');
   }
+  
 
   getUrl(url: string): string {
     return url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
@@ -272,7 +298,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   hideThumbnail() {
-    setTimeout(() => {
+   this.thumbnailTimeout = setTimeout(() => {
       this.thumbnailVisible = false;
     }, 700);
   }
