@@ -48,10 +48,6 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.addResizeListener();
   }
 
-  // ngAfterViewInit() {
-  //   this.addMetadataListener();
-  // }
-
 
   ngAfterViewInit() {
     this.addMetadataListener();
@@ -88,7 +84,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
       this.hls.on(Hls.Events.LEVEL_LOADED, () => {
-        this.hideThumbnail();
+       // this.hideThumbnail();
       });
     }
   }
@@ -101,7 +97,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
     }, { once: true });
 
     video.addEventListener('playing', () => {
-      this.hideThumbnail();
+      //this.hideThumbnail();
     }, { once: true });
   }
 
@@ -112,6 +108,7 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   playVideoWithPromiseHandling(video: HTMLVideoElement) {
+    video.muted = true;
     video.play().then(() => {
       this.hideThumbnail();
     }).catch((error) => {
@@ -154,7 +151,6 @@ export class VideoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.thumbnailVisible = true;
       this.videoPlayer.nativeElement.currentTime = 0;
       this.hoveringInProgress = false;
-      console.log(' this.thumbnailVisible', this.thumbnailVisible);
     }
   }
 

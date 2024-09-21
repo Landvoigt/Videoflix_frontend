@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loading: boolean = false;
   isFullscreen: boolean = false;
+  mainVideoPlaying = false;
 
   constructor(
     public authService: AuthService,
@@ -55,8 +56,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.oddVideos.push(video);
       }
     });
-    console.log('Ungerade Indizes:', this.oddVideos);
-    console.log('Gerade Indizes:', this.evenVideos);
   }
   
 
@@ -118,26 +117,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
       (document as any).webkitFullscreenElement ||
       (document as any).mozFullScreenElement ||
       (document as any).msFullscreenElement);
-    if (this.isFullscreen) {
+      const videoElement = this.previewVideo.nativeElement;
+    if (this.isFullscreen && this.mainVideoPlaying) {
       this.previewVideo.nativeElement.muted = false;
+      this.videoService.fadeAudio(videoElement, true);
     } else {
-      this.previewVideo.nativeElement.muted = true;
-      this.previewVideo.nativeElement.currentTime = 0;
+      this.videoService.fadeAudio(videoElement, false);
+      videoElement.muted = true;
+      videoElement.currentTime = 0;
       this.videoService.maxDuration = 15;
+      this.mainVideoPlaying = false;
     }
   }
 
   playPreviewVideo() {
+    this.mainVideoPlaying = true;
     this.videoService.currentVideo = this.previewVideoKey;
     this.videoService.playPreviewVideo(this.previewVideo, this.videoUrl);
-    this.previewVideo.nativeElement.muted = true;
+    this.previewVideo.nativeElement.muted = false;
+    //this.videoService.fadeAudio(this.previewVideo.nativeElement, true);
     this.videoService.maxDuration = 100000;
     this.requestFullScreen(this.previewVideo.nativeElement);
-  }
+   }
 
   toggleMute() {
     const videoElement = this.previewVideo.nativeElement;
-
     if (videoElement.muted) {
       this.videoService.fadeAudio(videoElement, true);
     } else {
