@@ -3,11 +3,12 @@ import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@ang
 import { VideoData } from '@interfaces/video.interface';
 import { VideoService } from '@services/video.service';
 import { VideoComponent } from '@video/video.component';
+import { VideoTestComponent } from 'src/app/video-test/video-test.component';
 
 @Component({
   selector: 'app-slideshow',
   standalone: true,
-  imports: [CommonModule, VideoComponent],
+  imports: [CommonModule, VideoComponent, VideoTestComponent],
   templateUrl: './slideshow.component.html',
   styleUrl: './slideshow.component.scss'
 })
@@ -50,27 +51,31 @@ export class SlideshowComponent implements OnInit {
     this.showRightArrow = scrollcontainer.scrollWidth > scrollcontainer.scrollLeft + scrollcontainer.clientWidth;
   }
 
+  move:any;
+
   onElementHover(event: MouseEvent): void {
     const targetElement = event.currentTarget as HTMLElement;
     const rect = targetElement.getBoundingClientRect();
     const containerRect = this.line.nativeElement.getBoundingClientRect();
     let translateX = 0;
 
-   
-    if (rect.x <= containerRect.left + 30 && this.showLeftArrow) {
-      translateX = (containerRect.left - rect.x) + 30;
-    } else if ((rect.x + rect.width ) >= containerRect.right - 50 && this.showRightArrow) {
-      translateX = -((rect.x + rect.width) - containerRect.right + 30);
-    }
-
-    if (translateX !== 0) {
-      this.renderer.addClass(targetElement, 'transition-slow');
-      this.renderer.setStyle(targetElement, 'transform', `translateX(${translateX}px)`);
-      this.renderer.setStyle(targetElement, 'z-index', '1000');
-    }
+    this.move = setTimeout(() => {
+      if (rect.x <= containerRect.left + 30 && this.showLeftArrow) {
+        translateX = (containerRect.left - rect.x) + 30;
+      } else if ((rect.x + rect.width ) >= containerRect.right - 50 && this.showRightArrow) {
+        translateX = -((rect.x + rect.width) - containerRect.right + 30);
+      }
+  
+      if (translateX !== 0) {
+        this.renderer.addClass(targetElement, 'transition-slow');
+        this.renderer.setStyle(targetElement, 'transform', `translateX(${translateX}px)`);
+        this.renderer.setStyle(targetElement, 'z-index', '1000');
+      }
+    }, 1000);
   }
 
   onElementLeave(event: MouseEvent): void {
+    clearTimeout(this.move);
     const targetElement = event.currentTarget as HTMLElement;
     this.renderer.removeClass(targetElement, 'transition-slow');
     this.renderer.removeStyle(targetElement, 'transform');
