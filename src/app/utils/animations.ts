@@ -21,10 +21,10 @@ export const fadeInSuperSlow = trigger('fadeInSuperSlow', [
     ]),
 ]);
 
-export const fadeOutSlow = trigger('fadeOutSlow', [
+export const fadeOutSuperSlow = trigger('fadeOutSuperSlow', [
     state('void', style({ opacity: 1 })),
     transition(':leave', [
-        animate('225ms ease-in-out', style({ opacity: 0 }))
+        animate('825ms ease-in-out', style({ opacity: 0 }))
     ]),
 ]);
 

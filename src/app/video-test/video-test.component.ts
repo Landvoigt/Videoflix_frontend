@@ -11,18 +11,18 @@ import videojs from 'video.js';
   styleUrl: './video-test.component.scss'
 })
 export class VideoTestComponent implements AfterViewInit {
-
-  @Input() video: VideoData;
   @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef;
-
+  @Input() video: VideoData;
   videoJsPlayer: any;
-  isFullscreen: boolean;
-  isHover: boolean = false;
-  thumbnailVisible: boolean = true;
-  videoPlayTimeout: any;
-  stopTimeout: any;
 
-  constructor() { }
+  videoPlayTimeout: any;
+
+  thumbnailVisible: boolean = true;
+
+  hovering: boolean = false;
+  isFullscreen: boolean;
+
+  stopTimeout: any;
 
   ngAfterViewInit(): void {
     this.initPlayer();
@@ -33,7 +33,7 @@ export class VideoTestComponent implements AfterViewInit {
     this.videoJsPlayer = videojs(videoElement, {
       controls: true,
       preload: 'auto',
-      muted: true, 
+      muted: true,
       fluid: true,
       disablePictureInPicture: true,
       sources: [
@@ -49,68 +49,62 @@ export class VideoTestComponent implements AfterViewInit {
     });
   }
 
-
   onHover(): void {
-    clearTimeout(this.videoPlayTimeout); 
+    clearTimeout(this.videoPlayTimeout);
     this.videoPlayTimeout = setTimeout(() => {
       if (this.videoJsPlayer.readyState() >= 2 && !this.isFullscreen) {
         this.thumbnailVisible = false;
         this.playVideo();
-        this.isHover = true;
-        this.stopVideoAfterTimeout(30 * 1000); 
+        this.hovering = true;
+        this.stopVideoAfterTimeout();
       }
-    }, 1000); 
+    }, 1000);
   }
-  
 
-  stopVideoAfterTimeout(timeoutDuration: number): void {
+  stopVideoAfterTimeout(): void {
     clearTimeout(this.stopTimeout);
-      this.stopTimeout = setTimeout(() => {
+    this.stopTimeout = setTimeout(() => {
       if (this.videoJsPlayer && !this.isFullscreen) {
         this.videoJsPlayer.pause();
         this.videoJsPlayer.currentTime(0);
       }
-    }, timeoutDuration);
+    }, 30000);
   }
-  
-  
+
   onLeave(): void {
-     this.isHover = false;
-     clearTimeout(this.videoPlayTimeout); 
-     clearTimeout(this.stopTimeout);
+    this.hovering = false;
+    clearTimeout(this.videoPlayTimeout);
+    clearTimeout(this.stopTimeout);
     if (!this.isFullscreen) {
       this.thumbnailVisible = true;
-       this.stopVideo();
+      this.stopVideo();
     }
-   }
-
+  }
 
   playVideo(): void {
     if (this.videoJsPlayer) {
-      this.videoJsPlayer.muted(false); 
+      this.videoJsPlayer.muted(false);
       this.videoJsPlayer.play();
     }
   }
 
-
   stopVideo(): void {
     if (this.videoJsPlayer) {
       this.videoJsPlayer.pause();
-      this.videoJsPlayer.currentTime(0); 
+      this.videoJsPlayer.currentTime(0);
     }
   }
 
-
   playVideoWithPromiseHandling(): void {
     if (this.videoJsPlayer) {
-      this.videoJsPlayer.muted(true); 
-  
+      this.videoJsPlayer.muted(true);
+
       const playPromise = this.videoJsPlayer.play();
-  
+
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            this.thumbnailVisible = false; 
+            this.thumbnailVisible = false;
           })
           .catch((error: any) => {
             console.error('Unable to auto-play video:', error);
@@ -118,7 +112,6 @@ export class VideoTestComponent implements AfterViewInit {
       }
     }
   }
-  
 
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -127,7 +120,6 @@ export class VideoTestComponent implements AfterViewInit {
   handleFullscreenChange(event: Event) {
     this.onFullscreenChange(event);
   }
-
 
   onFullscreenChange(event: Event) {
     this.isFullscreen = !!(document.fullscreenElement ||
@@ -138,19 +130,18 @@ export class VideoTestComponent implements AfterViewInit {
     if (this.isFullscreen) {
       if (this.videoJsPlayer) {
         this.videoJsPlayer.muted(false);
-        this.videoJsPlayer.currentTime(0); 
+        this.videoJsPlayer.currentTime(0);
       }
     } else {
-      this.isHover = false;
+      this.hovering = false;
       this.stopVideo();
-      this.thumbnailVisible = true; 
+      this.thumbnailVisible = true;
     }
   }
 
   ngOnDestroy(): void {
     if (this.videoJsPlayer) {
-      this.videoJsPlayer.dispose(); 
+      this.videoJsPlayer.dispose();
     }
   }
 }
-

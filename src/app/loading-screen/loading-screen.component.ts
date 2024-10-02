@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { VideoService } from '@services/video.service';
+import { fadeInOut } from '@utils/animations';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -8,11 +9,13 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [],
   templateUrl: './loading-screen.component.html',
-  styleUrl: './loading-screen.component.scss'
+  styleUrl: './loading-screen.component.scss',
+  animations: [fadeInOut]
 })
 export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   @ViewChild('loadingOverlay', { static: true }) loadingOverlay!: ElementRef;
   private loadingTimeout!: any;
+  private hideLoadingTimeout!: any;
   private loadingSubscription!: Subscription;
 
   constructor(private videoService: VideoService, private router: Router) { }
@@ -28,7 +31,9 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
       }
     });
 
-    this.videoService.fetchVideoData();
+    if (!this.videoService.videoDataLoaded) {
+      this.videoService.fetchVideoData();
+    }
   }
 
   showLoadingAnimation() {
@@ -36,7 +41,9 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   }
 
   hideLoadingAnimation() {
-    this.loadingOverlay.nativeElement.classList.remove('active');
+    this.hideLoadingTimeout = setTimeout(() => {
+      this.loadingOverlay.nativeElement.classList.remove('active');
+    }, 500);
   }
 
   startLoadingTimeout() {
@@ -55,6 +62,9 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     if (this.loadingSubscription) {
       this.loadingSubscription.unsubscribe();
+    }
+    if (this.hideLoadingTimeout) {
+      clearTimeout(this.hideLoadingTimeout);
     }
   }
 }

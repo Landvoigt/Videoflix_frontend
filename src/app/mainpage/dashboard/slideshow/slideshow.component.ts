@@ -16,11 +16,11 @@ export class SlideshowComponent implements OnInit {
   @Input() videoData: VideoData[];
   @Input() lineId: string;
   @Input() animationClass: string;
-  
+
   @ViewChild('line', { static: false }) line!: ElementRef<HTMLDivElement>;
-  
+
   thumbnails: string[] = [];
-  
+
   loading: boolean = false;
   showLeftArrow: boolean = false;
   showRightArrow: boolean = true;
@@ -35,14 +35,12 @@ export class SlideshowComponent implements OnInit {
     if (this.line && this.line.nativeElement) {
       this.line.nativeElement.scrollLeft -= 700;
     }
-   // this.checkScroll();
   }
 
   scrollRight(): void {
     if (this.line && this.line.nativeElement) {
       this.line.nativeElement.scrollLeft += 700;
     }
-   // this.checkScroll();
   }
 
   checkScroll() {
@@ -51,31 +49,25 @@ export class SlideshowComponent implements OnInit {
     this.showRightArrow = scrollcontainer.scrollWidth > scrollcontainer.scrollLeft + scrollcontainer.clientWidth;
   }
 
-  move:any;
-
   onElementHover(event: MouseEvent): void {
     const targetElement = event.currentTarget as HTMLElement;
     const rect = targetElement.getBoundingClientRect();
     const containerRect = this.line.nativeElement.getBoundingClientRect();
     let translateX = 0;
 
-    this.move = setTimeout(() => {
-      if (rect.x <= containerRect.left + 30 && this.showLeftArrow) {
-        translateX = (containerRect.left - rect.x) + 30;
-      } else if ((rect.x + rect.width ) >= containerRect.right - 50 && this.showRightArrow) {
-        translateX = -((rect.x + rect.width) - containerRect.right + 30);
-      }
-  
-      if (translateX !== 0) {
-        this.renderer.addClass(targetElement, 'transition-slow');
-        this.renderer.setStyle(targetElement, 'transform', `translateX(${translateX}px)`);
-        this.renderer.setStyle(targetElement, 'z-index', '1000');
-      }
-    }, 1000);
+    if (rect.x <= containerRect.left + 30 && this.showLeftArrow) {
+      translateX = (containerRect.left - rect.x) + 30;
+    } else if ((rect.x + rect.width) >= containerRect.right - 50 && this.showRightArrow) {
+      translateX = -((rect.x + rect.width) - containerRect.right + 30);
+    }
+    if (translateX !== 0) {
+      this.renderer.addClass(targetElement, 'transition-slow');
+      this.renderer.setStyle(targetElement, 'transform', `translateX(${translateX}px)`);
+      this.renderer.setStyle(targetElement, 'z-index', '1000');
+    }
   }
 
   onElementLeave(event: MouseEvent): void {
-    clearTimeout(this.move);
     const targetElement = event.currentTarget as HTMLElement;
     this.renderer.removeClass(targetElement, 'transition-slow');
     this.renderer.removeStyle(targetElement, 'transform');

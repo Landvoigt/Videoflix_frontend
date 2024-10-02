@@ -2,21 +2,20 @@
    class="video-container relative flex flex-col h-44 text-textColorPrimary rounded-md overflow-visible cursor-default"
    (mouseenter)="onHover()" (mouseleave)="onLeave()">
    <h2 class="video-logo-small logo-text absolute text-xl">V</h2>
-   <img @fadeOutSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? video.posterUrlGcs : ''" class="video-thumbnail absolute w-full h-44 border 
-   border-borderColorVideoBox rounded-md">
-   <div class="video-wrapper w-full flex flex-col justify-center items-center rounded-md">
+   <img @fadeOutSuperSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? video.posterUrlGcs : ''" class="video-thumbnail absolute w-full h-44 border 
+   border-borderColorVideoBox">
+   <div class="video-wrapper relative w-full flex flex-col justify-center items-center">
       <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button w-full h-44 border 
-      border-borderColorVideoBox border-b-0 rounded-t-md" controls preload="auto" data-setup="{}"
-         disablePictureInPicture type="application/x-mpegURL" [src]="video.hlsPlaylistUrl">
+         border-borderColorVideoBox border-b-0">
          Your browser does not support the video tag.
       </video>
-      <div class="relative flex flex-col justify-between w-full h-20 bg-gradient-to-r from-default-from to-default-to px-3 py-2 border 
+      <div *ngIf="panelVisible" class="relative flex flex-col justify-between w-full h-20 bg-gradient-to-r from-default-from to-default-to px-3 py-2 border 
          border-borderColorVideoBox border-t-0 rounded-b-md">
          <div @fadeInSlow *ngIf="!infoVisible" class="flex items-center gap-2">
             <span>{{ video.title }}</span>
             <span class="resolution flex justify-center items-center px-0.5 border border-textColorPrimary rounded-sm">
                {{ video.resolution }}</span>
-            <span class="duration italic">{{ duration }}</span>
+            <span class="duration italic">{{ video.video_duration }}</span>
          </div>
          <div @fadeInSlow *ngIf="!infoVisible" class="flex justify-between items-center gap-4">
             <div class="flex justify-start items-center gap-4">

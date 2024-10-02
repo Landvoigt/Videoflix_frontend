@@ -53,7 +53,9 @@ export class VideoService {
         this.videoDataSubject.next(data);
         this.thumbnailUrls = data.map(video => video.posterUrlGcs);
         this.videoDataLoaded = true;
-        this.loadingAppSubject.next(false);
+        setTimeout(() => {
+          this.setLoadingApp(false);
+        }, 1000);
       }),
       catchError(this.errorService.handleApiError)
     ).subscribe();
@@ -63,6 +65,7 @@ export class VideoService {
     return this.videoData$.pipe(
       map((data: VideoData[]) => {
         if (!category) {
+          console.log(data);
           return data;
         }
         return data.filter(video => video.category === category);

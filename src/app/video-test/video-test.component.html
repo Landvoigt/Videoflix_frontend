@@ -1,4 +1,4 @@
-<div [ngClass]="{'scale-video-container': isHover}" 
+<div [ngClass]="{'scale-video-container': hovering}" 
     (mouseenter)="onHover()" 
     (mouseleave)="onLeave()" 
     class="video-container-wrapper">
@@ -10,9 +10,9 @@
         </video>
     </div>
 
-    <div *ngIf="isHover" class="info-container bg-accentColor">
+    <!-- <div *ngIf="hovering" class="info-container bg-accentColor">
        <p>{{video.title}}</p>
        <p>{{video.description}}</p>
        <p>{{video.age}}</p>
-    </div>
+    </div> -->
 </div>

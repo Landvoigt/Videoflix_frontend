@@ -1,17 +1,18 @@
-<div @fadeInSuperSlow *ngIf="(videoService.loadingApp$ | async) === false" class="mainpage-wrapper relative flex flex-col min-h-screen">
+<div @fadeInSuperSlow *ngIf="(videoService.loadingApp$ | async) === false"
+  class="mainpage-wrapper relative flex flex-col min-h-screen">
   <div id="mainpageOverlay" class="mainpage-overlay absolute cursor-pointer"></div>
 
   <!-- Navbar -->
   <navbar [currentPage]="currentPage" (pageChanged)="onPageChanged($event)" [closeMenu]="closeMenu"></navbar>
 
   <!-- Main Content -->
-  <div (click)="closeUserMenu()"
-    class="flex-1 flex flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
+  <div (click)="closeUserMenu()" class="flex-1 flex flex-col bg-gradient-to-r from-default-from to-default-to pb-10">
 
     <ng-container *ngIf="activePage('dashboard')">
       <app-dashboard></app-dashboard>
     </ng-container>
 
+    <!-- Films -->
     <ng-container *ngIf="activePage('films')">
       <app-films></app-films>
     </ng-container>
@@ -32,7 +33,7 @@
 </div>
 
 <!-- Loading Screen -->
-<app-loading-screen *ngIf="(videoService.loadingApp$ | async) === true"></app-loading-screen>
+<app-loading-screen [class.visible]="(videoService.loadingApp$ | async) === true"></app-loading-screen>
 
 <!-- Notification Button -->
 <!-- <button type="button"

@@ -19,5 +19,6 @@ export interface VideoData {
   category: string;
   age: string;
   resolution: string;
-  release_date: string
+  release_date: string;
+  video_duration: string;
 }

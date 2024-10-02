@@ -1,33 +1,29 @@
-
 .video-container-wrapper {
 
-.video-container {
-    width: 313px;
-    height: 150px;
-    position: relative;
-}
+    .video-container {
+        width: 313px;
+        height: 150px;
+        position: relative;
+    }
 
 
-.poster {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    top: 0;
-    z-index: 100;
-    object-fit: cover;
-}
+    .poster {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        top: 0;
+        z-index: 100;
+        object-fit: cover;
+    }
 
-.info-container{
-    height: 100px;
-    color: white;
-}   
+    .info-container {
+        height: 100px;
+        color: white;
+    }
 }
 
 .scale-video-container {
-    scale: 1.2;
-    transition: all 500ms ease-in-out;
+    // scale: 1.2;
+    // transition: all 500ms ease-in-out;
 }
-
-
-

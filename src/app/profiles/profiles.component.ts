@@ -8,11 +8,13 @@ import { Profile, ProfileImages } from '../../models/profile.model';
 import { NavigationService } from '@services/navigation.service';
 import { AlertService } from '@services/alert.service';
 import { ProfileService } from '@services/profile.service';
+import { VideoService } from '@services/video.service';
+import { LoadingScreenComponent } from '../loading-screen/loading-screen.component';
 
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [CommonModule, DialogCreateProfileComponent],
+  imports: [CommonModule, DialogCreateProfileComponent, LoadingScreenComponent],
   templateUrl: './profiles.component.html',
   styleUrl: './profiles.component.scss',
   animations: [fadeIn]
@@ -32,7 +34,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
 
   constructor(
     public navService: NavigationService,
-    private restService: RestService,
+    public videoService: VideoService,
     private profileService: ProfileService,
     private alertService: AlertService) { }
 
@@ -43,13 +45,13 @@ export class ProfilesComponent implements OnInit, OnDestroy {
 
   addProfileListeners() {
     this.subscriptions.add(
-      this.profileService.profiles$.subscribe(profiles => {
+      this.profileService.profiles$.subscribe((profiles: Profile[]) => {
         this.profiles = profiles;
       })
     );
 
     this.subscriptions.add(
-      this.profileService.currentProfile$.subscribe(profile => {
+      this.profileService.currentProfile$.subscribe((profile: Profile) => {
         this.currentProfileId = profile ? profile.id : null;
       })
     );
@@ -72,16 +74,21 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
+    this.profileService.loadProfilesAndSetCurrent(this.currentProfileId!);
     this.isEdit = false;
     this.isDialogOpen = false;
   }
 
   startApp(profileId: number) {
+    this.navService.main();
+    this.videoService.setLoadingApp(true);
     this.profileService.updateProfile(profileId, { active: true })
-      .subscribe(profile => {
+      .subscribe((profile: Profile) => {
         if (profile) {
           this.profileService.setProfile(profile);
-          this.navService.main();
+          setTimeout(() => {
+            this.videoService.setLoadingApp(false);
+          }, 1000);
         } else {
           this.alertService.showAlert('Profile could not be loaded', 'error');
         }
