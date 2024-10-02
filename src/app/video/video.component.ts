@@ -54,9 +54,9 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
       ]
     });
 
-    this.videoJsPlayer.ready(() => {
-      console.log('VideoJS Player is ready');
-    });
+    // this.videoJsPlayer.ready(() => {
+    //   console.log('VideoJS Player is ready');
+    // });
   }
 
   onHover(): void {

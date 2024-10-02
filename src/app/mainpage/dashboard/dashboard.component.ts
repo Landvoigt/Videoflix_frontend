@@ -25,7 +25,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   videoData: VideoData[] = [];
   oddVideos: any[] = [];
   evenVideos: any[] = [];
-  slideshowCount: number;
 
   videoUrl: string = '';
   currentVideo!: VideoData;
@@ -44,7 +43,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPreviewVideoData();
     this.getVideoDataByCategory();
-    //this.slideshowCount = this.slideshows.length;
     this.splitVideoData();
   }
 
@@ -57,7 +55,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   getPreviewVideoData(): void {
     this.previewVideoData$ = this.videoService.getPreviewVideoData();
@@ -117,7 +114,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       (document as any).webkitFullscreenElement ||
       (document as any).mozFullScreenElement ||
       (document as any).msFullscreenElement);
-      const videoElement = this.previewVideo.nativeElement;
+    const videoElement = this.previewVideo.nativeElement;
     if (this.isFullscreen && this.mainVideoPlaying) {
       this.previewVideo.nativeElement.muted = false;
       this.videoService.fadeAudio(videoElement, true);
@@ -138,7 +135,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //this.videoService.fadeAudio(this.previewVideo.nativeElement, true);
     this.videoService.maxDuration = 100000;
     this.requestFullScreen(this.previewVideo.nativeElement);
-   }
+  }
 
   toggleMute() {
     const videoElement = this.previewVideo.nativeElement;

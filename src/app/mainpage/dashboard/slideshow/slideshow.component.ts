@@ -20,6 +20,8 @@ export class SlideshowComponent implements OnInit {
   @ViewChild('line', { static: false }) line!: ElementRef<HTMLDivElement>;
 
   thumbnails: string[] = [];
+  loadedImages = 0;
+  imagesLoaded = false;
 
   loading: boolean = false;
   showLeftArrow: boolean = false;
@@ -29,6 +31,13 @@ export class SlideshowComponent implements OnInit {
 
   ngOnInit(): void {
     this.thumbnails = this.videoService.thumbnailUrls.concat(this.videoService.thumbnailUrls);
+  }
+
+  onImageLoad() {
+    this.loadedImages++;
+    if (this.loadedImages === this.thumbnails.length) {
+      this.imagesLoaded = true;
+    }
   }
 
   scrollLeft(): void {
