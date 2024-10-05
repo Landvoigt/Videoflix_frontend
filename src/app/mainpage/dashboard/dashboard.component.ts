@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnIn
 import { CommonModule } from '@angular/common';
 import { VideoData } from '@interfaces/video.interface';
 import { VideoComponent } from '@video/video.component';
-import { Observable } from 'rxjs';
 import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
@@ -21,18 +20,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('previewVideo', { static: true }) previewVideo!: ElementRef<HTMLVideoElement>;
   @ViewChildren(SlideshowComponent) slideshows: QueryList<SlideshowComponent>;
 
-  previewVideoData$: Observable<VideoData | undefined>;
   videoData: VideoData[] = [];
-  oddVideos: any[] = [];
-  evenVideos: any[] = [];
 
-  videoUrl: string = '';
-  currentVideo!: VideoData;
+  previewVideoUrl: string = '';
+  previewVideoData!: VideoData;
   previewVideoKey: string;
 
-  loading: boolean = false;
   isFullscreen: boolean = false;
-  mainVideoPlaying = false;
+  previewVideoPlaying: boolean = false;
 
   constructor(
     public authService: AuthService,
@@ -41,57 +36,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.getPreviewVideoData();
-    this.getVideoDataByCategory();
-    this.splitVideoData();
+    this.loadVideos();
   }
 
-  splitVideoData() {
-    this.videoData.forEach((video, index) => {
-      if (index % 2 === 0) {
-        this.evenVideos.push(video);
-      } else {
-        this.oddVideos.push(video);
-      }
-    });
+  loadVideos() {
+    this.videoData = this.videoService.getVideoData();
+
+    if (this.videoData.length === 0) {
+      this.videoService.fetchVideoData(true);
+    } else {
+      this.setRandomPreviewVideo(this.videoData);
+    }
   }
 
-  getPreviewVideoData(): void {
-    this.previewVideoData$ = this.videoService.getPreviewVideoData();
-    this.previewVideoData$.subscribe({
-      next: (videoData: VideoData | undefined) => {
-        if (videoData) {
-          this.currentVideo = videoData;
-          this.videoUrl = videoData.hlsPlaylistUrl.replace("master", this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
-          this.previewVideoKey = videoData.subfolder;
-          this.cdr.detectChanges();
-          this.setupPreviewVideo(videoData.subfolder);
-        }
-      },
-      error: (error) => {
-        console.error('Error getting random video:', error);
-      }
-    });
-  }
-
-  getVideoDataByCategory(): void {
-    this.loading = true;
-    this.videoService.getVideoDataByCategory(null).subscribe({
-      next: (data: VideoData[]) => {
-        this.videoData = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading films:', error);
-        this.loading = false;
-      }
-    });
+  setRandomPreviewVideo(videoData: VideoData[]): void {
+    const randomIndex = Math.floor(Math.random() * videoData.length);
+    this.previewVideoData = videoData[randomIndex];
+    this.previewVideoUrl = this.previewVideoData.hlsPlaylistUrl.replace("master", this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
+    this.previewVideoKey = this.previewVideoData.subfolder;
+    this.cdr.detectChanges();
+    this.setupPreviewVideo(this.previewVideoData.subfolder);
   }
 
   setupPreviewVideo(videoKey: string): void {
     this.videoService.currentVideo = videoKey;
     this.videoService.maxDuration = 15;
-    this.videoService.playPreviewVideo(this.previewVideo, this.videoUrl);
+    this.videoService.playPreviewVideo(this.previewVideo, this.previewVideoUrl);
     this.previewVideo.nativeElement.muted = true;
   }
 
@@ -115,7 +85,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       (document as any).mozFullScreenElement ||
       (document as any).msFullscreenElement);
     const videoElement = this.previewVideo.nativeElement;
-    if (this.isFullscreen && this.mainVideoPlaying) {
+    if (this.isFullscreen && this.previewVideoPlaying) {
       this.previewVideo.nativeElement.muted = false;
       this.videoService.fadeAudio(videoElement, true);
     } else {
@@ -123,14 +93,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
       videoElement.muted = true;
       videoElement.currentTime = 0;
       this.videoService.maxDuration = 15;
-      this.mainVideoPlaying = false;
+      this.previewVideoPlaying = false;
     }
   }
 
   playPreviewVideo() {
-    this.mainVideoPlaying = true;
+    this.previewVideoPlaying = true;
     this.videoService.currentVideo = this.previewVideoKey;
-    this.videoService.playPreviewVideo(this.previewVideo, this.videoUrl);
+    this.videoService.playPreviewVideo(this.previewVideo, this.previewVideoUrl);
     this.previewVideo.nativeElement.muted = false;
     //this.videoService.fadeAudio(this.previewVideo.nativeElement, true);
     this.videoService.maxDuration = 100000;
@@ -148,13 +118,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   toggleVideoInViewList() {
     if (!this.videoService.updatingViewList) {
-      this.videoService.toggleVideoInViewList(this.videoUrl);
+      this.videoService.toggleVideoInViewList(this.previewVideoUrl);
     }
+  }
+
+  getOddVideoData() {
+    return this.videoData.filter((_, index) => index % 2 !== 0);
+  }
+
+  getEvenVideoData() {
+    return this.videoData.filter((_, index) => index % 2 === 0);
   }
 
   liked(): boolean {
     const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
-    return likedList.includes(this.videoUrl);
+    return likedList.includes(this.previewVideoUrl);
   }
 
   ngOnDestroy(): void {

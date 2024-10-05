@@ -3,12 +3,11 @@ import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@ang
 import { VideoData } from '@interfaces/video.interface';
 import { VideoService } from '@services/video.service';
 import { VideoComponent } from '@video/video.component';
-import { VideoTestComponent } from 'src/app/video-test/video-test.component';
 
 @Component({
   selector: 'app-slideshow',
   standalone: true,
-  imports: [CommonModule, VideoComponent, VideoTestComponent],
+  imports: [CommonModule, VideoComponent],
   templateUrl: './slideshow.component.html',
   styleUrl: './slideshow.component.scss'
 })
@@ -30,7 +29,7 @@ export class SlideshowComponent implements OnInit {
   constructor(private renderer: Renderer2, private videoService: VideoService) { }
 
   ngOnInit(): void {
-    this.thumbnails = this.videoService.thumbnailUrls.concat(this.videoService.thumbnailUrls);
+    this.thumbnails = this.videoService.getThumbnailUrls().concat(this.videoService.getThumbnailUrls());
   }
 
   onImageLoad() {

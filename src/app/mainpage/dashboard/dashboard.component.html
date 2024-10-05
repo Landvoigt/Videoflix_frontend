@@ -1,18 +1,19 @@
 <div class="w-full flex random-video-wrapper">
     <div [@fadeInSuperSlow] class="random-video-container relative w-full h-full">
-        <video preload="auto" disablePictureInPicture [muted]="!isFullscreen" id="previewVideo" #previewVideo  class="random-video-content absolute w-full h-full object-cover" [src]="videoUrl">
+        <video preload="auto" disablePictureInPicture [muted]="!isFullscreen" id="previewVideo" #previewVideo
+            class="random-video-content absolute w-full h-full object-cover" [src]="previewVideoUrl">
             Your browser does not support the video tag.
         </video>
         <div class="random-video-overlay absolute w-full h-full flex justify-start items-center">
-            <div class="w-2/5 flex flex-col justify-center items-start gap-8" *ngIf="currentVideo">
-                <h2 class="text-5xl text-textColorPrimary text-shadow-xl">{{ currentVideo.title }}</h2>
-                <span class="text-2xl text-textColorPrimary text-shadow-xl">{{ currentVideo.description }}</span>
+            <div class="w-2/5 flex flex-col justify-center items-start gap-8" *ngIf="previewVideoData">
+                <h2 class="text-5xl text-textColorPrimary text-shadow-xl">{{ previewVideoData.title }}</h2>
+                <span class="text-2xl text-textColorPrimary text-shadow-xl">{{ previewVideoData.description }}</span>
                 <div class="text-xl text-textColorPrimary text-shadow-lg flex gap-6">
-                    <span>{{ currentVideo.category === 'film' ? 'Film' : 'Serie' }}</span>
-                    <span>{{ currentVideo.release_date }}</span>
+                    <span>{{ previewVideoData.category === 'film' ? 'Film' : 'Serie' }}</span>
+                    <span>{{ previewVideoData.release_date }}</span>
                     <span
                         class="resolution flex justify-center items-center px-2 py-0 text-sm leading-4 border border-textColorPrimary rounded-md">{{
-                        currentVideo.resolution }}</span>
+                        previewVideoData.resolution }}</span>
                 </div>
                 <div class="flex items-center justify-center gap-x-9">
                     <a (click)="playPreviewVideo()" style="width: 185px; text-align: center; white-space: nowrap;"
@@ -29,8 +30,10 @@
                         {{ liked() ? 'Remove from' : 'Add to' }} my list <span aria-hidden="true"
                             class="btn-arrow"></span></a>
                 </div>
-                <div class="fsk-logo absolute h-12 w-28 flex justify-start items-center text-textColorPrimary text-2xl pl-8 border-l-2 border-textColorPrimary">{{
-                    currentVideo.age }}+</div>
+                <div
+                    class="fsk-logo absolute h-12 w-28 flex justify-start items-center text-textColorPrimary text-2xl pl-8 border-l-2 border-textColorPrimary">
+                    {{
+                    previewVideoData.age }}+</div>
             </div>
         </div>
         <div class="mute-btn-container absolute rounded-md" (click)="toggleMute()">
@@ -59,10 +62,10 @@
 <app-slideshow *ngIf="videoData.length" [videoData]="videoData"
     [animationClass]="'slide-right-animation'"></app-slideshow> -->
 
-<app-slideshow *ngIf="oddVideos.length" [videoData]="oddVideos"
+<app-slideshow *ngIf="videoData.length" [videoData]="getOddVideoData()"
     [animationClass]="'slide-left-animation'"></app-slideshow>
 
-<app-slideshow *ngIf="evenVideos.length" [videoData]="evenVideos"
+<app-slideshow *ngIf="videoData.length" [videoData]="getEvenVideoData()"
     [animationClass]="'slide-right-animation'"></app-slideshow>
 
 

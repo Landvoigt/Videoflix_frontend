@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { VideoService } from '@services/video.service';
 import { VideoComponent } from '@video/video.component';
 import { VideoData } from '@interfaces/video.interface';
 import { ProfileService } from '@services/profile.service';
-import { AlertService } from '@services/alert.service';
 import { staggeredFadeIn } from '@utils/animations';
 
 @Component({
@@ -17,11 +15,11 @@ import { staggeredFadeIn } from '@utils/animations';
   animations: [staggeredFadeIn]
 })
 export class PlaylistComponent implements OnInit {
-  videos$: Observable<VideoData[]>;
+  videoData: VideoData[] = [];
   loading: boolean = false;
   viewList: string[] = [];
 
-  constructor(private videoService: VideoService, private profileService: ProfileService, private alertService: AlertService) { }
+  constructor(private videoService: VideoService, private profileService: ProfileService) { }
 
   ngOnInit(): void {
     this.getViewList();
@@ -34,16 +32,10 @@ export class PlaylistComponent implements OnInit {
   }
 
   getVideoDataByCategory(): void {
-    this.loading = true;
-    this.videos$ = this.videoService.getVideoDataByUrls(this.viewList);
-    this.videos$.subscribe({
-      next: () => {
-        this.loading = false;
-      },
-      error: (error) => {
-        this.alertService.showAlert('Cannot load playlist. Please try again later', 'error');
-        this.loading = false;
-      }
-    });
+    this.videoData = this.videoService.getVideoDataByUrls(this.viewList);
+    if (this.videoData.length === 0) {
+      this.loading = true;
+      this.videoService.fetchVideoData(true);
+    }
   }
 }

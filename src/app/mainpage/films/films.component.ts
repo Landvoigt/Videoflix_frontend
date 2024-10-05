@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { VideoService } from '@services/video.service';
 import { VideoComponent } from '@video/video.component';
 import { VideoData } from '@interfaces/video.interface';
-import { Observable } from 'rxjs';
 import { AlertService } from '@services/alert.service';
 import { staggeredFadeIn } from '@utils/animations';
 
@@ -16,7 +15,7 @@ import { staggeredFadeIn } from '@utils/animations';
   animations: [staggeredFadeIn]
 })
 export class FilmsComponent implements OnInit {
-  videos$: Observable<VideoData[]>;
+  videoData: VideoData[] = [];
   category: string = 'film';
   loading: boolean = false;
 
@@ -27,16 +26,10 @@ export class FilmsComponent implements OnInit {
   }
 
   getVideoDataByCategory(): void {
-    this.loading = true;
-    this.videos$ = this.videoService.getVideoDataByCategory(this.category);
-    this.videos$.subscribe({
-      next: () => {
-        this.loading = false;
-      },
-      error: (error) => {
-        this.alertService.showAlert('Cannot load any films. Please try again later', 'error');
-        this.loading = false;
-      }
-    });
+    this.videoData = this.videoService.getVideoDataByCategory(this.category);
+    if (this.videoData.length === 0) {
+      this.loading = true;
+      this.videoService.fetchVideoData(true);
+    }
   }
 }

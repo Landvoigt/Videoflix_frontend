@@ -16,12 +16,13 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   @ViewChild('loadingOverlay', { static: true }) loadingOverlay!: ElementRef;
   private loadingTimeout!: any;
   private hideLoadingTimeout!: any;
-  private loadingSubscription!: Subscription;
+  private appLoadingSubscription!: Subscription;
+  private videoLoadingSubscription!: Subscription;
 
   constructor(private videoService: VideoService, private router: Router) { }
 
   ngAfterViewInit() {
-    this.loadingSubscription = this.videoService.loadingApp$.subscribe(isLoading => {
+    this.appLoadingSubscription = this.videoService.appLoading$.subscribe(isLoading => {
       if (isLoading) {
         this.showLoadingAnimation();
         this.startLoadingTimeout();
@@ -30,10 +31,6 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
         this.clearLoadingTimeout();
       }
     });
-
-    if (!this.videoService.videoDataLoaded) {
-      this.videoService.fetchVideoData();
-    }
   }
 
   showLoadingAnimation() {
@@ -49,7 +46,7 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   startLoadingTimeout() {
     this.loadingTimeout = setTimeout(() => {
       this.router.navigate(['/error']);
-      this.videoService.setLoadingApp(false);
+      this.videoService.setAppLoading(false);
     }, 10000);
   }
 
@@ -60,8 +57,11 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if (this.loadingSubscription) {
-      this.loadingSubscription.unsubscribe();
+    if (this.appLoadingSubscription) {
+      this.appLoadingSubscription.unsubscribe();
+    }
+    if (this.videoLoadingSubscription) {
+      this.videoLoadingSubscription.unsubscribe();
     }
     if (this.hideLoadingTimeout) {
       clearTimeout(this.hideLoadingTimeout);

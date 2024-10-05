@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
 import { NavigationService } from '@services/navigation.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-frontpage',
@@ -13,11 +13,17 @@ import { NavigationService } from '@services/navigation.service';
   styleUrl: './frontpage.component.scss'
 })
 export class FrontpageComponent {
-  loggedIn: boolean = false;
   loading: boolean = true;
+  loggedIn: boolean = false;
 
-  constructor(private router: Router, private authService: AuthService, public navService: NavigationService) {
-    this.loggedIn = this.authService.isLoggedIn();
-    this.loading = false;
+  constructor(private authService: AuthService, public navService: NavigationService) {
+    this.checkLoginStatus();
+  }
+
+  checkLoginStatus(): void {
+    this.authService.isLoggedIn().pipe(take(1)).subscribe((isLoggedIn: boolean) => {
+      this.loggedIn = isLoggedIn;
+      this.loading = false;
+    });
   }
 }

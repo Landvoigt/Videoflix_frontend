@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationService } from '@services/navigation.service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +9,7 @@ import { NavigationService } from '@services/navigation.service';
 export class AuthService {
   private readonly TOKEN_KEY = 'authToken';
 
-  constructor(public navService: NavigationService) {  }
+  constructor(public navService: NavigationService) { }
 
   private isLocalStorageAvailable(): boolean {
     try {
@@ -20,28 +22,37 @@ export class AuthService {
     }
   }
 
-  isLoggedIn(): boolean {
+  isLoggedIn(): Observable<boolean> {
     if (!this.isLocalStorageAvailable()) {
-      return false;
+      return of(false);
     }
-    return !!localStorage.getItem(this.TOKEN_KEY);
+    const isLoggedIn = !!localStorage.getItem(this.TOKEN_KEY);
+    return of(isLoggedIn);
   }
 
-  canActivate(): boolean {
-    if (this.isLoggedIn()) {
-      return true;
-    } else {
-      this.navService.login();
-      return false;
-    }
+  canActivate(): Observable<boolean> {
+    return this.isLoggedIn().pipe(
+      map(isLoggedIn => {
+        if (isLoggedIn) {
+          return true;
+        } else {
+          this.navService.login();
+          return false;
+        }
+      })
+    );
   }
 
-  redirectIfLoggedIn(): boolean {
-    if (this.isLoggedIn()) {
-      this.navService.profiles();
-      return false;
-    }
-    return true;
+  redirectIfLoggedIn(): Observable<boolean> {
+    return this.isLoggedIn().pipe(
+      map(isLoggedIn => {
+        if (isLoggedIn) {
+          this.navService.profiles();
+          return false;
+        }
+        return true;
+      })
+    );
   }
 
   login(token: string): void {
@@ -59,7 +70,7 @@ export class AuthService {
   }
 
   getAuthenticationToken(): string | null {
-    const storageToken = localStorage.getItem('authToken');
+    const storageToken = localStorage.getItem(this.TOKEN_KEY);
     if (storageToken) {
       return `Token ${storageToken}`;
     }

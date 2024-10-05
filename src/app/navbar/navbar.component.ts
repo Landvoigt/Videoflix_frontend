@@ -52,7 +52,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   closeUserMenu() {
-    this.userMenuOpen = false;
+    if (this.userMenuOpen) {
+      this.userMenuOpen = false;
+    }
   }
 
   toggleMobileMenu() {
@@ -64,11 +66,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   changePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
-    this.navService.main();
     this.closeUserMenu();
+    this.navService.main();
     this.currentPage = page;
-    localStorage.setItem('currentPage', page);
     this.pageChanged.emit(page);
+    localStorage.setItem('currentPage', page);
   }
 
   activePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {

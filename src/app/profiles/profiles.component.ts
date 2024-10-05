@@ -2,8 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { DialogCreateProfileComponent } from '../dialog-create-profile/dialog-create-profile.component';
-import { RestService } from '@services/rest.service';
-import { catchError, of, Subscription, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Profile, ProfileImages } from '../../models/profile.model';
 import { NavigationService } from '@services/navigation.service';
 import { AlertService } from '@services/alert.service';
@@ -81,13 +80,13 @@ export class ProfilesComponent implements OnInit, OnDestroy {
 
   startApp(profileId: number) {
     this.navService.main();
-    this.videoService.setLoadingApp(true);
+    this.videoService.setAppLoading(true);
     this.profileService.updateProfile(profileId, { active: true })
       .subscribe((profile: Profile) => {
         if (profile) {
           this.profileService.setProfile(profile);
           setTimeout(() => {
-            this.videoService.setLoadingApp(false);
+            this.videoService.setAppLoading(false);
           }, 1000);
         } else {
           this.alertService.showAlert('Profile could not be loaded', 'error');

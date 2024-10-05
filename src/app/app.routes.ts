@@ -16,7 +16,6 @@ import { ImprintComponent } from './imprint/imprint.component';
 import { PolicyComponent } from './policy/policy.component';
 import { UpdateUsernameComponent } from './update-username/update-username.component';
 import { DashboardComponent } from './mainpage/dashboard/dashboard.component';
-import { VideoTestComponent } from './video-test/video-test.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -29,7 +28,6 @@ export const routes: Routes = [
     { path: 'reset_password', component: ResetPasswordComponent, canActivate: [RedirectGuard] },
     { path: 'update_username', component: UpdateUsernameComponent, canActivate: [AuthGuard] },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-    { path: 'video-test', component: VideoTestComponent, canActivate: [AuthGuard] },
     
     { path: 'selection', component: ProfilesComponent, canActivate: [AuthGuard] },
     { path: 'mainpage', component: MainpageComponent, canActivate: [AuthGuard] },

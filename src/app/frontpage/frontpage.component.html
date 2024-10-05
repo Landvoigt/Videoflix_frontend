@@ -2,9 +2,9 @@
 
     <img class="frontpage-bg-animation absolute" src="assets/svg/rings_background.svg" alt="Loading Rings">
 
-    <header class="absolute inset-x-0 top-0 z-50">
+    <header *ngIf="!loading" class="absolute inset-x-0 top-0 z-50">
         <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
-            <div *ngIf="!loading" class="logo-container absolute">
+            <div class="logo-container absolute">
                 <app-logo></app-logo>
             </div>
             <div class="flex lg:hidden">

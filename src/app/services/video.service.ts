@@ -1,7 +1,7 @@
 import { ElementRef, Injectable, Renderer2, RendererFactory2, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { VideoData } from '@interfaces/video.interface';
 import { AlertService } from './alert.service';
 import Hls from 'hls.js';
@@ -14,26 +14,27 @@ import { ProfileService } from './profile.service';
   providedIn: 'root',
 })
 export class VideoService {
-  private loadingAppSubject = new BehaviorSubject<boolean>(true);
-  loadingApp$ = this.loadingAppSubject.asObservable();
+  @ViewChild('videoPlayerMain', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
 
-  private videoDataSubject = new BehaviorSubject<VideoData[]>([]);
-  videoData$: Observable<VideoData[]> = this.videoDataSubject.asObservable();
+  private appLoadingSubject = new BehaviorSubject<boolean>(true);
+  appLoading$ = this.appLoadingSubject.asObservable();
+
+  private videoLoadingSubject = new BehaviorSubject<boolean>(false);
+  videoLoading$ = this.videoLoadingSubject.asObservable();
+
+  private videoData: VideoData[] = [];
+  private thumbnailUrls: string[];
 
   private apiVideoBaseUrl = "http://localhost:8000/api/video/";
 
   elementRef: ElementRef;
   renderer: Renderer2;
 
-  @ViewChild('videoPlayerMain', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
-
   hls: Hls | null = null;
   audioEnabled: boolean = false;
   currentVideo: string;
   maxDuration: number;
-  thumbnailUrls: any;
 
-  videoDataLoaded: boolean = false;
   updatingViewList: boolean = false;
 
   constructor(
@@ -47,55 +48,18 @@ export class VideoService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  fetchVideoData(): void {
-    this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`, { headers: this.restService.getHeaders() }).pipe(
-      tap((data: VideoData[]) => {
-        this.videoDataSubject.next(data);
-        this.thumbnailUrls = data.map(video => video.posterUrlGcs);
-        this.videoDataLoaded = true;
-        setTimeout(() => {
-          this.setLoadingApp(false);
-        }, 1000);
-      }),
-      catchError(this.errorService.handleApiError)
-    ).subscribe();
-  }
-
-  getVideoDataByCategory(category: string): Observable<VideoData[]> {
-    return this.videoData$.pipe(
-      map((data: VideoData[]) => {
-        if (!category) {
-          console.log(data);
-          return data;
-        }
-        return data.filter(video => video.category === category);
-      })
-    );
-  }
-
-  getVideoDataByUrls(urls: string[]): Observable<VideoData[]> {
-    return this.videoData$.pipe(
-      map((data: VideoData[]) => {
-        if (!urls || urls.length === 0) {
-          return [];
-        }
-
-        return data.filter(video => urls.includes(video.hlsPlaylistUrl));
-      })
-    );
-  }
-
-  getPreviewVideoData(): Observable<VideoData | undefined> {
-    return this.videoData$.pipe(
-      map(videoData => {
-        if (videoData.length === 0) {
-          return undefined;
-        }
-        const randomIndex = Math.floor(Math.random() * videoData.length);
-        return videoData[randomIndex];
-      }),
-      catchError(this.errorService.handleApiError)
-    );
+  fetchVideoData(forceReload: boolean = false): void {
+    if (this.videoData.length === 0 || forceReload) {
+      this.http.get<VideoData[]>(`${this.apiVideoBaseUrl}info/`)
+        .pipe(catchError(this.errorService.handleApiError))
+        .subscribe((data: VideoData[]) => {
+          this.videoData = data;
+          this.thumbnailUrls = data.map(video => video.posterUrlGcs);
+          setTimeout(() => {
+            this.setAppLoading(false);
+          }, 1000);
+        });
+    }
   }
 
   playPreviewVideo(videoElement: ElementRef<HTMLVideoElement>, videoUrl: string): void {
@@ -224,8 +188,32 @@ export class VideoService {
     }
   }
 
-  setLoadingApp(isLoading: boolean): void {
-    this.loadingAppSubject.next(isLoading);
+  setAppLoading(isLoading: boolean): void {
+    this.appLoadingSubject.next(isLoading);
+  }
+
+  setVideoLoading(isLoading: boolean): void {
+    this.videoLoadingSubject.next(isLoading);
+  }
+
+  getVideoData(): VideoData[] {
+    return this.videoData;
+  }
+
+  getThumbnailUrls(): string[] {
+    return this.thumbnailUrls;
+  }
+
+  getVideoDataByCategory(category: string): VideoData[] {
+    return this.videoData.filter(video => video.category === category);
+  }
+
+  getVideoDataByUrls(urls: string[]): VideoData[] {
+    if (!urls || urls.length === 0) {
+      return [];
+    }
+
+    return this.videoData.filter(video => urls.includes(video.hlsPlaylistUrl));
   }
 
   getScreenSize(): string {

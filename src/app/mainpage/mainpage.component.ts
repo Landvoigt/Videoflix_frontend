@@ -25,6 +25,11 @@ export class MainpageComponent implements OnInit {
   constructor(public videoService: VideoService) { }
 
   ngOnInit() {
+    this.loadCurrentPage();
+    this.videoService.fetchVideoData();
+  }
+
+  loadCurrentPage() {
     const storedPage = localStorage.getItem('currentPage') as 'dashboard' | 'films' | 'series' | 'playlist';
     if (storedPage) {
       this.currentPage = storedPage;
@@ -32,6 +37,7 @@ export class MainpageComponent implements OnInit {
   }
 
   onPageChanged(page: 'dashboard' | 'films' | 'series' | 'playlist') {
+    this.videoService.setVideoLoading(true);
     this.currentPage = page;
   }
 
