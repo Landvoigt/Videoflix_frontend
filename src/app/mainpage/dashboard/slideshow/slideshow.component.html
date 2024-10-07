@@ -21,7 +21,7 @@
         <div class="thumbnail-loop-container">
             <div class="thumbnail-loop" [ngClass]="imagesLoaded ? animationClass : ''">
                 <div class="thumbnail-loop-img-box">
-                    <img *ngFor="let pic of thumbnails" [src]="pic" class="thumbnail-loop-img" (load)="onImageLoad()">
+                    <img *ngFor="let pic of thumbnails" [attr.draggable]="false" (dragstart)="$event.preventDefault()"  [src]="pic" class="thumbnail-loop-img" (load)="onImageLoad()">
                 </div>
                 <div class="thumbnail-loop-img-box">
                     <img *ngFor="let pic of thumbnails" [src]="pic" class="thumbnail-loop-img" (load)="onImageLoad()">

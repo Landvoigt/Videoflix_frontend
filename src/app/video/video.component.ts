@@ -1,7 +1,6 @@
-import { Component, ElementRef, Input, ViewChild, HostListener, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
 import { VideoService } from '@services/video.service';
 import { fadeInSlow, fadeOutSuperSlow } from '@utils/animations';
 import { ProfileService } from '@services/profile.service';
