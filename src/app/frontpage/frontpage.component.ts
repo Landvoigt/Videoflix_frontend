@@ -26,4 +26,9 @@ export class FrontpageComponent {
       this.loading = false;
     });
   }
+
+  logout() {
+    this.loggedIn = false;
+    this.authService.logout();
+  }
 }

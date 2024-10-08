@@ -1,3 +1,8 @@
-<div [@staggeredFadeIn] class="flex flex-wrap p-10 gap-6">
+<div @fadeInOut *ngIf="loading" class="loading-screen-video-overlay flex justify-center items-center
+     bg-gradient-to-r from-default-from to-default-to" #loadingOverlay>
+    <img src="assets/svg/rings.svg" alt="Loading Rings">
+</div>
+
+<div [@staggeredFadeIn] *ngIf="!loading" class="flex flex-wrap p-10 gap-6">
     <app-video *ngFor="let video of videoData" class="videoInFilms" [video]="video"></app-video>
 </div>

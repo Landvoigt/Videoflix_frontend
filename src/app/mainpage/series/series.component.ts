@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { VideoService } from '@services/video.service';
 import { VideoComponent } from '@video/video.component';
 import { VideoData } from '@interfaces/video.interface';
-import { AlertService } from '@services/alert.service';
-import { staggeredFadeIn } from '@utils/animations';
+import { fadeInOut, staggeredFadeIn } from '@utils/animations';
 
 @Component({
   selector: 'app-series',
@@ -12,14 +11,14 @@ import { staggeredFadeIn } from '@utils/animations';
   imports: [CommonModule, VideoComponent],
   templateUrl: './series.component.html',
   styleUrl: './series.component.scss',
-  animations: [staggeredFadeIn]
+  animations: [staggeredFadeIn, fadeInOut]
 })
 export class SeriesComponent implements OnInit {
   videoData: VideoData[] = [];
   category: string = 'film';
-  loading: boolean = false;
+  loading: boolean = true;
 
-  constructor(private videoService: VideoService, private alertService: AlertService) { }
+  constructor(private videoService: VideoService) { }
 
   ngOnInit(): void {
     this.getVideoDataByCategory();
@@ -27,9 +26,11 @@ export class SeriesComponent implements OnInit {
 
   getVideoDataByCategory(): void {
     this.videoData = this.videoService.getVideoDataByCategory(this.category);
+
     if (this.videoData.length === 0) {
-      this.loading = true;
       this.videoService.fetchVideoData(true);
     }
+
+    this.loading = false;
   }
 }

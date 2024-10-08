@@ -14,10 +14,11 @@ import { Subscription } from 'rxjs';
 })
 export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   @ViewChild('loadingOverlay', { static: true }) loadingOverlay!: ElementRef;
+
   private loadingTimeout!: any;
   private hideLoadingTimeout!: any;
+  
   private appLoadingSubscription!: Subscription;
-  private videoLoadingSubscription!: Subscription;
 
   constructor(private videoService: VideoService, private router: Router) { }
 
@@ -59,9 +60,6 @@ export class LoadingScreenComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     if (this.appLoadingSubscription) {
       this.appLoadingSubscription.unsubscribe();
-    }
-    if (this.videoLoadingSubscription) {
-      this.videoLoadingSubscription.unsubscribe();
     }
     if (this.hideLoadingTimeout) {
       clearTimeout(this.hideLoadingTimeout);

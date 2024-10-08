@@ -36,6 +36,7 @@ export class VideoService {
   maxDuration: number;
 
   updatingViewList: boolean = false;
+  videoDataLoaded: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -56,6 +57,7 @@ export class VideoService {
           this.videoData = data;
           this.thumbnailUrls = data.map(video => video.posterUrlGcs);
           setTimeout(() => {
+            this.videoDataLoaded = true;
             this.setAppLoading(false);
           }, 1000);
         });

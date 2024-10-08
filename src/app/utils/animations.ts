@@ -45,6 +45,13 @@ export const fadeInAlert = trigger('fadeInAlert', [
     ])
 ]);
 
+export const fadeInSlowDelayed = trigger('fadeInDelayed', [
+    state('void', style({ opacity: 0 })),
+    transition(':enter', [
+        animate('225ms 200ms ease-in-out', style({ opacity: 1 }))
+    ])
+]);
+
 export const staggeredFadeIn = trigger('staggeredFadeIn', [
     transition('* => *', [
         query(':enter', [
@@ -53,5 +60,16 @@ export const staggeredFadeIn = trigger('staggeredFadeIn', [
                 animate('255ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
             ])
         ], { optional: true })
+    ])
+]);
+
+export const slideUpDownSlow = trigger('slideUpDownSlow', [
+    state('in', style({ height: '*', opacity: 1, transform: 'translateY(0%)' })),
+    transition(':enter', [
+        style({ height: '0px', opacity: 0, transform: 'translateY(-100%)' }),
+        animate('225ms ease-in-out')
+    ]),
+    transition(':leave', [
+        animate('225ms ease-in-out', style({ height: '0px', opacity: 0, transform: 'translateY(-100%)' }))
     ])
 ]);

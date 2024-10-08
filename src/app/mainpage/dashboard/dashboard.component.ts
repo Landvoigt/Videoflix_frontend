@@ -6,7 +6,7 @@ import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
 import { ProfileService } from '@services/profile.service';
-import { fadeInSuperSlow } from '@utils/animations';
+import { fadeInOut, fadeInSuperSlow } from '@utils/animations';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +14,7 @@ import { fadeInSuperSlow } from '@utils/animations';
   imports: [CommonModule, VideoComponent, SlideshowComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  animations: [fadeInSuperSlow]
+  animations: [fadeInSuperSlow, fadeInOut]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('previewVideo', { static: true }) previewVideo!: ElementRef<HTMLVideoElement>;
@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   previewVideoData!: VideoData;
   previewVideoKey: string;
 
+  loading: boolean = true;
   isFullscreen: boolean = false;
   previewVideoPlaying: boolean = false;
 
@@ -47,15 +48,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       this.setRandomPreviewVideo(this.videoData);
     }
+    
+    this.loading = false;
   }
 
   setRandomPreviewVideo(videoData: VideoData[]): void {
-    const randomIndex = Math.floor(Math.random() * videoData.length);
-    this.previewVideoData = videoData[randomIndex];
-    this.previewVideoUrl = this.previewVideoData.hlsPlaylistUrl.replace("master", this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
-    this.previewVideoKey = this.previewVideoData.subfolder;
-    this.cdr.detectChanges();
-    this.setupPreviewVideo(this.previewVideoData.subfolder);
+    if (this.previewVideo) {
+      const randomIndex = Math.floor(Math.random() * videoData.length);
+      this.previewVideoData = videoData[randomIndex];
+      this.previewVideoUrl = this.previewVideoData.hlsPlaylistUrl.replace("master", this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
+      this.previewVideoKey = this.previewVideoData.subfolder;
+      this.cdr.detectChanges();
+      this.setupPreviewVideo(this.previewVideoData.subfolder);
+    }
   }
 
   setupPreviewVideo(videoKey: string): void {

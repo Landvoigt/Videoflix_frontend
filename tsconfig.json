@@ -25,6 +25,7 @@
     ],
     "baseUrl": "./",
     "paths": {
+      "@auth/*": ["src/app/services/*"],
       "@services/*": ["src/app/services/*"],
       "@interfaces/*": ["src/app/interfaces/*"],
       "@models/*": ["src/app/models/*"],

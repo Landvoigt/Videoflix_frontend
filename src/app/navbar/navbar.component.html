@@ -33,9 +33,9 @@
                         <a (click)="changePage('films')"
                             class="rounded-md px-3 py-2 text-md font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
                             [ngClass]="{'bg-navColorHover' : activePage('films'), 'text-white' : activePage('films')}">Films</a>
-                        <a (click)="changePage('series')"
+                        <!-- <a (click)="changePage('series')"
                             class="rounded-md px-3 py-2 text-md font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
-                            [ngClass]="{'bg-navColorHover' : activePage('series'), 'text-white' : activePage('series')}">Series</a>
+                            [ngClass]="{'bg-navColorHover' : activePage('series'), 'text-white' : activePage('series')}">Series</a> -->
                         <a (click)="changePage('playlist')"
                             class="rounded-md px-3 py-2 text-md font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
                             [ngClass]="{'bg-navColorHover' : activePage('playlist'), 'text-white' : activePage('playlist')}">My
@@ -73,21 +73,21 @@
     </div>
 
     <!-- Mobile menu -->
-    <div *ngIf="mobileMenuOpen" @fadeIn class="sm:hidden" id="mobile-menu">
+    <div *ngIf="mobileMenuOpen" @slideUpDownSlow class="sm:hidden" id="mobile-menu">
         <div class="space-y-1 px-2 pb-3 pt-2">
             <a (click)="changePage('dashboard')"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
                 [ngClass]="{'bg-navColorHover' : activePage('dashboard'), 'text-white' : activePage('dashboard')}">Dashboard</a>
             <a (click)="changePage('films')"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
-                [ngClass]="{'bg-navColorHover' : activePage('films'), 'text-white' : activePage('films')}">Filme</a>
-            <a (click)="changePage('series')"
+                [ngClass]="{'bg-navColorHover' : activePage('films'), 'text-white' : activePage('films')}">Films</a>
+            <!-- <a (click)="changePage('series')"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
-                [ngClass]="{'bg-navColorHover' : activePage('series'), 'text-white' : activePage('series')}">Serien</a>
+                [ngClass]="{'bg-navColorHover' : activePage('series'), 'text-white' : activePage('series')}">Series</a> -->
             <a (click)="changePage('playlist')"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-navColorHover hover:text-white cursor-pointer"
-                [ngClass]="{'bg-navColorHover' : activePage('playlist'), 'text-white' : activePage('playlist')}">Meine
-                Liste</a>
+                [ngClass]="{'bg-navColorHover' : activePage('playlist'), 'text-white' : activePage('playlist')}">My
+                List</a>
         </div>
     </div>
 </nav>

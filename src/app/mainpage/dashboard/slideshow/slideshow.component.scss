@@ -19,6 +19,15 @@
             gap: 1.5rem;
             scroll-behavior: smooth;
             transition: opacity 255ms ease;
+
+            @media(max-width: 768px) {
+                padding-left: calc(50vw - 156.5px);
+                padding-right: calc(50vw - 156.5px);
+                justify-content: center;
+                width: 100vw;
+                overflow-x: hidden;
+                gap: 50vw;
+            }
         }
 
         .thumbnail-loop-container {
@@ -67,25 +76,6 @@
 
 .line::-webkit-scrollbar {
     display: none;
-}
-
-
-// Responsive Styles
-@media (max-width: 600px) {
-    .line {
-        flex-wrap: wrap;
-        gap: 48px;
-        height: auto;
-        padding-top: 48px;
-    }
-
-    .video-slideshow-left {
-        display: none;
-    }
-
-    .video-slideshow-right {
-        display: none;
-    }
 }
 
 .transition-slow {

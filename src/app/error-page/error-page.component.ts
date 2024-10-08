@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { fadeIn } from '@utils/animations';
 import { CommonModule } from '@angular/common';
 import { NavigationService } from '@services/navigation.service';
+import { ProfileService } from '@auth/profile.service';
 
 @Component({
   selector: 'app-error-page',
@@ -14,6 +15,13 @@ import { NavigationService } from '@services/navigation.service';
 })
 export class ErrorPageComponent {
 
-  constructor(public navService: NavigationService) { }
+  constructor(private profileService: ProfileService, private navService: NavigationService) { }
 
+  relocate() {
+    if (this.profileService.profileSelected) {
+      this.navService.main();
+    } else {
+      this.navService.welcome();
+    }
+  }
 }

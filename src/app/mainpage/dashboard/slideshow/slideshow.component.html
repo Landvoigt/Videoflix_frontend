@@ -1,12 +1,12 @@
 <div class="slideshow-wrapper flex justify-center items-center">
     <div class="left-arrow-wrapper">
         <div class="w-20 px-4 -mt-5">
-            <a *ngIf="showLeftArrow" (click)="scrollLeft()"
-                class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
-          hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
-          focus-visible:outline-accentColor cursor-pointer flex justify-center items-center border-2 border-textColorPrimary">
+            <a *ngIf="showLeftArrow" (click)="scroll('left')" class="rounded-md bg-accentColor px-2 sm:py-2 md:py-2.5 lg:py-2.5 py-2.5 sm:py-2.5 md:py-2 lg:py-2 
+                text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2
+                focus-visible:outline-offset-2 focus-visible:outline-accentColor cursor-pointer flex justify-center items-center
+                border-2 border-textColorPrimary max-w-11 sm:max-w-11 md:max-w-none lg:max-w-none">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                    stroke="currentColor" class="size-6">
+                    stroke="currentColor" class="size-5 sm:size-5 md:size-6 lg:size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
             </a>
@@ -14,8 +14,8 @@
     </div>
     <div class="video-slideshow">
         <div #line class="line" (scroll)="checkScroll()" *ngIf="!loading">
-            <app-video #targetElement *ngFor="let video of videoData; let index = index" class="app-video"
-                [video]="video" (mouseenter)="onElementHover($event)" (mouseleave)="onElementLeave($event)">
+            <app-video #targetElement *ngFor="let video of videoData; let index = index" [video]="video"
+                (mouseenter)="onElementHover($event)" (mouseleave)="onElementLeave($event)">
             </app-video>
         </div>
         <div class="thumbnail-loop-container">
@@ -31,12 +31,12 @@
     </div>
     <div class="right-arrow-wrapper">
         <div class="w-20 px-4 -mt-5">
-            <a *ngIf="showRightArrow" (click)="scrollRight()"
-                class="rounded-md bg-accentColor px-2.5 py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm 
-          hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
-          focus-visible:outline-accentColor cursor-pointer flex justify-center items-center border-2 border-textColorPrimary">
+            <a *ngIf="showRightArrow" (click)="scroll('right')" class="rounded-md bg-accentColor px-2 sm:py-2 md:py-2.5 lg:py-2.5 py-2.5 sm:py-2.5 md:py-2 lg:py-2 
+                    text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-sm hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2
+                    focus-visible:outline-offset-2 focus-visible:outline-accentColor cursor-pointer flex justify-center items-center
+                    border-2 border-textColorPrimary max-w-11 sm:max-w-11 md:max-w-none lg:max-w-none">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                    stroke="currentColor" class="size-6">
+                    stroke="currentColor" class="size-5 sm:size-5 md:size-6 lg:size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                 </svg>
             </a>

@@ -53,10 +53,6 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
         }
       ]
     });
-
-    // this.videoJsPlayer.ready(() => {
-    //   console.log('VideoJS Player is ready');
-    // });
   }
 
   onHover(): void {
@@ -87,11 +83,11 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
   @HostListener('document:webkitfullscreenchange', ['$event'])
   @HostListener('document:mozfullscreenchange', ['$event'])
   @HostListener('document:MSFullscreenChange', ['$event'])
-  handleFullscreenChange(event: Event) {
+  handleFullscreenChange(event: Event): void {
     this.onFullscreenChange(event);
   }
 
-  onFullscreenChange(event: Event) {
+  onFullscreenChange(event: Event): void {
     this.fullscreen = !!(document.fullscreenElement ||
       (document as any).webkitFullscreenElement ||
       (document as any).mozFullScreenElement ||
@@ -139,11 +135,11 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
     return likedList.includes(this.video.hlsPlaylistUrl);
   }
 
-  showInfo() {
+  showInfo(): void {
     this.infoVisible = true;
   }
 
-  hideInfo() {
+  hideInfo(): void {
     this.infoVisible = false;
   }
 

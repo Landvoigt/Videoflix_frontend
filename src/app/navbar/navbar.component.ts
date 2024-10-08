@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Profile, ProfileImages } from '../../models/profile.model';
 import { NavigationService } from '@services/navigation.service';
-import { fadeIn } from '@utils/animations';
+import { fadeIn, fadeInSlow, fadeInSlowDelayed, slideUpDownSlow } from '@utils/animations';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '@services/profile.service';
 import { AuthService } from '../auth/auth.service';
@@ -13,7 +13,7 @@ import { AuthService } from '../auth/auth.service';
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  animations: [fadeIn]
+  animations: [fadeIn, slideUpDownSlow]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   @Input() closeMenu: boolean = false;

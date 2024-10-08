@@ -8,6 +8,7 @@
 @use "assets/scss/elements/buttons.scss";
 @use "assets/scss/elements/inputs.scss";
 @use "assets/scss/elements/links.scss";
+@use "assets/scss/elements/loading.scss";
 
 @use "assets/scss/core/form.scss";
 @use "assets/scss/core/logo.scss";
@@ -16,17 +17,11 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-
 html,
 body {
     height: 100%;
     background-color: rgb(29, 29, 29);
 }
-
-
-
-
-
 
 .custom-left-extra {
     left: -40rem;
@@ -48,8 +43,13 @@ body {
     }
 }
 
-
 .video-box-wrapper {
     display: flex;
     flex-wrap: wrap;
+}
+
+app-video {
+    @media(max-width: 768px) {
+        // width: calc(100% - 8.5rem);
+    }
 }

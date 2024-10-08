@@ -1,5 +1,5 @@
 .video-container {
-  width: 313px; /// important width for video aligning
+  width: 313px; /// important not change
   transition: transform 225ms ease-in-out;
   z-index: 90;
 
@@ -30,6 +30,13 @@
         }
       }
     }
+  }
+
+  @media (max-width: 768px) {
+    width: 100vw;
+    max-width: 313px;
+    transform: none;
+    margin: 0 auto;
   }
 
   .video-wrapper {

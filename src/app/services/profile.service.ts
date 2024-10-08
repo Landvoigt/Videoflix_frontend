@@ -17,11 +17,9 @@ export class ProfileService {
   currentProfile$: Observable<Profile | null> = this.currentProfileSubject.asObservable();
 
   private isBrowser: boolean;
+  profileSelected: boolean = false;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
-    private restService: RestService
-  ) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private restService: RestService) {
     this.isBrowser = isPlatformBrowser(this.platformId);
 
     if (this.isBrowser) {

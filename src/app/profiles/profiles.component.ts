@@ -86,6 +86,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
         if (profile) {
           this.profileService.setProfile(profile);
           setTimeout(() => {
+            this.profileService.profileSelected = true;
             this.videoService.setAppLoading(false);
           }, 1000);
         } else {

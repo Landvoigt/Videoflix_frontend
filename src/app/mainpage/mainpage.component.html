@@ -19,9 +19,9 @@
     </ng-container>
 
     <!-- Series -->
-    <ng-container *ngIf="activePage('series')">
+    <!-- <ng-container *ngIf="activePage('series')">
       <app-series></app-series>
-    </ng-container>
+    </ng-container> -->
 
     <!-- Playlist -->
     <ng-container *ngIf="activePage('playlist')">
@@ -34,4 +34,4 @@
 </div>
 
 <!-- Loading Screen -->
-<app-loading-screen [class.visible]="(videoService.appLoading$ | async) === true"></app-loading-screen>
+<app-loading-screen [class.active]="(videoService.appLoading$ | async) === true"></app-loading-screen>

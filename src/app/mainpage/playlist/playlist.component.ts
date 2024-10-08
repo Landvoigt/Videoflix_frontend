@@ -4,7 +4,7 @@ import { VideoService } from '@services/video.service';
 import { VideoComponent } from '@video/video.component';
 import { VideoData } from '@interfaces/video.interface';
 import { ProfileService } from '@services/profile.service';
-import { staggeredFadeIn } from '@utils/animations';
+import { fadeInOut, staggeredFadeIn } from '@utils/animations';
 
 @Component({
   selector: 'app-playlist',
@@ -12,12 +12,12 @@ import { staggeredFadeIn } from '@utils/animations';
   imports: [CommonModule, VideoComponent],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
-  animations: [staggeredFadeIn]
+  animations: [staggeredFadeIn, fadeInOut]
 })
 export class PlaylistComponent implements OnInit {
   videoData: VideoData[] = [];
-  loading: boolean = false;
   viewList: string[] = [];
+  loading: boolean = true;
 
   constructor(private videoService: VideoService, private profileService: ProfileService) { }
 
@@ -33,9 +33,11 @@ export class PlaylistComponent implements OnInit {
 
   getVideoDataByCategory(): void {
     this.videoData = this.videoService.getVideoDataByUrls(this.viewList);
+    
     if (this.videoData.length === 0) {
-      this.loading = true;
       this.videoService.fetchVideoData(true);
     }
+
+    this.loading = false;
   }
 }
