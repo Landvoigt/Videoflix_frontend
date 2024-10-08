@@ -1,7 +1,6 @@
-import { Component, ElementRef, Input, ViewChild, HostListener, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
 import { VideoService } from '@services/video.service';
 import { fadeInSlow, fadeOutSuperSlow } from '@utils/animations';
 import { ProfileService } from '@services/profile.service';
@@ -21,16 +20,16 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
   @Input() video: VideoData;
 
   videoJsPlayer: any;
-
   videoStartTimeout: any;
   videoStopTimeout: any;
+  volumeInterval:any;
 
   hovering: boolean = false;
   fullscreen: boolean = false;
-
   thumbnailVisible: boolean = true;
   panelVisible: boolean = false;
   infoVisible: boolean = false;
+  
 
   constructor(public videoService: VideoService, private profileService: ProfileService) { }
 
@@ -53,56 +52,89 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
         }
       ]
     });
+    this.videoJsPlayer.on('fullscreenchange', () => {
+      if (this.videoJsPlayer.isFullscreen()) {
+        this.onEnterFullscreen();
+        this.fullscreen = true;
+      } else {
+        this.onExitFullscreen();
+        this.fullscreen = false;
+        clearInterval(this.volumeInterval); 
+    }
+    });
+    this.videoJsPlayer.volume(0.4);
   }
 
+
+fadeInVolume(): void {
+  const targetVolume = 1;
+  const increment = 0.05;
+  const interval = 1000;
+  let currentVolume = 0.4; 
+  this.videoJsPlayer.muted(false);
+  this.videoJsPlayer.volume(currentVolume);
+  this.videoJsPlayer.play();
+
+  if (this.volumeInterval) {
+      clearInterval(this.volumeInterval);
+  }
+
+  this.volumeInterval = setInterval(() => {
+      if (currentVolume < targetVolume) {
+          currentVolume += increment;
+          this.videoJsPlayer.volume(currentVolume);
+      } else {
+          clearInterval(this.volumeInterval); 
+      }
+  }, interval);
+}
+
+
+onEnterFullscreen(): void {
+  if (this.videoJsPlayer) {
+    this.videoJsPlayer.muted(true);
+    this.videoJsPlayer.currentTime(0); 
+    this.fadeInVolume();
+  }
+}
+
+onExitFullscreen(): void {
+    if (this.videoJsPlayer) {
+      this.hovering = false;
+    this.panelVisible = false;
+    this.stopVideo();
+    this.thumbnailVisible = true;
+    }
+}
+
+
   onHover(): void {
+    if (this.volumeInterval) {
+      clearInterval(this.volumeInterval);
+  }
     this.panelVisible = true;
     clearTimeout(this.videoStartTimeout);
     this.videoStartTimeout = setTimeout(() => {
       if (this.videoJsPlayer.readyState() >= 2 && !this.fullscreen) {
         this.thumbnailVisible = false;
-        this.playVideo();
+        this.fadeInVolume();
         this.hovering = true;
         this.stopVideoAfterTimeout();
       }
     }, 1000);
   }
 
+
   onLeave(): void {
     this.hovering = false;
     this.panelVisible = false;
     clearTimeout(this.videoStartTimeout);
     clearTimeout(this.videoStopTimeout);
+    clearInterval(this.volumeInterval);
     if (!this.fullscreen) {
+      clearInterval(this.volumeInterval);
       this.thumbnailVisible = true;
       this.stopVideo();
-    }
-  }
-
-  @HostListener('document:fullscreenchange', ['$event'])
-  @HostListener('document:webkitfullscreenchange', ['$event'])
-  @HostListener('document:mozfullscreenchange', ['$event'])
-  @HostListener('document:MSFullscreenChange', ['$event'])
-  handleFullscreenChange(event: Event): void {
-    this.onFullscreenChange(event);
-  }
-
-  onFullscreenChange(event: Event): void {
-    this.fullscreen = !!(document.fullscreenElement ||
-      (document as any).webkitFullscreenElement ||
-      (document as any).mozFullScreenElement ||
-      (document as any).msFullscreenElement);
-
-    if (this.fullscreen) {
-      if (this.videoJsPlayer) {
-        this.videoJsPlayer.muted(false);
-        this.videoJsPlayer.currentTime(0);
-      }
-    } else {
-      this.hovering = false;
-      this.panelVisible = false;
-      this.stopVideo();
-      this.thumbnailVisible = true;
     }
   }
 
@@ -116,12 +148,6 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
     }, 30000);
   }
 
-  playVideo(): void {
-    if (this.videoJsPlayer) {
-      this.videoJsPlayer.muted(false);
-      this.videoJsPlayer.play();
-    }
-  }
 
   stopVideo(): void {
     if (this.videoJsPlayer) {

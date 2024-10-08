@@ -3,9 +3,9 @@
    (mouseenter)="onHover()" (mouseleave)="onLeave()">
    <h2 class="video-logo-small logo-text absolute text-xl">V</h2>
    <img @fadeOutSuperSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? video.posterUrlGcs : ''" class="video-thumbnail absolute w-full h-44 border 
-   border-borderColorVideoBox">
+   border-borderColorVideoBox" [attr.draggable]="false" (dragstart)="$event.preventDefault()">
    <div class="video-wrapper relative w-full flex flex-col justify-center items-center">
-      <video #videoPlayer class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button w-full h-44 border 
+      <video #videoPlayer playsinline class="video-js vjs-default-skin vjs-control-bar vjs-big-play-button w-full h-44 border 
          border-borderColorVideoBox border-b-0">
          Your browser does not support the video tag.
       </video>
