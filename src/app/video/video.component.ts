@@ -22,14 +22,13 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
   videoJsPlayer: any;
   videoStartTimeout: any;
   videoStopTimeout: any;
-  volumeInterval:any;
+  volumeInterval: any;
 
   hovering: boolean = false;
   fullscreen: boolean = false;
   thumbnailVisible: boolean = true;
   panelVisible: boolean = false;
   infoVisible: boolean = false;
-  
 
   constructor(public videoService: VideoService, private profileService: ProfileService) { }
 
@@ -39,6 +38,12 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
 
   initPlayer(): void {
     const videoElement = this.videoPlayer.nativeElement;
+    this.initializePlayer(videoElement);
+    this.attachEventListeners();
+    this.setInitialVolume(0.4);
+  }
+
+  initializePlayer(videoElement: HTMLElement): void {
     this.videoJsPlayer = videojs(videoElement, {
       controls: true,
       preload: 'auto',
@@ -52,71 +57,129 @@ export class VideoComponent implements OnDestroy, AfterViewInit {
         }
       ]
     });
-    this.videoJsPlayer.on('fullscreenchange', () => {
-      if (this.videoJsPlayer.isFullscreen()) {
-        this.onEnterFullscreen();
-        this.fullscreen = true;
-      } else {
-        this.onExitFullscreen();
-        this.fullscreen = false;
-        clearInterval(this.volumeInterval); 
-    }
-    });
-    this.videoJsPlayer.volume(0.4);
   }
 
+  attachEventListeners(): void {
+    this.videoJsPlayer.on('fullscreenchange', this.handleFullscreenChange.bind(this));
+  }
 
-fadeInVolume(): void {
-  const targetVolume = 1;
-  const increment = 0.05;
-  const interval = 1000;
-  let currentVolume = 0.4; 
-  this.videoJsPlayer.muted(false);
-  this.videoJsPlayer.volume(currentVolume);
-  this.videoJsPlayer.play();
-
-  if (this.volumeInterval) {
+  handleFullscreenChange(): void {
+    if (this.videoJsPlayer.isFullscreen()) {
+      this.onEnterFullscreen();
+      this.fullscreen = true;
+    } else {
+      this.onExitFullscreen();
+      this.fullscreen = false;
       clearInterval(this.volumeInterval);
-  }
-
-  this.volumeInterval = setInterval(() => {
-      if (currentVolume < targetVolume) {
-          currentVolume += increment;
-          this.videoJsPlayer.volume(currentVolume);
-      } else {
-          clearInterval(this.volumeInterval); 
-      }
-  }, interval);
-}
-
-
-onEnterFullscreen(): void {
-  if (this.videoJsPlayer) {
-    this.videoJsPlayer.muted(true);
-    this.videoJsPlayer.currentTime(0); 
-    this.fadeInVolume();
-  }
-}
-
-onExitFullscreen(): void {
-    if (this.videoJsPlayer) {
-      this.hovering = false;
-    this.panelVisible = false;
-    this.stopVideo();
-    this.thumbnailVisible = true;
     }
-}
+  }
 
+  setInitialVolume(volume: number): void {
+    this.videoJsPlayer.volume(volume);
+  }
 
-  onHover(): void {
+  fadeInVolume(): void {
+    const targetVolume = 1;
+    const increment = 0.05;
+    const interval = 1000;
+    let currentVolume = 0.4;
+
+    this.startPlaybackWithInitialVolume(currentVolume);
+    this.clearVolumeInterval();
+
+    this.volumeInterval = setInterval(() => {
+      currentVolume = Math.min(currentVolume + increment, targetVolume);
+      this.adjustVolume(currentVolume, targetVolume);
+    }, interval);
+  }
+
+  startPlaybackWithInitialVolume(volume: number): void {
+    this.videoJsPlayer.muted(false);
+    this.setInitialVolume(volume);
+    this.videoJsPlayer.play();
+  }
+
+  adjustVolume(currentVolume: number, targetVolume: number): void {
+    if (currentVolume < targetVolume) {
+      this.videoJsPlayer.volume(currentVolume);
+    } else {
+      this.clearVolumeInterval();
+    }
+  }
+
+  clearVolumeInterval(): void {
     if (this.volumeInterval) {
       clearInterval(this.volumeInterval);
+    }
   }
+
+  onEnterFullscreen(): void {
+    if (!this.videoJsPlayer) return;
+    this.prepareFullscreen();
+    this.fadeInVolume();
+  }
+
+  onExitFullscreen(): void {
+    if (!this.videoJsPlayer) return;
+    this.resetPanel();
+    this.stopVideo();
+    this.showThumbnail();
+  }
+
+  onHover(): void {
+    this.clearVolumeFade();
+    this.showPanel();
+    this.clearVideoStartTimeout();
+    this.startVideoAfterDelay();
+  }
+
+  onLeave(): void {
+    this.resetHoverState();
+    this.clearVideoStartTimeout();
+    this.clearVideoStopTimeout();
+    this.clearVolumeFade();
+    if (!this.fullscreen) {
+      this.showThumbnail();
+      this.stopVideo();
+    }
+  }
+
+  stopVideoAfterTimeout(): void {
+    this.clearVideoStopTimeout();
+    this.videoStopTimeout = setTimeout(() => {
+      if (this.videoJsPlayer && !this.fullscreen) {
+        this.pauseAndResetVideo();
+      }
+    }, 30000);
+  }
+
+  private prepareFullscreen(): void {
+    this.videoJsPlayer.muted(true);
+    this.videoJsPlayer.currentTime(0);
+  }
+
+  private resetPanel(): void {
+    this.hovering = false;
+    this.panelVisible = false;
+  }
+
+  private showPanel(): void {
     this.panelVisible = true;
-    clearTimeout(this.videoStartTimeout);
+  }
+
+  private resetHoverState(): void {
+    this.hovering = false;
+    this.panelVisible = false;
+  }
+
+  private showThumbnail(): void {
+    this.thumbnailVisible = true;
+  }
+
+  private startVideoAfterDelay(): void {
     this.videoStartTimeout = setTimeout(() => {
       if (this.videoJsPlayer.readyState() >= 2 && !this.fullscreen) {
-        this.thumbnailVisible = false;
+        this.hideThumbnail();
         this.fadeInVolume();
         this.hovering = true;
         this.stopVideoAfterTimeout();
@@ -124,36 +187,31 @@ onExitFullscreen(): void {
     }, 1000);
   }
 
+  private hideThumbnail(): void {
+    this.thumbnailVisible = false;
+  }
 
-  onLeave(): void {
-    this.hovering = false;
-    this.panelVisible = false;
+  private pauseAndResetVideo(): void {
+    this.videoJsPlayer.pause();
+    this.videoJsPlayer.currentTime(0);
+  }
+
+  private clearVideoStartTimeout(): void {
     clearTimeout(this.videoStartTimeout);
+  }
+
+  private clearVideoStopTimeout(): void {
     clearTimeout(this.videoStopTimeout);
+  }
+
+  private clearVolumeFade(): void {
     clearInterval(this.volumeInterval);
-    if (!this.fullscreen) {
-      clearInterval(this.volumeInterval);
-      this.thumbnailVisible = true;
-      this.stopVideo();
-    }
   }
-
-  stopVideoAfterTimeout(): void {
-    clearTimeout(this.videoStopTimeout);
-    this.videoStopTimeout = setTimeout(() => {
-      if (this.videoJsPlayer && !this.fullscreen) {
-        this.videoJsPlayer.pause();
-        this.videoJsPlayer.currentTime(0);
-      }
-    }, 30000);
-  }
-
 
   stopVideo(): void {
-    if (this.videoJsPlayer) {
-      this.videoJsPlayer.pause();
-      this.videoJsPlayer.currentTime(0);
-    }
+    if (!this.videoJsPlayer) return;
+    this.videoJsPlayer.pause();
+    this.videoJsPlayer.currentTime(0);
   }
 
   liked(): boolean {
@@ -170,8 +228,6 @@ onExitFullscreen(): void {
   }
 
   ngOnDestroy(): void {
-    if (this.videoJsPlayer) {
-      this.videoJsPlayer.dispose();
-    }
+    if (this.videoJsPlayer) { this.videoJsPlayer.dispose(); }
   }
 }

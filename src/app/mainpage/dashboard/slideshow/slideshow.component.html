@@ -13,15 +13,20 @@
         </div>
     </div>
     <div class="video-slideshow">
-        <div #line class="line" (scroll)="checkScroll()" *ngIf="!loading">
-            <app-video #targetElement *ngFor="let video of videoData; let index = index" [video]="video"
-                (mouseenter)="onElementHover($event)" (mouseleave)="onElementLeave($event)">
-            </app-video>
+        <div #slide class="slide" (scroll)="checkScroll()" *ngIf="!loading">
+            <ng-container *ngFor="let video of videoData; let index = index">
+                <app-video 
+                    [video]="video" 
+                    (mouseenter)="onElementHover($event)" 
+                    (mouseleave)="onElementLeave($event)">
+                </app-video>
+            </ng-container>
         </div>
         <div class="thumbnail-loop-container">
             <div class="thumbnail-loop" [ngClass]="imagesLoaded ? animationClass : ''">
                 <div class="thumbnail-loop-img-box">
-                    <img *ngFor="let pic of thumbnails" [attr.draggable]="false" (dragstart)="$event.preventDefault()"  [src]="pic" class="thumbnail-loop-img" (load)="onImageLoad()">
+                    <img *ngFor="let pic of thumbnails" [attr.draggable]="false" (dragstart)="$event.preventDefault()"
+                        [src]="pic" class="thumbnail-loop-img" (load)="onImageLoad()">
                 </div>
                 <div class="thumbnail-loop-img-box">
                     <img *ngFor="let pic of thumbnails" [src]="pic" class="thumbnail-loop-img" (load)="onImageLoad()">

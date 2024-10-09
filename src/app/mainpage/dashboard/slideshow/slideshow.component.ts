@@ -13,10 +13,9 @@ import { VideoComponent } from '@video/video.component';
 })
 export class SlideshowComponent implements OnInit, OnDestroy {
   @Input() videoData: VideoData[];
-  @Input() lineId: string;
   @Input() animationClass: string;
 
-  @ViewChild('line', { static: false }) line!: ElementRef<HTMLDivElement>;
+  @ViewChild('slide', { static: false }) slide!: ElementRef<HTMLDivElement>;
 
   thumbnails: string[] = [];
   loadedImages = 0;
@@ -48,8 +47,8 @@ export class SlideshowComponent implements OnInit, OnDestroy {
     const gapWidth = screenWidth * 0.5;
     const scrollAmount = videoWidth + gapWidth;
 
-    if (this.line && this.line.nativeElement) {
-      const scrollcontainer = this.line.nativeElement;
+    if (this.slide && this.slide.nativeElement) {
+      const scrollcontainer = this.slide.nativeElement;
       const maxScrollLeft = scrollcontainer.scrollWidth - scrollcontainer.clientWidth;
 
       if (direction === 'left') {
@@ -67,7 +66,7 @@ export class SlideshowComponent implements OnInit, OnDestroy {
       const gapWidth = screenWidth * 0.5;
       const scrollAmount = videoWidth + gapWidth;
 
-      const scrollcontainer = this.line?.nativeElement;
+      const scrollcontainer = this.slide?.nativeElement;
       const currentScroll = scrollcontainer.scrollLeft;
 
       const videoIndex = Math.round(currentScroll / scrollAmount);
@@ -83,7 +82,7 @@ export class SlideshowComponent implements OnInit, OnDestroy {
 
   checkScroll() {
     const screenWidth = window.innerWidth;
-    const scrollcontainer = this.line?.nativeElement;
+    const scrollcontainer = this.slide?.nativeElement;
     const videoWidth = 313;
     const gapWidth = window.innerWidth * 0.5;
     const scrollAmount = videoWidth + gapWidth;
@@ -103,7 +102,7 @@ export class SlideshowComponent implements OnInit, OnDestroy {
     if (screenWidth > 768) {
       const targetElement = event.currentTarget as HTMLElement;
       const rect = targetElement.getBoundingClientRect();
-      const containerRect = this.line.nativeElement.getBoundingClientRect();
+      const containerRect = this.slide.nativeElement.getBoundingClientRect();
       let translateX = 0;
 
       if (rect.x <= containerRect.left + 30 && this.showLeftArrow) {

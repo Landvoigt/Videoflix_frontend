@@ -121,11 +121,6 @@ export class VideoService {
     });
   }
 
-  logWindowSize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-  }
-
   toggleVideoInViewList(url: string) {
     if (!url) return;
 

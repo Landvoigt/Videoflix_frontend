@@ -20,7 +20,7 @@ import { LoadingScreenComponent } from '../loading-screen/loading-screen.compone
 })
 export class ProfilesComponent implements OnInit, OnDestroy {
   profiles: Profile[];
-  profileImages: any[] = ProfileImages;
+  profileImages: string[] = ProfileImages;
 
   isDialogOpen: boolean = false;
   isEdit: boolean = false;
@@ -38,17 +38,20 @@ export class ProfilesComponent implements OnInit, OnDestroy {
     private alertService: AlertService) { }
 
   ngOnInit(): void {
-    this.addProfileListeners();
+    this.addProfilesListener();
+    this.addCurrentProfileListener();
     this.profileService.loadProfilesAndSetCurrent(this.currentProfileId!);
   }
 
-  addProfileListeners() {
+  addProfilesListener() {
     this.subscriptions.add(
       this.profileService.profiles$.subscribe((profiles: Profile[]) => {
         this.profiles = profiles;
       })
     );
+  }
 
+  addCurrentProfileListener() {
     this.subscriptions.add(
       this.profileService.currentProfile$.subscribe((profile: Profile) => {
         this.currentProfileId = profile ? profile.id : null;
@@ -79,17 +82,16 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   }
 
   startApp(profileId: number) {
-    this.navService.main();
     this.videoService.setAppLoading(true);
     this.profileService.updateProfile(profileId, { active: true })
       .subscribe((profile: Profile) => {
         if (profile) {
           this.profileService.setProfile(profile);
-          setTimeout(() => {
-            this.profileService.profileSelected = true;
-            this.videoService.setAppLoading(false);
-          }, 1000);
+          this.profileService.profileSelected = true;
+          this.videoService.fetchVideoData(true);
+          this.navService.main();
         } else {
+          this.videoService.setAppLoading(false);
           this.alertService.showAlert('Profile could not be loaded', 'error');
         }
       });

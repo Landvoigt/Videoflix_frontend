@@ -9,8 +9,6 @@ import { Alert } from '../interfaces/alert.interface';
 export class AlertService {
   private alertSubject = new BehaviorSubject<Alert | null>(null);
 
-  constructor() {}
-
   getAlert(): Observable<Alert | null> {
     return this.alertSubject.asObservable();
   }
