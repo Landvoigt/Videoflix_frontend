@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoData } from '@interfaces/video.interface';
 import { VideoComponent } from '@video/video.component';
@@ -6,7 +6,8 @@ import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
 import { ProfileService } from '@services/profile.service';
-import { fadeInOut, fadeInSuperSlow } from '@utils/animations';
+import { fadeInOut, fadeInSuperSlow, fadeOutSuperSlow } from '@utils/animations';
+import videojs from 'video.js';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,30 +15,37 @@ import { fadeInOut, fadeInSuperSlow } from '@utils/animations';
   imports: [CommonModule, VideoComponent, SlideshowComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  animations: [fadeInSuperSlow, fadeInOut]
+  animations: [fadeInSuperSlow, fadeOutSuperSlow, fadeInOut]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('previewVideo', { static: true }) previewVideo!: ElementRef<HTMLVideoElement>;
-  @ViewChildren(SlideshowComponent) slideshows: QueryList<SlideshowComponent>;
+  videoJsPlayer: any;
 
   videoData: VideoData[] = [];
+  volumeInterval: any;
 
   previewVideoUrl: string = '';
   previewVideoData!: VideoData;
   previewVideoKey: string;
 
+  thumbnailVisible: boolean = true;
   loading: boolean = true;
-  isFullscreen: boolean = false;
+  fullscreen: boolean = false;
   previewVideoPlaying: boolean = false;
 
   constructor(
     public authService: AuthService,
     private profileService: ProfileService,
-    public videoService: VideoService,
-    private cdr: ChangeDetectorRef) { }
+    public videoService: VideoService) { }
 
   ngOnInit(): void {
     this.loadVideos();
+
+    this.videoJsPlayer.ready(() => {
+      setTimeout(() => {
+        this.playPreviewVideo();
+      }, 2500);
+    });
   }
 
   loadVideos() {
@@ -46,70 +54,137 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.videoData.length === 0) {
       this.videoService.fetchVideoData(true);
     } else {
-      this.setRandomPreviewVideo(this.videoData);
+      this.getRandomPreviewVideo(this.videoData);
+      this.initPlayer();
     }
-    
+
     this.loading = false;
   }
 
-  setRandomPreviewVideo(videoData: VideoData[]): void {
+  getRandomPreviewVideo(videoData: VideoData[]): void {
     if (this.previewVideo) {
       const randomIndex = Math.floor(Math.random() * videoData.length);
       this.previewVideoData = videoData[randomIndex];
-      this.previewVideoUrl = this.previewVideoData.hlsPlaylistUrl.replace("master", this.videoService.getVideoElementResolution(this.previewVideo.nativeElement));
-      this.previewVideoKey = this.previewVideoData.subfolder;
-      this.cdr.detectChanges();
-      this.setupPreviewVideo(this.previewVideoData.subfolder);
     }
   }
 
-  setupPreviewVideo(videoKey: string): void {
-    this.videoService.currentVideo = videoKey;
-    this.videoService.maxDuration = 15;
-    this.videoService.playPreviewVideo(this.previewVideo, this.previewVideoUrl);
-    this.previewVideo.nativeElement.muted = true;
-  }
-
-  requestFullScreen(video: HTMLVideoElement): void {
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    }
-  }
-
-  @HostListener('document:fullscreenchange', ['$event'])
-  @HostListener('document:webkitfullscreenchange', ['$event'])
-  @HostListener('document:mozfullscreenchange', ['$event'])
-  @HostListener('document:MSFullscreenChange', ['$event'])
-  handleFullscreenChange(event: Event) {
-    this.onFullscreenChange(event);
-  }
-
-  onFullscreenChange(event: Event) {
-    this.isFullscreen = !!(document.fullscreenElement ||
-      (document as any).webkitFullscreenElement ||
-      (document as any).mozFullScreenElement ||
-      (document as any).msFullscreenElement);
+  initPlayer(): void {
     const videoElement = this.previewVideo.nativeElement;
-    if (this.isFullscreen && this.previewVideoPlaying) {
-      this.previewVideo.nativeElement.muted = false;
-      this.videoService.fadeAudio(videoElement, true);
+    this.initializePlayer(videoElement);
+    this.attachEventListeners();
+    this.setInitialVolume(0.4);
+  }
+
+  initializePlayer(videoElement: HTMLElement): void {
+    this.videoJsPlayer = videojs(videoElement, {
+      controls: false,
+      preload: 'auto',
+      muted: true,
+      fluid: true,
+      disablePictureInPicture: true,
+      sources: [
+        {
+          src: this.previewVideoData.hlsPlaylistUrl,
+          type: 'application/x-mpegURL'
+        }
+      ]
+    });
+  }
+
+  attachEventListeners(): void {
+    this.videoJsPlayer.on('fullscreenchange', this.handleFullscreenChange.bind(this));
+  }
+
+  handleFullscreenChange(): void {
+    if (this.videoJsPlayer.isFullscreen()) {
+      this.onEnterFullscreen();
+      this.fullscreen = true;
+      this.videoJsPlayer.controls(true);
     } else {
-      this.videoService.fadeAudio(videoElement, false);
-      videoElement.muted = true;
-      videoElement.currentTime = 0;
-      this.videoService.maxDuration = 15;
-      this.previewVideoPlaying = false;
+      this.onExitFullscreen();
+      this.fullscreen = false;
+      this.videoJsPlayer.controls(false);
+      clearInterval(this.volumeInterval);
     }
   }
 
-  playPreviewVideo() {
-    this.previewVideoPlaying = true;
-    this.videoService.currentVideo = this.previewVideoKey;
-    this.videoService.playPreviewVideo(this.previewVideo, this.previewVideoUrl);
-    this.previewVideo.nativeElement.muted = false;
-    //this.videoService.fadeAudio(this.previewVideo.nativeElement, true);
-    this.videoService.maxDuration = 100000;
-    this.requestFullScreen(this.previewVideo.nativeElement);
+  onEnterFullscreen(): void {
+    if (!this.videoJsPlayer) return;
+    this.prepareFullscreen();
+    this.fadeInVolume();
+  }
+
+  onExitFullscreen(): void {
+    if (!this.videoJsPlayer) return;
+  }
+
+  playPreviewVideo(): void {
+    this.clearVolumeFade();
+    this.startVideoAfterDelay();
+  }
+
+  enterFullscreen() {
+    this.videoJsPlayer.requestFullscreen();
+  }
+
+  private clearVolumeFade(): void {
+    clearInterval(this.volumeInterval);
+  }
+
+  private startVideoAfterDelay(): void {
+    if (this.videoJsPlayer.readyState() >= 2 && !this.fullscreen) {
+      this.videoJsPlayer.play();
+      this.fadeInVolume();
+      this.hideThumbnail();
+    }
+  }
+
+  private hideThumbnail(): void {
+    this.thumbnailVisible = false;
+  }
+
+  private prepareFullscreen(): void {
+    this.videoJsPlayer.muted(true);
+    this.videoJsPlayer.currentTime(0);
+  }
+
+  fadeInVolume(): void {
+    const targetVolume = 1;
+    const increment = 0.05;
+    const interval = 1000;
+    let currentVolume = 0.4;
+
+    this.startPlaybackWithInitialVolume(currentVolume);
+    this.clearVolumeInterval();
+
+    this.volumeInterval = setInterval(() => {
+      currentVolume = Math.min(currentVolume + increment, targetVolume);
+      this.adjustVolume(currentVolume, targetVolume);
+    }, interval);
+  }
+
+  startPlaybackWithInitialVolume(volume: number): void {
+    this.videoJsPlayer.muted(false);
+    this.setInitialVolume(volume);
+    this.videoJsPlayer.play();
+  }
+
+  adjustVolume(currentVolume: number, targetVolume: number): void {
+    if (currentVolume < targetVolume) {
+      this.videoJsPlayer.volume(currentVolume);
+    } else {
+      this.clearVolumeInterval();
+    }
+  }
+
+  setInitialVolume(volume: number): void {
+    this.videoJsPlayer.volume(volume);
+  }
+
+  clearVolumeInterval(): void {
+    if (this.volumeInterval) {
+      clearInterval(this.volumeInterval);
+    }
   }
 
   toggleMute() {
@@ -141,6 +216,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.videoService.intervalId);
+
   }
 }

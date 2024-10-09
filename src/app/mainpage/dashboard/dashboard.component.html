@@ -4,13 +4,16 @@
 </div>
 
 <div class="w-full flex random-video-wrapper">
-    <div [@fadeInSuperSlow] class="random-video-container relative w-full h-full">
-        <video preload="auto" disablePictureInPicture [muted]="!isFullscreen" id="previewVideo" #previewVideo
-            class="random-video-content absolute w-full h-full object-cover" [src]="previewVideoUrl">
+    <div [@fadeInSuperSlow] class="random-video-container relative w-full h-full overflow-hidden">
+        <img @fadeOutSuperSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? previewVideoData.posterUrlGcs : ''"
+            class="absolute z-20 w-full h-full object-cover w-full h-44" [attr.draggable]="false"
+            (dragstart)="$event.preventDefault()">
+        <video #previewVideo playsinline class="absolute z-10 !h-full video-js vjs-fluid vjs-default-skin 
+            vjs-control-bar vjs-big-play-button">
             Your browser does not support the video tag.
         </video>
         <div
-            class="random-video-overlay absolute w-full h-full flex justify-start items-start sm:items-start md:items-start lg:items-center">
+            class="random-video-overlay absolute z-30 w-full h-full flex justify-start items-start sm:items-start md:items-start lg:items-center">
             <div class="w-4/5 sm:w-4/5 md:w-4/5 lg:w-3/5 flex flex-col justify-center items-start gap-4 sm:gap-6 md:gap-8 lg:gap-8"
                 *ngIf="previewVideoData">
                 <h2 class="text-3xl text-textColorPrimary text-shadow-xl sm:text-4xl md:text-5xl lg:text-5xl">{{
@@ -25,16 +28,15 @@
                         previewVideoData.resolution }}</span>
                 </div>
                 <div class="flex items-center justify-center gap-x-4 sm:gap-x-4 md:gap-x-9 lg:gap-x-9">
-                    <a (click)="playPreviewVideo()" style="width: 185px; text-align: center; white-space: nowrap;"
-                        class="rounded-md bg-accentColor px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
-                    text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white 
+                    <a (click)="enterFullscreen()" class="rounded-md bg-accentColor w-44  
+                    px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white text-center
                     hover:bg-accentColorHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 shadow-md
-                    focus-visible:outline-accentColor cursor-pointer">
+                    focus-visible:outline-accentColor cursor-pointer whitespace-nowrap">
                         Abspielen</a>
-                    <a (click)="toggleVideoInViewList()" style="text-align: center; white-space: nowrap;" class="flex items-center rounded-md 
+                    <a (click)="toggleVideoInViewList()" class="flex items-center rounded-md 
                         bg-greyTransparent hover:bg-greyTransparentHover px-4 sm:px-4 md:px-9 lg:px-9 py-2 sm:py-2 md:py-2.5 lg:py-2.5 
                         text-md sm:text-md md:text-lg lg:text-lg font-semibold text-white shadow-md cursor-pointer hover:text-accentColor 
-                        max-h-10 sm:max-h-10 md:max-h-none lg:max-h-none"
+                        max-h-10 sm:max-h-10 md:max-h-none lg:max-h-none text-center whitespace-nowrap"
                         [class.disabled]="videoService.updatingViewList"
                         [style.pointer-events]="videoService.updatingViewList ? 'none' : 'auto'"
                         [style.opacity]="videoService.updatingViewList ? 0.7 : 1">
