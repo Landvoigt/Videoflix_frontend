@@ -5,7 +5,7 @@
 
 <div class="w-full flex random-video-wrapper">
     <div [@fadeInSuperSlow] class="random-video-container relative w-full h-full overflow-hidden">
-        <img @fadeOutSuperSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? previewVideoData.posterUrlGcs : ''"
+        <img @fadeInOutSuperSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? previewVideoData.posterUrlGcs : ''"
             class="absolute z-20 w-full h-full object-cover w-full h-44" [attr.draggable]="false"
             (dragstart)="$event.preventDefault()">
         <video #previewVideo playsinline class="absolute z-10 w-full !h-full object-cover video-js vjs-fluid vjs-default-skin 
@@ -72,8 +72,8 @@
     </div>
 </div>
 
-<app-slideshow *ngIf="videoData.length" [videoData]="getOddVideoData()"
-    [animationClass]="'slide-left-animation'"></app-slideshow>
+<app-slideshow *ngIf="videoData.length" [videoData]="getOddVideoData()" [animationClass]="'slide-left-animation'"
+    (mouseenter)="mutePreviewVideoAudio()" (mouseleave)="unmutePreviewVideoAudio()"></app-slideshow>
 
-<app-slideshow *ngIf="videoData.length" [videoData]="getEvenVideoData()"
-    [animationClass]="'slide-right-animation'"></app-slideshow>
+<app-slideshow *ngIf="videoData.length" [videoData]="getEvenVideoData()" [animationClass]="'slide-right-animation'"
+    (mouseenter)="mutePreviewVideoAudio()" (mouseleave)="unmutePreviewVideoAudio()"></app-slideshow>

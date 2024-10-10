@@ -6,7 +6,7 @@ import { VideoService } from '@services/video.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SlideshowComponent } from './slideshow/slideshow.component';
 import { ProfileService } from '@services/profile.service';
-import { fadeInOut, fadeInSuperSlow, fadeOutSuperSlow } from '@utils/animations';
+import { fadeInOut, fadeInOutSuperSlow, fadeInSuperSlow, fadeOutSuperSlow } from '@utils/animations';
 import videojs from 'video.js';
 
 @Component({
@@ -15,7 +15,7 @@ import videojs from 'video.js';
   imports: [CommonModule, VideoComponent, SlideshowComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  animations: [fadeInSuperSlow, fadeOutSuperSlow, fadeInOut]
+  animations: [fadeInSuperSlow, fadeOutSuperSlow, fadeInOut, fadeInOutSuperSlow]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('previewVideo', { static: true }) previewVideo!: ElementRef<HTMLVideoElement>;
@@ -23,6 +23,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   videoData: VideoData[] = [];
   volumeInterval: any;
+  fadeOutTimeout: any;
+  restartTimeout: any;
 
   previewVideoUrl: string = '';
   previewVideoData!: VideoData;
@@ -44,6 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.videoJsPlayer.ready(() => {
       setTimeout(() => {
         this.playPreviewVideo();
+        this.scheduleStop();
       }, 2500);
     });
   }
@@ -91,6 +94,49 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  scheduleStop(): void {
+    this.clearTimeouts();
+
+    this.fadeOutTimeout = setTimeout(() => {
+      this.fadeOutVolumeAndStop();
+    }, 5000);
+  }
+
+  fadeOutVolumeAndStop(): void {
+    const fadeOutDuration = 3000;
+    const steps = 10;
+    const intervalDuration = fadeOutDuration / steps;
+    let currentVolume = this.videoJsPlayer.volume();
+    const volumeDecrement = currentVolume / steps;
+
+    this.thumbnailVisible = true;
+
+    this.volumeInterval = setInterval(() => {
+      currentVolume = Math.max(currentVolume - volumeDecrement, 0);
+      this.videoJsPlayer.volume(currentVolume);
+
+      if (currentVolume <= 0) {
+        clearInterval(this.volumeInterval);
+        this.videoJsPlayer.pause();
+        this.scheduleReplay();
+      }
+    }, intervalDuration);
+  }
+
+  scheduleReplay(): void {
+    this.restartTimeout = setTimeout(() => {
+      this.restartVideo();
+    }, 10000);
+  }
+
+  restartVideo(): void {
+    this.clearTimeouts();
+    this.thumbnailVisible = false;
+    this.videoJsPlayer.currentTime(0);
+    this.fadeInVolume();
+    this.scheduleStop();
+  }
+
   attachEventListeners(): void {
     this.videoJsPlayer.on('fullscreenchange', this.handleFullscreenChange.bind(this));
   }
@@ -133,7 +179,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private startVideoAfterDelay(): void {
     if (this.videoJsPlayer.readyState() >= 2 && !this.fullscreen) {
-      this.videoJsPlayer.play();
+      this.videoJsPlayer.play().catch((error: any) => {
+        if (error.name === 'AbortError') {
+          console.log('Video play was interrupted due to background media restrictions.');
+        } else {
+          console.error('Error during video playback:', error);
+        }
+      });
       this.fadeInVolume();
       this.hideThumbnail();
     }
@@ -196,10 +248,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  unmutePreviewVideoAudio() {
+    const videoElement = this.previewVideo.nativeElement;
+    this.videoService.fadeAudio(videoElement, true);
+  }
+
+  mutePreviewVideoAudio() {
+    const videoElement = this.previewVideo.nativeElement;
+    this.videoService.fadeAudio(videoElement, false);
+  }
+
   toggleVideoInViewList() {
     if (!this.videoService.updatingViewList) {
       this.videoService.toggleVideoInViewList(this.previewVideoUrl);
     }
+  }
+
+  clearTimeouts() {
+    clearTimeout(this.fadeOutTimeout);
+    clearTimeout(this.restartTimeout);
+    clearInterval(this.volumeInterval);
   }
 
   getOddVideoData() {
@@ -216,6 +284,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-
+    this.clearTimeouts();
   }
 }
