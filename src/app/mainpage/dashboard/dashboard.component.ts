@@ -99,7 +99,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.fadeOutTimeout = setTimeout(() => {
       this.fadeOutVolumeAndStop();
-    }, 5000);
+    }, 30000);
   }
 
   fadeOutVolumeAndStop(): void {
