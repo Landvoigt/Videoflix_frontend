@@ -43,7 +43,8 @@
                         <span class="hidden sm:hidden md:flex lg:flex">{{ liked() ? 'Remove from' : 'Add to' }} my
                             list</span>
                         <span aria-hidden="true"
-                            class="flex sm:flex md:hidden lg:hidden text-xl sm:text-xl md:text-2xl lg:text-2xl">+</span>
+                            class="flex sm:flex md:hidden lg:hidden pb-0.5 text-xl sm:text-xl md:text-2xl lg:text-2xl">{{
+                            liked() ? '-' : '+' }}</span>
                     </a>
                 </div>
                 <div

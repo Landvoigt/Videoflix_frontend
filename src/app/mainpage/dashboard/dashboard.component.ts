@@ -22,18 +22,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   videoJsPlayer: any;
 
   videoData: VideoData[] = [];
+  previewVideoData!: VideoData;
+
   volumeInterval: any;
   fadeOutTimeout: any;
   restartTimeout: any;
 
-  previewVideoUrl: string = '';
-  previewVideoData!: VideoData;
-  previewVideoKey: string;
-
+  previewVideoPlaying: boolean = false;
   thumbnailVisible: boolean = true;
   loading: boolean = true;
   fullscreen: boolean = false;
-  previewVideoPlaying: boolean = false;
 
   constructor(
     public authService: AuthService,
@@ -260,7 +258,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   toggleVideoInViewList() {
     if (!this.videoService.updatingViewList) {
-      this.videoService.toggleVideoInViewList(this.previewVideoUrl);
+      this.videoService.toggleVideoInViewList(this.previewVideoData.hlsPlaylistUrl);
     }
   }
 
@@ -280,7 +278,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   liked(): boolean {
     const likedList = this.profileService.currentProfileSubject.value?.liked_list ?? [];
-    return likedList.includes(this.previewVideoUrl);
+    return likedList.includes(this.previewVideoData.hlsPlaylistUrl);
   }
 
   ngOnDestroy(): void {

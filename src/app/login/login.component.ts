@@ -54,9 +54,6 @@ export class LoginComponent implements OnInit {
         next: (response) => {
           const token = response.token;
           this.authService.login(token);
-
-          /////
-          console.log(response);
           this.loading = false;
         },
         error: (err) => {
