@@ -1,5 +1,5 @@
 <div
-   class="video-container relative flex flex-col h-44 text-textColorPrimary rounded-md overflow-visible cursor-default"
+   class="video-container relative flex flex-col h-44 text-textColorPrimary rounded-md overflow-hidden hover:overflow-visible cursor-default"
    (mouseenter)="onHover()" (mouseleave)="onLeave()">
    <h2 class="video-logo-small logo-text absolute text-xl">V</h2>
    <img @fadeOutSuperSlow *ngIf="thumbnailVisible" [src]="thumbnailVisible ? video.posterUrlGcs : ''" class="video-thumbnail absolute w-full h-44 border 

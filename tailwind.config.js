@@ -25,7 +25,7 @@ module.exports = {
 
         borderColorPopup: '#e3d9ffb8',
         borderColorLight: '#e5e7eb38',
-        borderColorVideoBox: 'rgba(241, 248, 253, 0.25)',
+        borderColorVideoBox: 'rgba(241, 248, 253, 0.2)',
 
         inputColorFocus: '#2528eb',
 

@@ -67,6 +67,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   changePage(page: 'dashboard' | 'films' | 'series' | 'playlist') {
     this.closeUserMenu();
+    this.closeMobileMenu();
     this.navService.main();
     this.currentPage = page;
     this.pageChanged.emit(page);

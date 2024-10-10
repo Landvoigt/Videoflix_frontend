@@ -1,6 +1,12 @@
 .random-video-wrapper {
   height: calc(100vh - 4rem);
-  width: 100%;
+  position: relative;
+
+  video {
+    top: 0;
+    left: 0;
+    object-fit: cover;
+  }
 
   .random-video-container {
     transition: opacity 2s ease-in-out;
