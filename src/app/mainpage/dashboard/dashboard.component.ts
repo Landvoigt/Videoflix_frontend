@@ -261,6 +261,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  // unused
   unmutePreviewVideoAudio() {
     if (!this.previewVideoMuted) {
       const videoElement = this.previewVideo.nativeElement;

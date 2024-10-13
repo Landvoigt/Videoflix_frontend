@@ -74,7 +74,7 @@
 </div>
 
 <app-slideshow *ngIf="videoData.length" [videoData]="getOddVideoData()" [animationClass]="'slide-left-animation'"
-    (mouseenter)="mutePreviewVideoAudio()" (mouseleave)="unmutePreviewVideoAudio()"></app-slideshow>
+    (mouseenter)="mutePreviewVideoAudio()"></app-slideshow>
 
 <app-slideshow *ngIf="videoData.length" [videoData]="getEvenVideoData()" [animationClass]="'slide-right-animation'"
-    (mouseenter)="mutePreviewVideoAudio()" (mouseleave)="unmutePreviewVideoAudio()"></app-slideshow>
+    (mouseenter)="mutePreviewVideoAudio()"></app-slideshow>
