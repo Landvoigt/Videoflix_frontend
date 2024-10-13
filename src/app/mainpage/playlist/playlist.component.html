@@ -3,6 +3,13 @@
     <img src="assets/svg/rings.svg" alt="Loading Rings">
 </div>
 
-<div [@staggeredFadeIn] *ngIf="!loading" class="flex flex-wrap p-10 gap-6">
-    <app-video *ngFor="let video of videoData" class="videoInFilms" [video]="video"></app-video>
+<div *ngIf="!loading" class="flex flex-wrap p-10 gap-6">
+    <ng-container *ngIf="videoData.length > 0; else noVideosMessage">
+        <app-video *ngFor="let video of videoData" class="videoInFilms" [video]="video"></app-video>
+    </ng-container>
+
+    <ng-template #noVideosMessage>
+        <p class="text-md text-textColorPrimary text-shadow-xl sm:text-md md:text-xl lg:text-xl italic">
+            It's a bit empty here. How about adding some videos to your list?</p>
+    </ng-template>
 </div>

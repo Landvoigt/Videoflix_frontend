@@ -301,5 +301,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clearTimeouts();
+
+    if (this.videoJsPlayer) {
+      this.videoJsPlayer.dispose();
+    }
   }
 }
