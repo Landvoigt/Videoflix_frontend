@@ -89,14 +89,12 @@ export class ResetPasswordComponent implements OnInit {
         next: (response) => {
           this.alertService.showAlert('Password reset successfully!', 'success');
           this.navService.login();
+          this.loading = false;
         },
         error: (err) => {
           this.errorService.handleResetPasswordError(err);
           this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-        },
+        }
       });
     }
   }

@@ -9,7 +9,7 @@ import { ErrorService } from './error.service';
   providedIn: 'root'
 })
 export class RestService {
-  //apiBaseUrl: string = 'http://127.0.0.1:8000/api/';
+  // apiBaseUrl: string = 'http://127.0.0.1:8000/api/';
   apiBaseUrl: string = 'https://videoflix.back-serv-api.com/api/';
 
   constructor(

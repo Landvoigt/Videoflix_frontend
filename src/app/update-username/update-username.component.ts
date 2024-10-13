@@ -43,11 +43,10 @@ export class UpdateUsernameComponent {
         next: () => {
           this.alertService.showAlert('Username updated successfully!', 'success');
           this.navService.profiles();
+          this.loading = false;
         },
         error: (err) => {
           this.errorService.handleUpdateUsernameError(err);
-        },
-        complete: () => {
           this.loading = false;
         }
       });

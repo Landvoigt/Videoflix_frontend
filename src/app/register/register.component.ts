@@ -70,11 +70,10 @@ export class RegisterComponent {
       this.restService.register(email!, password!).subscribe({
         next: (response) => {
           this.navService.registerSuccess();
+          this.loading = false;
         },
         error: (err) => {
           this.errorService.handleRegisterError(err);
-        },
-        complete: () => {
           this.loading = false;
         }
       });

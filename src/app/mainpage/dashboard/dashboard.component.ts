@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   restartTimeout: any;
 
   previewVideoPlaying: boolean = false;
+  previewVideoMuted: boolean = false;
   thumbnailVisible: boolean = true;
   loading: boolean = true;
   fullscreen: boolean = false;
@@ -40,13 +41,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadVideos();
-
-    this.videoJsPlayer.ready(() => {
-      setTimeout(() => {
-        this.playPreviewVideo();
-        this.scheduleStop();
-      }, 2500);
-    });
   }
 
   loadVideos() {
@@ -74,6 +68,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.initializePlayer(videoElement);
     this.attachEventListeners();
     this.setInitialVolume(0.4);
+    this.startPreviewVideo();
   }
 
   initializePlayer(videoElement: HTMLElement): void {
@@ -89,6 +84,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
           type: 'application/x-mpegURL'
         }
       ]
+    });
+  }
+
+  startPreviewVideo() {
+    if (!this.videoJsPlayer) return;
+
+    this.videoJsPlayer.ready(() => {
+      setTimeout(() => {
+        this.playPreviewVideo();
+        this.scheduleStop();
+      }, 2500);
     });
   }
 
@@ -199,23 +205,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   fadeInVolume(): void {
-    const targetVolume = 1;
-    const increment = 0.05;
-    const interval = 1000;
-    let currentVolume = 0.4;
+    if (this.previewVideoMuted) {
+      this.videoJsPlayer.muted(true);
+      this.startPlaybackWithInitialVolume(0);
+    } else {
+      const targetVolume = 1;
+      const increment = 0.05;
+      const interval = 1000;
+      let currentVolume = 0.4;
 
-    this.startPlaybackWithInitialVolume(currentVolume);
-    this.clearVolumeInterval();
+      this.startPlaybackWithInitialVolume(currentVolume);
+      this.clearVolumeInterval();
 
-    this.volumeInterval = setInterval(() => {
-      currentVolume = Math.min(currentVolume + increment, targetVolume);
-      this.adjustVolume(currentVolume, targetVolume);
-    }, interval);
+      this.volumeInterval = setInterval(() => {
+        currentVolume = Math.min(currentVolume + increment, targetVolume);
+        this.adjustVolume(currentVolume, targetVolume);
+      }, interval);
+    }
   }
 
   startPlaybackWithInitialVolume(volume: number): void {
-    this.videoJsPlayer.muted(false);
-    this.setInitialVolume(volume);
+    if (volume !== 0) {
+      this.videoJsPlayer.muted(false);
+      this.setInitialVolume(volume);
+    }
     this.videoJsPlayer.play();
   }
 
@@ -241,14 +254,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const videoElement = this.previewVideo.nativeElement;
     if (videoElement.muted) {
       this.videoService.fadeAudio(videoElement, true);
+      this.previewVideoMuted = false;
     } else {
       this.videoService.fadeAudio(videoElement, false);
+      this.previewVideoMuted = true;
     }
   }
 
   unmutePreviewVideoAudio() {
-    const videoElement = this.previewVideo.nativeElement;
-    this.videoService.fadeAudio(videoElement, true);
+    if (!this.previewVideoMuted) {
+      const videoElement = this.previewVideo.nativeElement;
+      this.videoService.fadeAudio(videoElement, true);
+    }
   }
 
   mutePreviewVideoAudio() {

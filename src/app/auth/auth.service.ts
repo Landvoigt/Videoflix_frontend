@@ -44,6 +44,7 @@ export class AuthService {
   }
 
   redirectIfLoggedIn(): Observable<boolean> {
+    console.log("test")
     return this.isLoggedIn().pipe(
       map(isLoggedIn => {
         if (isLoggedIn) {

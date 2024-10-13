@@ -45,11 +45,10 @@ export class SendMailComponent {
         next: (response) => {
           this.alertService.showAlert('Email sent successfully!', 'success');
           this.navService.login();
+          this.loading = false;
         },
         error: (err) => {
           this.errorService.handleSendMailError(err);
-        },
-        complete: () => {
           this.loading = false;
         }
       });
