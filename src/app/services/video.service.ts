@@ -22,7 +22,8 @@ export class VideoService {
   private videoData: VideoData[] = [];
   private thumbnailUrls: string[];
 
-  private apiVideoBaseUrl = "http://localhost:8000/api/video/";
+  //private apiVideoBaseUrl = "http://localhost:8000/api/video/";
+  private apiVideoBaseUrl = "https://videoflix.back-serv-api.com/api/video/";
 
   updatingViewList: boolean = false;
   videoDataLoaded: boolean = false;
