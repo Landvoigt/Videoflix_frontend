@@ -14,9 +14,8 @@ export class ErrorService {
   constructor(private alertService: AlertService) { }
 
   handleApiError(error: HttpErrorResponse): Observable<never> {
-    console.log(error);
-    if (error?.status === 401) {
-      this.alertService?.showAlert('You are not authorized!', 'error');
+    if (error.status === 401) {
+      this.alertService.showAlert('You are not authorized!', 'error');
     }
     return throwError(() => { });
   }
