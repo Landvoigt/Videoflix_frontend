@@ -1,11 +1,11 @@
 import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { MainpageComponent } from './mainpage/mainpage.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { VideoComponent } from './video/video.component';
 import { SendMailComponent } from './send-mail/send-mail.component';
-import { NgModule } from '@angular/core';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { AuthGuard, RedirectGuard } from './auth/auth.guard';
 import { ProfilesComponent } from './profiles/profiles.component';
@@ -28,7 +28,7 @@ export const routes: Routes = [
     { path: 'reset_password', component: ResetPasswordComponent, canActivate: [RedirectGuard] },
     { path: 'update_username', component: UpdateUsernameComponent, canActivate: [AuthGuard] },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-    
+
     { path: 'selection', component: ProfilesComponent, canActivate: [AuthGuard] },
     { path: 'mainpage', component: MainpageComponent, canActivate: [AuthGuard] },
     { path: 'video', component: VideoComponent, canActivate: [AuthGuard] },
@@ -40,8 +40,9 @@ export const routes: Routes = [
     { path: 'error', component: ErrorPageComponent },
     { path: '**', redirectTo: '/error' }
 ];
+
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule]
-  })
-  export class AppRoutingModule { }
+})
+export class AppRoutingModule { }

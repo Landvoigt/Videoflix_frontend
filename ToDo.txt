@@ -1,5 +1,2 @@
 Tim:
-- fix loading-screen not appearing - DONE
-- add logout btn or go back in /welcome page - DONE
 - fix error page relocation - partially DONE (check profileSelected setting correct at all times)
-- fix videos sometimes not loading after profile load executed and not showing loading after 1sec there - DONE
