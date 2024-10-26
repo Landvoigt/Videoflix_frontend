@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const videoElement = this.previewVideo.nativeElement;
     this.initializePlayer(videoElement);
     this.attachEventListeners();
-    this.setInitialVolume(0.4);
+    this.setInitialVolume(0);
     this.startPreviewVideo();
   }
 
@@ -137,7 +137,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.clearTimeouts();
     this.thumbnailVisible = false;
     this.videoJsPlayer.currentTime(0);
-    this.fadeInVolume();
+    //this.fadeInVolume();
     this.scheduleStop();
   }
 
@@ -169,12 +169,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   playPreviewVideo(): void {
+    this.videoJsPlayer.muted(true);
     this.clearVolumeFade();
     this.startVideoAfterDelay();
+   
   }
 
   enterFullscreen() {
     this.videoJsPlayer.requestFullscreen();
+    this.videoJsPlayer.muted(false);
   }
 
   private clearVolumeFade(): void {
@@ -206,7 +209,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   fadeInVolume(): void {
     if (this.previewVideoMuted) {
-      this.videoJsPlayer.muted(true);
       this.startPlaybackWithInitialVolume(0);
     } else {
       const targetVolume = 1;
@@ -253,10 +255,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   toggleMute() {
     const videoElement = this.previewVideo.nativeElement;
     if (videoElement.muted) {
-      this.videoService.fadeAudio(videoElement, true);
+      this.videoJsPlayer.muted(false);
+      this.setInitialVolume(0.4);
       this.previewVideoMuted = false;
     } else {
-      this.videoService.fadeAudio(videoElement, false);
+      this.videoJsPlayer.muted(true); 
       this.previewVideoMuted = true;
     }
   }

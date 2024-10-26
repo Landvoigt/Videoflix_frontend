@@ -20,6 +20,11 @@ export class FrontpageComponent {
     this.checkLoginStatus();
   }
 
+
+  ngOnInit(): void {
+    this.trackClicks();
+  }
+
   checkLoginStatus(): void {
     this.authService.isLoggedIn().pipe(take(1)).subscribe((isLoggedIn: boolean) => {
       this.loggedIn = isLoggedIn;
@@ -31,4 +36,41 @@ export class FrontpageComponent {
     this.loggedIn = false;
     this.authService.logout();
   }
+
+
+
+
+  // Funktion zur Überwachung der Klicks auf der Welcome-Seite
+  trackClicks() {
+    document.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (this.isClickable(target)) {
+        console.log(`Clicked element is clickable: <${target.tagName.toLowerCase()}> with class: ${target.className}`);
+      } else {
+        console.log(`Clicked element is not clickable: <${target.tagName.toLowerCase()}> with class: ${target.className}`);
+      }
+    });
+  }
+
+  // Überprüft, ob das geklickte Element klickbar ist (z. B. Buttons, Links, etc.)
+  isClickable(element: HTMLElement): boolean {
+    const clickableTags = ['button', 'a', 'input']; // Liste der interaktiven Elemente
+    const clickableRoles = ['button', 'link'];
+
+    // Prüfen, ob das Element ein Button oder Link ist (anhand des Tags oder des Role-Attributs)
+    if (clickableTags.includes(element.tagName.toLowerCase()) ||
+        clickableRoles.includes(element.getAttribute('role') || '')) {
+      return true;
+    }
+
+    // Optional: Prüfen, ob das Element eine spezifische klickbare Klasse hat (falls gewünscht)
+    // Beispiel: Elemente mit einer bestimmten CSS-Klasse, z.B. 'btn' oder 'clickable'
+    if (element.classList.contains('btn') || element.classList.contains('clickable')) {
+      return true;
+    }
+
+    return false;
+  }
+
 }
